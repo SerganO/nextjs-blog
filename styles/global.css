@@ -1,27 +1,13 @@
-html,
-body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-  line-height: 1.6;
-  font-size: 18px;
+@tailwind base;
+@tailwind components;
+
+.aspect-6x5 {
+  @apply relative pb-5/6
 }
 
-* {
-  box-sizing: border-box;
+.aspect-6x5 > * {
+  @apply absolute inset-0 h-full
 }
 
-a {
-  color: #0070f3;
-  text-decoration: none;
-}
+@tailwind utilities;
 
-a:hover {
-  text-decoration: underline;
-}
-
-img {
-  max-width: 100%;
-  display: block;
-}
