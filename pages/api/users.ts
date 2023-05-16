@@ -1,19 +1,33 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Sequelize } from "sequelize";
+import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter, expressWrapper } from "next-connect";
+import User from "../../db/models/User";
 
-export default async (_: NextApiRequest, res: NextApiResponse) => {
-    const sequelize = new Sequelize("my_db_dev", "my_db_user", "mydbpass", {
-        host: "127.0.0.1",
-        dialect: "mysql",
-      });
-      
-      const [results, metadata] = await sequelize.query("SELECT * FROM users");
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
-      if(results.length > 0) {
-        res.status(200).json(results)
-      } else {
-        res.status(404).send({error: "not found"});
-      }
+router.get(async (req, res) => {
+  await User.findAll()
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((error) => {
+      res.status(404).send({ error: error });
+    });
+});
 
-      sequelize.close();
-}
+export default router.handler({
+  onError: (err, req, res) => {
+    const error = err as Error;
+    console.error(error.stack);
+    res.status(500).end(error.message);
+  },
+});
+
+/*export default async (req: NextApiRequest, res: NextApiResponse) => {
+  await User.findAll()
+    .then((users) => {
+      res.status(200).json(users);
+    })
+    .catch((error) => {
+      res.status(404).send({ error: error });
+    });
+};*/

@@ -87,6 +87,6 @@ module.exports = {
   },
   plugins: [
     require("prettier-plugin-tailwindcss"),
-    require("@tailwindcss/custom-forms"),
+    //require("@tailwindcss/custom-forms"),
   ],
 };

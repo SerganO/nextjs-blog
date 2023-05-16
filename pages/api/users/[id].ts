@@ -1,24 +1,14 @@
-import { NextApiRequest, NextApiResponse } from 'next'
-import { Sequelize } from "sequelize";
+import { NextApiRequest, NextApiResponse } from "next";
+import User from "../../../db/models/User";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
-    const id = req.query["id"]
-    const sequelize = new Sequelize("my_db_dev", "my_db_user", "mydbpass", {
-        host: "127.0.0.1",
-        dialect: "mysql",
-      });
+  const id = parseInt(req.query.id as string);
 
-      
-      
-      const [results, metadata] = await sequelize.query("SELECT * FROM users WHERE id = " + id);
-      
-      if(results.length > 0) {
-        res.status(200).json(results)
-      } else {
-        res.status(404).send({error: "not found"});
-      }
-
-      sequelize.close();
- 
-}
-
+  await User.findByPk(id)
+    .then((user) => {
+      res.status(200).json(user);
+    })
+    .catch((error) => {
+      res.status(404).send({ error: error });
+    });
+};
