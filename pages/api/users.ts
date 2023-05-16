@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter, expressWrapper } from "next-connect";
+import { createRouter } from "next-connect";
+
 import User from "../../db/models/User";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -21,13 +22,3 @@ export default router.handler({
     res.status(500).end(error.message);
   },
 });
-
-/*export default async (req: NextApiRequest, res: NextApiResponse) => {
-  await User.findAll()
-    .then((users) => {
-      res.status(200).json(users);
-    })
-    .catch((error) => {
-      res.status(404).send({ error: error });
-    });
-};*/

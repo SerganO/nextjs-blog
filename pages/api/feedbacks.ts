@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { Op } from "sequelize";
+import { createRouter } from "next-connect";
+
 import Feedback from "../../db/models/Feedback";
 import QueryOptions from "../../types/QueryOptions";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+const router = createRouter<NextApiRequest, NextApiResponse>();
+
+router.get(async (req, res) => {
   const userId = req.query["user"];
   const productId = req.query["product"];
 
@@ -30,4 +34,12 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     .catch((error) => {
       res.status(404).send({ error: error });
     });
-};
+});
+
+export default router.handler({
+  onError: (err, req, res) => {
+    const error = err as Error;
+    console.error(error.stack);
+    res.status(500).end(error.message);
+  },
+});

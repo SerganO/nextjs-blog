@@ -1,33 +1,44 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { createRouter } from "next-connect";
+
 import User from "../../../db/models/User";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
-  var firstName: string;
-  var lastName: string;
-  var userEmail: string;
-  var password: string;
-  var role: string;
-  if (req.method == "POST") {
-    console.log(req.body);
-    let bodyString = JSON.stringify(req.body);
-    console.log(bodyString);
-    let bodyData = JSON.parse(bodyString);
-    console.log(bodyData);
-    firstName = bodyData["firstName"] as string;
-    lastName = bodyData["lastName"] as string;
-    userEmail = bodyData["userEmail"] as string;
-    password = bodyData["password"] as string;
-    role = bodyData["role"] as string;
-  } else {
-    firstName = req.query["fn"] as string;
-    lastName = req.query["ln"] as string;
-    userEmail = req.query["email"] as string;
-    password = req.query["pwd"] as string;
-    role = req.query["r"] as string;
-  }
+const router = createRouter<NextApiRequest, NextApiResponse>();
 
+router
+  .get(async (req, res) => {
+    const firstName = req.query["fn"] as string;
+    const lastName = req.query["ln"] as string;
+    const userEmail = req.query["email"] as string;
+    const password = req.query["pwd"] as string;
+    const role = req.query["r"] as string;
+
+    await checkAndAdd(req, res, firstName, lastName, userEmail, password, role);
+  })
+  .post(async (req, res) => {
+    let bodyString = JSON.stringify(req.body);
+    let bodyData = JSON.parse(bodyString);
+
+    const firstName = bodyData["firstName"] as string;
+    const lastName = bodyData["lastName"] as string;
+    const userEmail = bodyData["userEmail"] as string;
+    const password = bodyData["password"] as string;
+    const role = bodyData["role"] as string;
+
+    await checkAndAdd(req, res, firstName, lastName, userEmail, password, role);
+  });
+
+async function checkAndAdd(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  firstName: string,
+  lastName: string,
+  userEmail: string,
+  password: string,
+  role: string
+) {
   if (firstName && lastName && userEmail && password && role) {
-    addNewUser(
+    await addNewUser(
       firstName,
       lastName,
       userEmail,
@@ -45,9 +56,9 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     res.status(400).json({ error: "not full data" });
   }
-};
+}
 
-function addNewUser(
+async function addNewUser(
   firstName: string,
   lastName: string,
   userEmail: string,
@@ -56,7 +67,7 @@ function addNewUser(
   success: (User) => void,
   failure: (Error) => void
 ) {
-  User.create({
+  await User.create({
     firstName: firstName,
     lastName: lastName,
     userEmail: userEmail,
@@ -70,3 +81,11 @@ function addNewUser(
       failure(error);
     });
 }
+
+export default router.handler({
+  onError: (err, req, res) => {
+    const error = err as Error;
+    console.error(error.stack);
+    res.status(500).end(error.message);
+  },
+});
