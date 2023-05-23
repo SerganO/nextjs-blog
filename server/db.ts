@@ -1,5 +1,6 @@
 import { Sequelize } from "sequelize";
 import { env } from "process"
+import mysql from "mysql2";
 
 
 export function createDB() {

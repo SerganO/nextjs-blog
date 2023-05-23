@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
-import { createDB } from "../../lib/db";
+import { createDB } from "../db";
 import User from "./User";
 import Product from "./Product";
 
@@ -21,8 +21,8 @@ class Feedback extends Model {
   public productId: number;
   public rating: number;
   public message: string;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public createdAt: number;
+  public updatedAt: number;
 
   public author: User;
   public product: Product;
@@ -69,15 +69,18 @@ Feedback.init(
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
   },
-  { sequelize, modelName: "feedbacks" }
+  {
+    sequelize,
+    modelName: "feedbacks",
+  }
 );
 
 Feedback.belongsTo(User, { foreignKey: "user_id", as: "author" });

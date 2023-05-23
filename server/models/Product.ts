@@ -1,6 +1,7 @@
 import { Sequelize, BelongsTo, DataTypes, Model } from "sequelize";
-import { createDB } from "../../lib/db";
+import { createDB } from "../db";
 import User from "./User";
+import Feedback from "./Feedback";
 
 const sequelize = createDB();
 
@@ -21,10 +22,11 @@ class Product extends Model {
   public SKU: string;
   public category: string;
   public price: number;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public createdAt: number;
+  public updatedAt: number;
 
   public vendor?: User;
+  public feedbacks?: [Feedback];
 }
 Product.init(
   {
@@ -86,16 +88,19 @@ Product.init(
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
   },
 
-  { sequelize, modelName: "products" }
+  {
+    sequelize,
+    modelName: "products",
+  }
 );
 
 Product.belongsTo(User, {

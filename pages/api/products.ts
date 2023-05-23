@@ -1,9 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Op } from "sequelize";
+import { Op, FindOptions } from "sequelize";
 import { createRouter } from "next-connect";
 
-import Product from "../../db/models/Product";
-import QueryOptions from "../../types/QueryOptions";
+import Product from "../../server/models/Product";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -11,7 +10,7 @@ router.get(async (req, res) => {
   const userId = req.query["user"];
   console.log("get q");
   console.log(userId);
-  const queryOptions: QueryOptions = {};
+  const queryOptions: FindOptions = {};
 
   if (userId !== null && userId !== undefined) {
     queryOptions.where = {

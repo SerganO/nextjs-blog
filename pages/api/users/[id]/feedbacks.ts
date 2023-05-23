@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import User from "../../../../db/models/User";
-import Feedback from "../../../../db/models/Feedback";
+import User from "../../../../server/models/User";
+import Feedback from "../../../../server/models/Feedback";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 

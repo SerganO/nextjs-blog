@@ -1,5 +1,11 @@
 {
+
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "server/*": ["server/*"],
+      "componetns/*": ["componetns/*"],
+    },
     "lib": [
       "dom",
       "dom.iterable",

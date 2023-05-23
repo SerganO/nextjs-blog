@@ -1,15 +1,25 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import Product from "../../../../db/models/Product";
-import User from "../../../../db/models/User";
+import Product from "../../../../server/models/Product";
+import User from "../../../../server/models/User";
+import Feedback from "../../../../server/models/Feedback";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
 router.get(async (req, res) => {
   const id = parseInt(req.query.id as string);
 
-  await Product.findByPk(id, { include: { model: User, as: "vendor" } })
+  await Product.findByPk(id, {
+    include: [
+      { model: User, as: "vendor" },
+      {
+        model: Feedback,
+        as: "feedbacks",
+        include: { model: User, as: "author" },
+      },
+    ],
+  })
     .then((product) => {
       res.status(200).json(product);
     })

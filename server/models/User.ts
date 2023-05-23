@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
-import { createDB } from "../../lib/db";
+import { createDB } from "../db";
 import Product from "./Product";
 import Feedback from "./Feedback";
 
@@ -23,8 +23,8 @@ class User extends Model {
   public userEmail: string;
   public password: string;
   public role: string;
-  public createdAt: Date;
-  public updatedAt: Date;
+  public createdAt: number;
+  public updatedAt: number;
 
   public products?: [Product];
   public feedbacks?: [Feedback];
@@ -100,15 +100,18 @@ User.init(
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.DATE,
+      type: DataTypes.BIGINT,
     },
   },
-  { sequelize, modelName: "users" }
+  {
+    sequelize,
+    modelName: "users",
+  }
 );
 
 export default User;

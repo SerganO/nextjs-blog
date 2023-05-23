@@ -7,7 +7,7 @@ export default function SearchFilters() {
     <section className=" bg-gray-800 ">
       <div>
         <div className="flex justify-between px-4 py-2">
-          <div className=" group flex w-full max-w-xs items-center rounded-lg bg-gray-900 px-3  py-2 focus-within:bg-gray-200 hover:bg-white ">
+          <div className="group flex w-full max-w-xs items-center rounded-lg bg-gray-900 px-3  py-2 focus-within:bg-gray-200 hover:bg-white ">
             <svg
               className="h-5 w-5 fill-current text-gray-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@ export default function SearchFilters() {
               <path d="m14.32 12.906 1.096 1.096c.412-.023.83.123 1.145.437l3 3a1.5 1.5 0 0 1-2.122 2.122l-3-3a1.497 1.497 0 0 1-.437-1.145l-1.096-1.096a8 8 0 1 1 1.414-1.414ZM8 14A6 6 0 1 0 8 2a6 6 0 0 0 0 12Z" />
             </svg>
             <input
-              className="ml-1 block w-full bg-gray-900 text-base text-gray-500 focus:bg-gray-200 focus:text-gray-800 focus:outline-none group-hover:bg-white"
+              className="ml-1 block w-full bg-gray-900 text-base text-gray-500 hover:bg-white focus:bg-gray-200 focus:text-gray-800 focus:outline-none group-hover:bg-white"
               placeholder="Search by keyword"
             ></input>
           </div>
