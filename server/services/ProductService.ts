@@ -29,15 +29,15 @@ class ProductService {
       queryOptions.limit = limit;
     }
 
-    queryOptions.raw = true;
-    queryOptions.nest = true;
+    /*queryOptions.raw = true;
+    queryOptions.nest = true;*/
 
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
     return Product.findAll(queryOptions);
   }
 
-  /**
+    /**
    * findProductsPaginated
    */
   public findProductsPaginated(
@@ -47,6 +47,8 @@ class ProductService {
   ) {
     const queryOptions: FindOptions = {};
     const countQueryOptions: FindOptions = {};
+
+    console.log("parameters: ", userId, offset, limit);
 
     if (userId !== null && userId !== undefined) {
       queryOptions.where = {
@@ -68,26 +70,44 @@ class ProductService {
       queryOptions.limit = limit;
     }
 
-    queryOptions.raw = true;
-    queryOptions.nest = true;
+    /*queryOptions.raw = true;
+queryOptions.nest = true;*/
 
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
-    const fetchData = async () => {
-      await Product.count(countQueryOptions).then(async (count) => {
-        await Product.findAll(queryOptions).then(async (products) => {
-          if (userId !== null && userId !== undefined) {
-            await User.findByPk(parseInt(userId as string)).then((user) => {
-              return { count: count, products: products, vendor: user };
-            });
-          } else {
-            return { count: count, products: products };
-          }
-        });
-      });
-    };
+    return new Promise(async (resolve, reject) => {
+      try {
+        const count = await Product.count(countQueryOptions);
+        const products = await Product.findAll(queryOptions);
 
-    return fetchData();
+        let response = { count, products, vendor: null };
+
+        if (userId !== null && userId !== undefined) {
+          const user = await User.findByPk(parseInt(userId as string));
+          response.vendor = user;
+        }
+
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  /**
+   * findProductExtendedInfo
+   */
+  public findProductExtendedInfo(productId: string) {
+    return Product.findByPk(productId, {
+      include: [
+        { model: User, as: "vendor" },
+        {
+          model: Feedback,
+          as: "feedbacks",
+          include: [{ model: User, as: "author" }],
+        },
+      ],
+    })
   }
 }
 

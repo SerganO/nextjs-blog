@@ -14,7 +14,7 @@ router.get(async (req, res) => {
     include: {
       model: Feedback,
       as: "feedbacks",
-      include: { model: User, as: "author" },
+      include: [{ model: User, as: "author" }],
     },
   })
     .then((product) => {

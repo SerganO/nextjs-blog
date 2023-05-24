@@ -17,7 +17,7 @@ export default function Base({ products }) {
   const [productsData, setProductsData] = useState<[Product]>(products);
   const router = useRouter();
 
-  /*useEffect(() => {
+  useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
         BASE_URL + "/api/products/feedbacksIncluded?o=0&l=20"
@@ -27,7 +27,7 @@ export default function Base({ products }) {
     };
 
     fetchData();
-  }, []);*/
+  }, []);
 
   const goToProductsPage = () => {
     router.push("/products");

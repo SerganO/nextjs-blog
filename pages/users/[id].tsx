@@ -1,21 +1,35 @@
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-
+import { useState, useEffect } from "react";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
-import User from "../../server/models/User";
+import User from "server/models/User";
 
-interface PageProps {
-  user: User;
-}
+import userController from "server/controllers/UserController";
+import getConfig from "next/config";
 
-export default function Base({ user }: PageProps) {
+const {
+  publicRuntimeConfig: { BASE_URL },
+} = getConfig();
+
+export default function Base({ user }) {
   const router = useRouter();
 
-  const fullname = `${user.firstName} ${user.lastName}`;
+  const [userData, setUserData] = useState<User>(user);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(BASE_URL + `/api/users/${router.query.id}`);
+      const newData = await response.json();
+      setUserData(newData);
+    };
+
+    fetchData();
+  }, []);
+
+  const fullname = `${userData.firstName} ${userData.lastName}`;
 
   const goToProductsPage = () => {
-    router.push(`/products?user=${user.id}`);
+    router.push(`/products?user=${userData.id}`);
   };
 
   const handleGoBack = () => {
@@ -52,11 +66,11 @@ export default function Base({ user }: PageProps) {
               </div>
             </div>
             <div
-              hidden={user.role != "vendor"}
+              hidden={userData.role != "vendor"}
               className="mt-8 flex justify-center"
             >
               <button
-                hidden={user.role != "vendor"}
+                hidden={userData.role != "vendor"}
                 className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
                 onClick={goToProductsPage}
               >
@@ -70,17 +84,4 @@ export default function Base({ user }: PageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
-) => {
-  const response = await fetch(
-    `http://localhost:3000/api/users/${context.params.id as string}`
-  );
-  const data = await response.json();
-
-  return {
-    props: {
-      user: data as User,
-    },
-  };
-};
+export const getServerSideProps = userController.getServerSideUser;

@@ -1,42 +1,44 @@
 import { useQuery, dehydrate, QueryClient } from "react-query";
 import Pagination from "@material-ui/lab/Pagination";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import ProductPlate from "../../components/productPlate";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import getConfig from "next/config";
 
+import productController from "server/controllers/ProductController";
+import Link from "next/link";
+
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function paginationSSR(props) {
+export default function paginationSSR({ pageData }) {
   const router = useRouter();
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
+  const [productsPageData, setProductsPageData] = useState(pageData);
+  const [userId, setUserId] = useState(router.query.user);
 
-  var userString = "";
-  var userId = router.query.user;
+  let userString = "";
   if (userId) {
     userString = `&user=${userId}`;
   }
 
-  const { data } = useQuery(
-    [page],
-    async () =>
-      await fetch(
-        `http://localhost:3000/api/products/pagination?o=${
-          (page - 1) * 20
-        }&l=20${userString}`
-      ).then((result) => result.json()),
-    {
-      keepPreviousData: true,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-    }
-  );
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        BASE_URL +
+          `/api/products/pagination?o=${(page - 1) * 20}&l=20${userString}`
+      );
+      const newData = await response.json();
+      setProductsPageData(newData);
+    };
 
-  const fullname = `${data.vendor?.firstName} ${data.vendor?.lastName}`;
+    fetchData();
+  }, [page, userId]);
+
+  const fullname = `${productsPageData?.vendor?.firstName} ${productsPageData?.vendor?.lastName}`;
 
   const handleGoMain = () => {
     router.push("/");
@@ -72,13 +74,14 @@ export default function paginationSSR(props) {
         >
           Go to main
         </button>
-        <button
+        <Link
           hidden={!userId}
+          href={`${BASE_URL}/products?page=1`}
           className="my-4 mr-4 rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
           onClick={goToProductsPage}
         >
           All Products
-        </button>
+        </Link>
       </div>
       <div hidden={!userId} className="mx-4 my-4">
         <div className="my-4">
@@ -107,9 +110,9 @@ export default function paginationSSR(props) {
       <div className="my-4 flex justify-center">
         <Pagination
           count={
-            data.count % 20 == 0
-              ? Math.trunc(data.count / 20)
-              : Math.trunc(data.count / 20) + 1
+            productsPageData?.count % 20 == 0
+              ? Math.trunc(productsPageData?.count / 20)
+              : Math.trunc(productsPageData?.count / 20) + 1
           }
           variant="outlined"
           color="primary"
@@ -119,16 +122,16 @@ export default function paginationSSR(props) {
         />
       </div>
       <div className="flex flex-wrap justify-center gap-4">
-        {data?.products.map((product) => {
+        {productsPageData?.products.map((product) => {
           return ProductPlate(product);
         })}
       </div>
       <div className="my-4 flex justify-center">
         <Pagination
           count={
-            data.count % 20 == 0
-              ? Math.trunc(data.count / 20)
-              : Math.trunc(data.count / 20) + 1
+            productsPageData?.count % 20 == 0
+              ? Math.trunc(productsPageData?.count / 20)
+              : Math.trunc(productsPageData?.count / 20) + 1
           }
           variant="outlined"
           color="primary"
@@ -141,25 +144,4 @@ export default function paginationSSR(props) {
   );
 }
 
-export async function getServerSideProps(context) {
-  let page = 1;
-  if (context.query.page) {
-    page = parseInt(context.query.page);
-  }
-  var userString = "";
-  var userId = context.query.user;
-  if (userId) {
-    userString = `&user=${userId}`;
-  }
-  const queryClient = new QueryClient();
-  await queryClient.prefetchQuery(
-    [page],
-    async () =>
-      await fetch(
-        `http://localhost:3000/api/products/pagination?o=${
-          (page - 1) * 20
-        }&l=20${userString}`
-      ).then((result) => result.json())
-  );
-  return { props: { dehydratedState: dehydrate(queryClient) } };
-}
+export const getServerSideProps = productController.getServerSidePaginated;

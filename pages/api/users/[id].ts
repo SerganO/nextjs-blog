@@ -1,21 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import User from "../../../server/models/User";
+import userController from "server/controllers/UserController";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
-router.get(async (req, res) => {
-  const id = parseInt(req.query.id as string);
-
-  await User.findByPk(id)
-    .then((user) => {
-      res.status(200).json(user);
-    })
-    .catch((error) => {
-      res.status(404).send({ error: error });
-    });
-});
+router.get(userController.findUserInfo);
 
 export default router.handler({
   onError: (err, req, res) => {

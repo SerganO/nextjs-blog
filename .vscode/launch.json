@@ -4,6 +4,7 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+    
         {
             "type": "chrome",
             "request": "launch",
@@ -11,5 +12,9 @@
             "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         }
-    ]
+    ],
+    "skipFiles": [
+        "inspector_async_hook.js",
+        "async_hooks.js"
+      ]
 }

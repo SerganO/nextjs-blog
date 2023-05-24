@@ -1,13 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { Op, FindOptions } from "sequelize";
-
-import Product from "server/models/Product";
-import Feedback from "server/models/Feedback";
 
 import productService from "server/services/ProductService";
-import { off } from "process";
 
 class ProductController {
+  /**
+   * findProductExtendedInfo
+   */
+  public findProductExtendedInfo(req: NextApiRequest, res: NextApiResponse) {
+    const id = req.query["id"] as string;
+
+    return productService
+      .findProductExtendedInfo(id)
+      .then((product) => {
+        res.status(200).json(product);
+      })
+      .catch((error) => {
+        res.status(404).send({ error: error });
+      });
+  }
+
   /**
    * findProductsFeedbackIncluded
    */
@@ -35,7 +46,6 @@ class ProductController {
    */
   public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
     const userId = req.query["user"] as string;
-
     const limit = parseInt(req.query["l"] as string);
     const offset = parseInt(req.query["o"] as string);
 
@@ -81,35 +91,6 @@ class ProductController {
    * getServerSidePropsMainPage
    */
   public async getServerSidePropsMainPage(context) {
-    let page = 1;
-    if (context.query.page) {
-      page = parseInt(context.query.page);
-    }
-
-    const userId = context.query.user;
-
-    const offset = (page - 1) * 20;
-    const limit = 20;
-
-    let products = await productService.findProductsPaginated(
-      userId,
-      offset,
-      limit
-    );
-
-    products = JSON.parse(JSON.stringify(products));
-
-    return {
-      props: {
-        pageData,
-      },
-    };
-  }
-
-  /**
-   * getServerSidePropsMainPage
-   */
-  public async getServerSidePaginated(context) {
     var offset = 0;
     var limit = 20;
 
@@ -123,6 +104,50 @@ class ProductController {
     return {
       props: {
         products,
+      },
+    };
+  }
+
+  /**
+   * getServerSidePaginated
+   */
+  public async getServerSidePaginated(context) {
+    let page = 1;
+    if (context.query.page) {
+      page = parseInt(context.query.page);
+    }
+
+    const userId = context.query.user;
+
+    const offset = (page - 1) * 20;
+    const limit = 20;
+
+    let pageData = await productService.findProductsPaginated(
+      userId,
+      offset,
+      limit
+    );
+
+    pageData = JSON.parse(JSON.stringify(pageData));
+
+    return {
+      props: {
+        pageData,
+      },
+    };
+  }
+
+  /**
+   * getServerSideProduct
+   */
+  public async getServerSideProduct(context) {
+    const id = context.params.id;
+
+    let product = await productService.findProductExtendedInfo(id);
+    product = JSON.parse(JSON.stringify(product));
+    return {
+      props: {
+        product,
       },
     };
   }

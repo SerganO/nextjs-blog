@@ -10,21 +10,21 @@ export default function ProductPage(product: Product) {
   var [feedbackShown, setFeedbackShown] = useState(false);
   const router = useRouter();
 
-  const fullname = `${product.vendor.firstName} ${product.vendor.lastName}`;
+  const fullname = `${product?.vendor?.firstName} ${product?.vendor?.lastName}`;
 
   var rating = 0;
   var roundedRaiting = 0;
-  if (product.feedbacks.length > 0) {
-    rating = product.feedbacks.reduce(
+  if (product?.feedbacks?.length > 0) {
+    rating = product?.feedbacks?.reduce(
       (sum, current) => sum + current.rating,
       0
     );
-    rating = rating / product.feedbacks.length;
+    rating = rating / product?.feedbacks?.length;
     roundedRaiting = Math.round(rating);
   }
 
   const goToProductsPage = () => {
-    router.push(`/products?user=${product.vendor.id}`);
+    router.push(`/products?user=${product?.vendor?.id}`);
   };
 
   const toggle = () => {
@@ -32,7 +32,7 @@ export default function ProductPage(product: Product) {
   };
 
   const goToUserPage = () => {
-    router.push(`/users/${product.vendor.id}`);
+    router.push(`/users/${product?.vendor?.id}`);
   };
 
   return (
@@ -78,12 +78,12 @@ export default function ProductPage(product: Product) {
         </div>
         <div className="p-4 sm:w-4/5 ">
           <h4 className="mt-1 text-lg font-semibold text-gray-900">
-            {product.title}
-            <span className="ml-1 text-xs text-gray-600">/{product.SKU}</span>
+            {product?.title}
+            <span className="ml-1 text-xs text-gray-600">/{product?.SKU}</span>
           </h4>
           <h6>{product.description}</h6>
           <div className="mt-1">
-            <span className="text-gray-900">{product.price}₴</span>
+            <span className="text-gray-900">{product?.price}₴</span>
           </div>
           <div className="flex justify-center">
             <button
@@ -104,20 +104,20 @@ export default function ProductPage(product: Product) {
               )}
             </div>
             <span className="ml-2 text-sm text-gray-600">
-              {product.feedbacks.length} feedbacks
+              {product?.feedbacks?.length} feedbacks
             </span>
 
             <button
-              hidden={product.feedbacks.length <= 0}
+              hidden={product?.feedbacks?.length <= 0}
               className="mx-4 my-4 rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
               onClick={toggle}
             >
               {feedbackShown ? "Hide" : "Show"}
             </button>
           </div>
-          {FeedbackForm(product.id)}
+          {FeedbackForm(product?.id)}
           <div hidden={!feedbackShown}>
-            {product.feedbacks.map((feedback, index) => FeedbackView(feedback))}
+            {product?.feedbacks?.map((feedback, index) => FeedbackView(feedback))}
           </div>
         </div>
       </div>

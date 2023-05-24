@@ -1,17 +1,33 @@
-import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import Product from "../../server/models/Product";
 
-interface PageProps {
-  product: Product;
-}
+import productController from "server/controllers/ProductController";
+import { useEffect, useState } from "react";
+import getConfig from "next/config";
 
-export default function Base({ product }: PageProps) {
+const {
+  publicRuntimeConfig: { BASE_URL },
+} = getConfig();
+
+export default function Base({ product }) {
   const router = useRouter();
+
+  const [productData, setProductData] = useState(product);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch(
+        BASE_URL + `/api/products/${router.query.id}/extended`
+      );
+      const newData = await response.json();
+      setProductData(newData);
+    };
+
+    fetchData();
+  }, []);
 
   const handleGoBack = () => {
     router.back();
@@ -31,24 +47,11 @@ export default function Base({ product }: PageProps) {
           </button>
         </div>
         <div className="">
-          <div className="">{ProductPage(product)}</div>
+          <div className="">{ProductPage(productData)}</div>
         </div>
       </main>
     </div>
   );
 }
 
-export const getServerSideProps: GetServerSideProps<PageProps> = async (
-  context
-) => {
-  const response = await fetch(
-    `http://localhost:3000/api/products/${context.params.id as string}/extended`
-  );
-  const data = await response.json();
-
-  return {
-    props: {
-      product: data as Product,
-    },
-  };
-};
+export const getServerSideProps = productController.getServerSideProduct;
