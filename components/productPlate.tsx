@@ -1,7 +1,6 @@
-import { useRouter } from "next/router";
-
 import Product from "../server/models/Product";
 import Star from "./star";
+import Link from "next/link";
 
 export default function ProductPlate(product: Product) {
   var rating = 0;
@@ -15,17 +14,12 @@ export default function ProductPlate(product: Product) {
     roundedRaiting = Math.round(rating);
   }
 
-  const router = useRouter();
-
-  function moveToProduct() {
-    router.push(`/products/${product.id}`);
-  }
-
   return (
-    <button
+    <Link
+      href={`/products/${product.id}`}
       key={product.id}
       className="h-full py-3 sm:w-80 sm:max-w-xs sm:flex-shrink-0 sm:px-2 sm:py-0"
-      onClick={moveToProduct}
+      //onClick={moveToProduct}
     >
       <div className="aspect-6x5">
         <img
@@ -62,6 +56,6 @@ export default function ProductPlate(product: Product) {
           </div>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }

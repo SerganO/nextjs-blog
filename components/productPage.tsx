@@ -5,10 +5,10 @@ import Product from "../server/models/Product";
 import Star from "./star";
 import FeedbackView from "./feedback";
 import FeedbackForm from "./feedbackForm";
+import Link from "next/link";
 
 export default function ProductPage(product: Product) {
   var [feedbackShown, setFeedbackShown] = useState(false);
-  const router = useRouter();
 
   const fullname = `${product?.vendor?.firstName} ${product?.vendor?.lastName}`;
 
@@ -23,16 +23,8 @@ export default function ProductPage(product: Product) {
     roundedRaiting = Math.round(rating);
   }
 
-  const goToProductsPage = () => {
-    router.push(`/products?user=${product?.vendor?.id}`);
-  };
-
   const toggle = () => {
     setFeedbackShown(!feedbackShown);
-  };
-
-  const goToUserPage = () => {
-    router.push(`/users/${product?.vendor?.id}`);
   };
 
   return (
@@ -49,16 +41,17 @@ export default function ProductPage(product: Product) {
           <div className="m-4 sm:w-1/4">
             <div className="h-fit justify-center rounded-lg bg-white px-4 py-3 shadow-lg ">
               <div className="flex h-fit flex-wrap items-center justify-center gap-x-4">
-                <button
+                <Link
+                  href={`/users/${product?.vendor?.id}`}
                   className="mt-2  h-12 w-12 shrink-0"
-                  onClick={goToUserPage}
+                  //onClick={goToUserPage}
                 >
                   <img
                     className="h-full w-full rounded-full object-cover shadow-md"
                     src="https://cdn-icons-png.flaticon.com/512/236/236832.png?w=740&t=st=1684484148~exp=1684484748~hmac=76a8fdbb5201abe34f6169c8fcdd2993f7ef81e883b909ce225263ad4d9b1df1"
                     alt={fullname}
                   />
-                </button>
+                </Link>
                 <div className="mt-2 flex items-center justify-center">
                   <h4 className="mt-1 h-full w-fit flex-1 text-lg font-semibold text-gray-900">
                     {fullname}
@@ -66,12 +59,13 @@ export default function ProductPage(product: Product) {
                 </div>
               </div>
               <div className="mt-8 flex justify-center">
-                <button
+                <Link
+                  href={`/products?user=${product?.vendor?.id}`}
                   className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
-                  onClick={goToProductsPage}
+                  //onClick={goToProductsPage}
                 >
                   All Products
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -117,7 +111,9 @@ export default function ProductPage(product: Product) {
           </div>
           {FeedbackForm(product?.id)}
           <div hidden={!feedbackShown}>
-            {product?.feedbacks?.map((feedback, index) => FeedbackView(feedback))}
+            {product?.feedbacks?.map((feedback, index) =>
+              FeedbackView(feedback)
+            )}
           </div>
         </div>
       </div>

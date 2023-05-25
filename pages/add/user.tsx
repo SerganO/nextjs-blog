@@ -1,4 +1,9 @@
+import getConfig from "next/config";
 import { useState } from "react";
+
+const {
+  publicRuntimeConfig: { BASE_URL },
+} = getConfig();
 
 type UserData = {
   firstName: string;
@@ -29,7 +34,7 @@ const AddUserForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/users/add", {
+      const response = await fetch(`${BASE_URL}/api/users/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +80,7 @@ const AddUserForm = () => {
             id="firstName"
             value={user.firstName}
             onChange={handleChange}
-            className="shadow border rounded focus:outline-none w-full appearance-none px-3 py-2 leading-tight text-gray-700 focus:shadow-outline"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             required
           />
         </div>
@@ -92,7 +97,7 @@ const AddUserForm = () => {
             id="lastName"
             value={user.lastName}
             onChange={handleChange}
-            className="shadow border rounded focus:outline-none w-full appearance-none px-3 py-2 leading-tight text-gray-700 focus:shadow-outline"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             required
           />
         </div>
@@ -109,7 +114,7 @@ const AddUserForm = () => {
             id="userEmail"
             value={user.userEmail}
             onChange={handleChange}
-            className="shadow border rounded focus:outline-none w-full appearance-none px-3 py-2 leading-tight text-gray-700 focus:shadow-outline"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             required
           />
         </div>
@@ -126,7 +131,7 @@ const AddUserForm = () => {
             id="password"
             value={user.password}
             onChange={handleChange}
-            className="shadow border rounded focus:outline-none w-full appearance-none px-3 py-2 leading-tight text-gray-700 focus:shadow-outline"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             required
           />
         </div>
@@ -140,14 +145,14 @@ const AddUserForm = () => {
             id="role"
             value={user.role}
             onChange={handleChange}
-            className="shadow border rounded focus:outline-none w-full appearance-none px-3 py-2 leading-tight text-gray-700 focus:shadow-outline"
+            className="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
             required
           />
         </div>
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="rounded focus:outline-none bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:shadow-outline"
+            className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
           >
             Add User
           </button>

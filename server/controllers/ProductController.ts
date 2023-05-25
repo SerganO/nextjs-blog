@@ -118,7 +118,7 @@ class ProductController {
     }
 
     const userId = context.query.user;
-
+    console.log(userId);
     const offset = (page - 1) * 20;
     const limit = 20;
 
@@ -132,7 +132,7 @@ class ProductController {
 
     return {
       props: {
-        pageData,
+        data: pageData,
       },
     };
   }
