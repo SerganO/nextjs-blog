@@ -11,8 +11,8 @@ export interface IUser extends Model {
   userEmail: string;
   password: string;
   role: string;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 
   products?: [IProduct];
   feedbacks?: [IFeedback];
@@ -93,12 +93,12 @@ export default (ctx: IContextContainer) => {
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
   });
 

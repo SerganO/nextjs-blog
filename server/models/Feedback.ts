@@ -9,8 +9,8 @@ export interface IFeedback extends Model {
   productId: number;
   rating: number;
   message: string;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 
   author?: IUser;
 }
@@ -61,12 +61,12 @@ export default (ctx: IContextContainer) => {
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
   });
 

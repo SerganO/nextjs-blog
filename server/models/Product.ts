@@ -13,8 +13,8 @@ export interface IProduct extends Model {
   SKU: string;
   category: string;
   price: number;
-  createdAt: number;
-  updatedAt: number;
+  createdAt: Date;
+  updatedAt: Date;
 
   vendor?: IUser;
   feedbacks?: [IFeedback];
@@ -85,12 +85,12 @@ export default (ctx: IContextContainer) => {
     createdAt: {
       field: "created_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
     updatedAt: {
       field: "updated_at",
       allowNull: false,
-      type: DataTypes.BIGINT,
+      type: DataTypes.DATE,
     },
   });
 
