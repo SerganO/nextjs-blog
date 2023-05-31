@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import getConfig from "next/config";
 
 type FeedbackData = {
   user_id: number;
@@ -7,6 +8,11 @@ type FeedbackData = {
   rating: number;
   message: string;
 };
+
+const {
+  publicRuntimeConfig: { BASE_URL },
+} = getConfig();
+
 export default function FeedbackForm(product_id: number) {
   const [feedBackData, setFeedbackData] = useState<FeedbackData>({
     rating: 0,
@@ -24,10 +30,10 @@ export default function FeedbackForm(product_id: number) {
   const [buttonBackground, setButtonBackground] = useState("bg-gray-500");
 
   useEffect(() => {
-    console.log(rating);
-    console.log(feedback.length);
+    console.log("rating: ", rating);
+    console.log("message lenght: ", feedback.length);
     setSendEnabled(rating !== undefined && feedback.length >= 6);
-    console.log(sendEnabled);
+    console.log("sendEnabled: ", sendEnabled);
     feedBackData.rating = rating;
     feedBackData.message = feedback;
     setButtonBackground(sendEnabled ? "bg-indigo-500" : "bg-gray-500");
@@ -50,7 +56,7 @@ export default function FeedbackForm(product_id: number) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/api/feedbacks/add", {
+      const response = await fetch(`${BASE_URL}/api/feedbacks/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +67,7 @@ export default function FeedbackForm(product_id: number) {
       if (response.ok) {
         console.log("all ok");
         const responseBody = await response.json();
-        console.log(responseBody);
+        console.log("responseBody: ", responseBody);
         setFeedback("");
         setRating(undefined);
         showNotification("feedback added successfully");

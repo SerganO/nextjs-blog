@@ -4,7 +4,8 @@ import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import User from "server/models/User";
 
-import userController from "server/controllers/UserController";
+//import userController from "server/controllers/UserController";
+import container from "server/di";
 import getConfig from "next/config";
 import Link from "next/link";
 
@@ -82,4 +83,5 @@ export default function Base({ user }) {
   );
 }
 
+const userController = container.resolve("UserController");
 export const getServerSideProps = userController.getServerSideUser;

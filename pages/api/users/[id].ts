@@ -1,9 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import userController from "server/controllers/UserController";
+//import userController from "server/controllers/UserController";
 
+import container from "server/di";
 const router = createRouter<NextApiRequest, NextApiResponse>();
+const userController = container.resolve("UserController");
 
 router.get(userController.findUserInfo);
 

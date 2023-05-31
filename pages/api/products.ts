@@ -9,7 +9,7 @@ const router = createRouter<NextApiRequest, NextApiResponse>();
 router.get(async (req, res) => {
   const userId = req.query["user"];
   console.log("get q");
-  console.log(userId);
+  console.log("userId: ", userId);
   const queryOptions: FindOptions = {};
 
   if (userId !== null && userId !== undefined) {

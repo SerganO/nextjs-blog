@@ -2,8 +2,9 @@ import Product from "server/models/Product";
 import Feedback from "server/models/Feedback";
 import User from "server/models/User";
 import { Op, FindOptions } from "sequelize";
+import BaseContext from "server/di/BaseContext";
 
-class ProductService {
+export default class ProductService extends BaseContext {
   /**
    * findProductsFeedbackIndluded
    */
@@ -49,7 +50,8 @@ class ProductService {
     const countQueryOptions: FindOptions = {};
 
     console.log("parameters: ", userId, offset, limit);
-
+    console.log("Product service dI:", this.di);
+    console.log("Product service dI us:", this.di.UserService);
     if (userId !== null && userId !== undefined) {
       queryOptions.where = {
         ...queryOptions.where,
@@ -111,6 +113,6 @@ queryOptions.nest = true;*/
   }
 }
 
-const productService = new ProductService();
+/*const productService = new ProductService();
 
-export default productService;
+export default productService;*/

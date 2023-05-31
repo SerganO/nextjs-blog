@@ -6,7 +6,8 @@ import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import getConfig from "next/config";
 
-import productController from "server/controllers/ProductController";
+//import productController from "server/controllers/ProductController";
+import container from "server/di";
 import Link from "next/link";
 
 const {
@@ -53,7 +54,9 @@ export default function paginationSSR({ pageData }) {
     };
 
     fetchData();
-    router.push("/products");
+    router.replace("/products?page=1").then(() => {
+      setPage(1);
+    });
   };
 
   const fullname = `${productsPageData?.vendor?.firstName ?? ""} ${
@@ -152,4 +155,5 @@ export default function paginationSSR({ pageData }) {
   );
 }
 
+const productController = container.resolve("ProductController");
 export const getServerSideProps = productController.getServerSidePaginated;

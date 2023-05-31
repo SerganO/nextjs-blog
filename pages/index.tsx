@@ -5,13 +5,18 @@ import SiteHeader from "../components/siteHeader";
 import SearchFilters from "../components/searchFilters";
 import ProductPlate from "../components/productPlate";
 
-import productController from "server/controllers/ProductController";
+//import productController from "server/controllers/ProductController";
 import getConfig from "next/config";
 import Product from "server/models/Product";
+
+import container from "server/di";
+
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
+
+
 
 export default function Base({ products }) {
   const [productsData, setProductsData] = useState<[Product]>(products);
@@ -60,4 +65,6 @@ export default function Base({ products }) {
   );
 }
 
-export const getServerSideProps = productController.getServerSidePropsMainPage;
+//const productController = container.resolve("ProductController");
+//export const getServerSideProps = productController.getServerSidePropsMainPage;
+

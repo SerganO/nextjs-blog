@@ -1,9 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import productController from "server/controllers/ProductController";
+//import productController from "server/controllers/ProductController";
+import container from "server/di";
+
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
+
+const productController = container.resolve("ProductController");
 
 router.get(productController.findProductExtendedInfo);
 

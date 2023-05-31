@@ -1,6 +1,7 @@
-import User from "server/models/User";
+import BaseContext from "server/di/BaseContext";
+import User from "models/User";
 
-class UserService {
+export default class UserService extends BaseContext {
   /**
    * findUserInfo
    */
@@ -9,6 +10,6 @@ class UserService {
   }
 }
 
-const userService = new UserService();
+/*const userService = new UserService();
 
-export default userService;
+export default userService;*/

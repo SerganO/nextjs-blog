@@ -45,7 +45,7 @@ const AddUserForm = () => {
       if (response.ok) {
         console.log("all ok");
         const responseBody = await response.json();
-        console.log(responseBody);
+        console.log("responseBody: ", responseBody);
         setUser({
           firstName: "",
           lastName: "",

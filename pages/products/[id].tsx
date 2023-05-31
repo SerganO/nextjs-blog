@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
+import container from "server/di";
 
-import productController from "server/controllers/ProductController";
+//import productController from "server/controllers/ProductController";
 import { useEffect, useState } from "react";
 import getConfig from "next/config";
 
@@ -54,4 +55,5 @@ export default function Base({ product }) {
   );
 }
 
+const productController = container.resolve("ProductController");
 export const getServerSideProps = productController.getServerSideProduct;

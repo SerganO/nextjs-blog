@@ -1,15 +1,17 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import BaseContext from "server/di/BaseContext";
+import container from "server/di";
 
-import productService from "server/services/ProductService";
+export default class ProductController extends BaseContext {
 
-class ProductController {
   /**
    * findProductExtendedInfo
    */
   public findProductExtendedInfo(req: NextApiRequest, res: NextApiResponse) {
     const id = req.query["id"] as string;
-
-    return productService
+   //const { ProductService} = this.di
+   const ProductService = container.resolve("ProductService")
+    return ProductService
       .findProductExtendedInfo(id)
       .then((product) => {
         res.status(200).json(product);
@@ -30,8 +32,9 @@ class ProductController {
 
     const limit = parseInt(req.query["l"] as string);
     const offset = parseInt(req.query["o"] as string);
-
-    return productService
+    //const { ProductService} = this.di
+    const ProductService = container.resolve("ProductService")
+    return ProductService
       .findProductsFeedbackIndluded(userId, offset, limit)
       .then((products) => {
         res.status(200).json(products);
@@ -49,7 +52,10 @@ class ProductController {
     const limit = parseInt(req.query["l"] as string);
     const offset = parseInt(req.query["o"] as string);
 
-    return productService
+    //const { ProductService} = this.di
+    console.log("productController dI: ", this.di)
+    const ProductService = container.resolve("ProductService")
+    return ProductService
       .findProductsPaginated(userId, offset, limit)
       .then((pageData) => {
         res.status(200).json(pageData);
@@ -74,7 +80,10 @@ class ProductController {
       limit = parseInt(context.query.l as string);
     }
 
-    let products = await productService.findProductsFeedbackIndluded(
+    //const { ProductService} = this.di
+    const ProductService = container.resolve("ProductService")
+
+    let products = await ProductService.findProductsFeedbackIndluded(
       userId,
       offset,
       limit
@@ -94,7 +103,10 @@ class ProductController {
     var offset = 0;
     var limit = 20;
 
-    let products = await productService.findProductsFeedbackIndluded(
+    //const { ProductService} = this.di
+    const ProductService = container.resolve("ProductService")
+
+    let products = await ProductService.findProductsFeedbackIndluded(
       null,
       offset,
       limit
@@ -118,11 +130,12 @@ class ProductController {
     }
 
     const userId = context.query.user;
-    console.log(userId);
+    console.log("userId: ", userId);
     const offset = (page - 1) * 20;
     const limit = 20;
-
-    let pageData = await productService.findProductsPaginated(
+    //const { ProductService} = this.di
+    const ProductService = container.resolve("ProductService")
+    let pageData = await ProductService.findProductsPaginated(
       userId,
       offset,
       limit
@@ -142,8 +155,9 @@ class ProductController {
    */
   public async getServerSideProduct(context) {
     const id = context.params.id;
-
-    let product = await productService.findProductExtendedInfo(id);
+    //const { ProductService} = this.di
+    const ProductService = container.resolve("ProductService")
+    let product = await ProductService.findProductExtendedInfo(id);
     product = JSON.parse(JSON.stringify(product));
     return {
       props: {
@@ -153,6 +167,6 @@ class ProductController {
   }
 }
 
-const productController = new ProductController();
+/*const productController = new ProductController();
 
-export default productController;
+export default productController;*/

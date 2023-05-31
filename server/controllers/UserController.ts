@@ -1,15 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import BaseContext from "server/di/BaseContext";
+import container from "server/di";
 
-import userService from "server/services/UserService";
-
-class UserController {
+export default class UserController extends BaseContext {
   /**
    * findUserInfo
    */
   public findUserInfo(req: NextApiRequest, res: NextApiResponse) {
     const id = req.query["id"] as string;
-
-    return userService
+    //const { UserService} = this.di
+    const UserService = container.resolve("UserService")
+    return UserService
       .findUserInfo(id)
       .then((user) => {
         res.status(200).json(user);
@@ -24,8 +25,9 @@ class UserController {
    */
   public async getServerSideUser(context) {
     const id = context.params.id;
-
-    let user = await userService.findUserInfo(id);
+    //const { UserService} = this.di
+    const UserService = container.resolve("UserService")
+    let user = await UserService.findUserInfo(id);
     user = JSON.parse(JSON.stringify(user));
 
     return {
@@ -36,6 +38,6 @@ class UserController {
   }
 }
 
-const userController = new UserController();
+/*const userController = new UserController();
 
-export default userController;
+export default userController;*/
