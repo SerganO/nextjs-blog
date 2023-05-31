@@ -1,7 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
-import Feedback from "../../../server/models/Feedback";
+//import Feedback from "../../../server/models/Feedback";
+import container from "server/di/container";
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -60,6 +61,8 @@ async function addNewFeedback(
   success: (Feedback) => void,
   failure: (Error) => void
 ) {
+  const Feedback  = container.resolve("Feedback");
+
   Feedback.create({
     userId: userId,
     productId: productId,

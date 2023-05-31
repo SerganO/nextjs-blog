@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import BaseContext from "server/di/BaseContext";
 //import container from "server/di/container";
-import IContextContainer from "server/di/interfaces/IContextContainer ";
+import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class ProductController extends BaseContext {
   constructor(opts: IContextContainer) {
@@ -11,10 +11,12 @@ export default class ProductController extends BaseContext {
 
     this.findProductsPaginated = this.findProductsPaginated.bind(this);
     this.findProductExtendedInfo = this.findProductExtendedInfo.bind(this);
-    this.findProductsFeedbackIncluded = this.findProductsFeedbackIncluded.bind(this);
+    this.findProductsFeedbackIncluded =
+      this.findProductsFeedbackIncluded.bind(this);
 
     this.getServerSidePaginated = this.getServerSidePaginated.bind(this);
-    this.getServerSidePropsMainPage = this.getServerSidePropsMainPage.bind(this);
+    this.getServerSidePropsMainPage =
+      this.getServerSidePropsMainPage.bind(this);
     this.getServerSideProduct = this.getServerSideProduct.bind(this);
   }
 
@@ -23,7 +25,7 @@ export default class ProductController extends BaseContext {
    */
   public findProductExtendedInfo(req: NextApiRequest, res: NextApiResponse) {
     const id = req.query["id"] as string;
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
     return ProductService.findProductExtendedInfo(id)
       .then((product) => {
         res.status(200).json(product);
@@ -44,7 +46,7 @@ export default class ProductController extends BaseContext {
 
     const limit = parseInt(req.query["l"] as string);
     const offset = parseInt(req.query["o"] as string);
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
     return ProductService.findProductsFeedbackIndluded(userId, offset, limit)
       .then((products) => {
         res.status(200).json(products);
@@ -57,12 +59,16 @@ export default class ProductController extends BaseContext {
   /**
    * findProductsPaginated
    */
-  public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
+  public findProductsPaginated = (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => {
+    // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
     const userId = req.query["user"] as string;
     const limit = parseInt(req.query["l"] as string);
     const offset = parseInt(req.query["o"] as string);
 
-    const { ProductService} = this.di
+    const { ProductService } = this.di;
     console.log("call element: ", this);
     console.log("findProductsPaginated dI: ", this.di);
     return ProductService.findProductsPaginated(userId, offset, limit)
@@ -72,7 +78,7 @@ export default class ProductController extends BaseContext {
       .catch((error) => {
         res.status(404).send({ error: error });
       });
-  }
+  };
 
   /**
    * getServerSidePropsFeedbackIncluded
@@ -89,7 +95,7 @@ export default class ProductController extends BaseContext {
       limit = parseInt(context.query.l as string);
     }
 
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
 
     let products = await ProductService.findProductsFeedbackIndluded(
       userId,
@@ -111,7 +117,7 @@ export default class ProductController extends BaseContext {
     var offset = 0;
     var limit = 20;
 
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
 
     let products = await ProductService.findProductsFeedbackIndluded(
       null,
@@ -140,7 +146,7 @@ export default class ProductController extends BaseContext {
     console.log("userId: ", userId);
     const offset = (page - 1) * 20;
     const limit = 20;
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
     let pageData = await ProductService.findProductsPaginated(
       userId,
       offset,
@@ -161,7 +167,7 @@ export default class ProductController extends BaseContext {
    */
   public async getServerSideProduct(context) {
     const id = context.params.id;
-    const { ProductService} = this.di;
+    const { ProductService } = this.di;
     let product = await ProductService.findProductExtendedInfo(id);
     product = JSON.parse(JSON.stringify(product));
     return {

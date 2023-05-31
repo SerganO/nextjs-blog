@@ -1,5 +1,5 @@
 import { trace } from "console";
-import IContextContainer from "./interfaces/IContextContainer ";
+import IContextContainer from "./interfaces/IContextContainer";
 
 export default class BaseContext {
   protected di: IContextContainer;
@@ -9,8 +9,8 @@ export default class BaseContext {
     this.di = opts;
     //trace();
     /*if (!BaseContext.stopInit) {
-            opts.initModels();
-            BaseContext.stopInit = true;
-        } */
+      opts.bindModels();
+      BaseContext.stopInit = true;
+    }*/
   }
 }

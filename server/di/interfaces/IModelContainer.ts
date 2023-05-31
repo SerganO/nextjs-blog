@@ -1,17 +1,32 @@
-import { asClass } from "awilix";
+import { asFunction } from "awilix";
 
-import User from "models/User";
-import Product from "models/Product";
-import Feedback from "models/Feedback";
+import User, { UserType } from "models/User";
+import Product, { ProductType } from "models/Product";
+import Feedback, { FeedbackType } from "models/Feedback";
+import IContextContainer from "./IContextContainer";
 
 export interface IModelContainer {
-  User: User;
-  Product: Product;
-  Feedback: Feedback;
+  //bindModels: () => void;
+  User: UserType;
+  Product: ProductType;
+  Feedback: FeedbackType;
 }
 
+/*const bindModels = (ctx: IContextContainer) => {
+  const { User, Product, Feedback } = ctx;
+  return () => {
+    console.log("bind models");
+
+    User.bind();
+    Product.bind();
+    Feedback.bind();
+  };
+};*/
+
 export default {
-  User: asClass(User).scoped(),
-  Product: asClass(Product).scoped(),
-  Feedback: asClass(Feedback).scoped(),
+  //bindModels: asFunction(bindModels).singleton(),
+
+  User: asFunction(User).singleton(),
+  Product: asFunction(Product).singleton(),
+  Feedback: asFunction(Feedback).singleton(),
 };

@@ -1,9 +1,9 @@
-import Product from "server/models/Product";
-import Feedback from "server/models/Feedback";
-import User from "server/models/User";
+//import Product from "server/models/Product";
+//import Feedback from "server/models/Feedback";
+//import User from "server/models/User";
 import { Op, FindOptions } from "sequelize";
 import BaseContext from "server/di/BaseContext";
-import IContextContainer from "server/di/interfaces/IContextContainer ";
+import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class ProductService extends BaseContext {
   constructor(opts: IContextContainer) {
@@ -40,6 +40,9 @@ export default class ProductService extends BaseContext {
 
     /*queryOptions.raw = true;
     queryOptions.nest = true;*/
+
+    const { Product } = this.di;
+    const { Feedback } = this.di;
 
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
@@ -83,6 +86,10 @@ export default class ProductService extends BaseContext {
     /*queryOptions.raw = true;
 queryOptions.nest = true;*/
 
+    const { Product } = this.di;
+    const { Feedback } = this.di;
+    const { User } = this.di;
+
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
     return new Promise(async (resolve, reject) => {
@@ -108,6 +115,10 @@ queryOptions.nest = true;*/
    * findProductExtendedInfo
    */
   public findProductExtendedInfo(productId: string) {
+    const { Product } = this.di;
+    const { Feedback } = this.di;
+    const { User } = this.di;
+
     return Product.findByPk(productId, {
       include: [
         { model: User, as: "vendor" },

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
-import User from "server/models/User";
+import { IUser } from "server/models/User";
 
 //import userController from "server/controllers/UserController";
 import container from "server/di/container";
@@ -16,7 +16,7 @@ const {
 export default function Base({ user }) {
   const router = useRouter();
 
-  const [userData, setUserData] = useState<User>(user);
+  const [userData, setUserData] = useState<IUser>(user);
 
   useEffect(() => {
     const fetchData = async () => {

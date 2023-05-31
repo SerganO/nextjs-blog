@@ -4,7 +4,7 @@ import IControllerContainer from "./interfaces/IControllerContainer";
 import { createDB } from "../db";
 import { config } from "coreConfig";
 
-const awilix = require("awilix");
+import * as awilix from "awilix";
 
 const container = awilix.createContainer({
   injectionMode: awilix.InjectionMode.PROXY,
@@ -13,7 +13,7 @@ const container = awilix.createContainer({
 container.register({
   config: awilix.asValue(config),
   db: awilix.asFunction(createDB).singleton(),
-  //...IModelContainer,
+  ...IModelContainer,
   ...IControllerContainer,
   ...IServicesContainer,
 });

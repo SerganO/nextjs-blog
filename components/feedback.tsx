@@ -1,8 +1,8 @@
 import Link from "next/link";
-import Feedback from "../server/models/Feedback";
+import { IFeedback } from "../server/models/Feedback";
 import Star from "./star";
 
-export default function FeedbackView(feedback: Feedback) {
+export default function FeedbackView(feedback: IFeedback) {
   const fullname = `${feedback.author.firstName} ${feedback.author.lastName}`;
 
   return (

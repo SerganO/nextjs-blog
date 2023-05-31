@@ -7,7 +7,7 @@ import ProductPlate from "../components/productPlate";
 
 //import productController from "server/controllers/ProductController";
 import getConfig from "next/config";
-import Product from "server/models/Product";
+import { IProduct } from "server/models/Product";
 
 import container from "server/di/container";
 
@@ -16,7 +16,7 @@ const {
 } = getConfig();
 
 export default function Base({ products }) {
-  const [productsData, setProductsData] = useState<[Product]>(products);
+  const [productsData, setProductsData] = useState<[IProduct]>(products);
   const router = useRouter();
 
   useEffect(() => {

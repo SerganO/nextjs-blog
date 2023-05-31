@@ -1,8 +1,8 @@
-import Product from "../server/models/Product";
+import { IProduct } from "../server/models/Product";
 import Star from "./star";
 import Link from "next/link";
 
-export default function ProductPlate(product: Product) {
+export default function ProductPlate(product: IProduct) {
   var rating = 0;
   var roundedRaiting = 0;
   if (product.feedbacks.length > 0) {

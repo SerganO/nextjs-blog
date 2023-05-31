@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import BaseContext from "server/di/BaseContext";
-import IContextContainer from "server/di/interfaces/IContextContainer ";
+import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class UserController extends BaseContext {
   constructor(opts: IContextContainer) {

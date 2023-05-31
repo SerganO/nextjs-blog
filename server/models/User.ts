@@ -1,39 +1,30 @@
-import { Sequelize, DataTypes, Model } from "sequelize";
-import { createDB } from "../db";
-import Product from "./Product";
-import Feedback from "./Feedback";
-import container from "server/di/container";
+import { Model, DataTypes, BuildOptions } from "sequelize";
+import { IProduct } from "./Product";
+import { IFeedback } from "./Feedback";
 
-//const sequelize = container.resolve("db");
+import IContextContainer from "server/di/interfaces/IContextContainer";
 
-const sequelize = createDB();
-/*
-id int NOT NULL AUTO_INCREMENT,
-    first_name varchar(45) NOT NULL,
-    last_name varchar(45) NOT NULL,
-    user_email varchar(45) NOT NULL,
-    password varchar(90) NOT NULL,
-    role varchar(45) NOT NULL,
-    created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-*/
+export interface IUser extends Model {
+  id: number;
+  firstName: string;
+  lastName: string;
+  userEmail: string;
+  password: string;
+  role: string;
+  createdAt: number;
+  updatedAt: number;
 
-class User extends Model {
-  public id: number;
-  public firstName: string;
-  public lastName: string;
-  public userEmail: string;
-  public password: string;
-  public role: string;
-  public createdAt: number;
-  public updatedAt: number;
-
-  public products?: [Product];
-  public feedbacks?: [Feedback];
+  products?: [IProduct];
+  feedbacks?: [IFeedback];
 }
 
-User.init(
-  {
+export type UserType = typeof Model & {
+  new (values?: object, options?: BuildOptions): IUser;
+  //bind(): void;
+};
+
+export default (ctx: IContextContainer) => {
+  const User = <UserType>ctx.db.define("users", {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -109,11 +100,11 @@ User.init(
       allowNull: false,
       type: DataTypes.BIGINT,
     },
-  },
-  {
-    sequelize,
-    modelName: "users",
-  }
-);
+  });
 
-export default User;
+  //User.bind = () => {};
+
+  //User.bind();
+
+  return User;
+};

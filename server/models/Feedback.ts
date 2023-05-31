@@ -1,39 +1,27 @@
-import { Sequelize, DataTypes, Model } from "sequelize";
-import { createDB } from "../db";
-import User from "./User";
-import Product from "./Product";
+import { Model, DataTypes, BuildOptions } from "sequelize";
 
-import container from "server/di/container";
+import IContextContainer from "server/di/interfaces/IContextContainer";
+import { IUser } from "./User";
 
-//const sequelize = container.resolve("db");
+export interface IFeedback extends Model {
+  id: number;
+  userId: number;
+  productId: number;
+  rating: number;
+  message: string;
+  createdAt: number;
+  updatedAt: number;
 
-const sequelize = createDB();
-
-/*
-      id int NOT NULL AUTO_INCREMENT,
-      user_id int NOT NULL,
-      product_id int NOT NULL,
-      rating int NOT NULL,
-      message text NOT NULL,
-      created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-*/
-
-class Feedback extends Model {
-  public id: number;
-  public userId: number;
-  public productId: number;
-  public rating: number;
-  public message: string;
-  public createdAt: number;
-  public updatedAt: number;
-
-  public author: User;
-  public product: Product;
+  author?: IUser;
 }
 
-Feedback.init(
-  {
+export type FeedbackType = typeof Model & {
+  new (values?: object, options?: BuildOptions): IFeedback;
+  //bind(): void;
+};
+
+export default (ctx: IContextContainer) => {
+  const Feedback = <FeedbackType>ctx.db.define("feedbacks", {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -80,17 +68,29 @@ Feedback.init(
       allowNull: false,
       type: DataTypes.BIGINT,
     },
-  },
-  {
-    sequelize,
-    modelName: "feedbacks",
-  }
-);
+  });
 
-Feedback.belongsTo(User, { foreignKey: "user_id", as: "author" });
-Feedback.belongsTo(Product, { foreignKey: "product_id", as: "product" });
+  //Feedback.bind = () => {};
 
-User.hasMany(Feedback, { as: "feedbacks" });
-Product.hasMany(Feedback, { as: "feedbacks" });
+  //Feedback.bind();
 
-export default Feedback;
+  Feedback.belongsTo(ctx.User, { foreignKey: "user_id", as: "author" });
+  Feedback.belongsTo(ctx.Product, {
+    foreignKey: "product_id",
+    as: "product",
+  });
+  ctx.Product.hasMany(Feedback, {
+    as: "feedbacks",
+    sourceKey: "id",
+    foreignKey: "product_id",
+    onDelete: "CASCADE",
+  });
+  ctx.User.hasMany(Feedback, {
+    as: "feedbacks",
+    sourceKey: "id",
+    foreignKey: "user_id",
+    onDelete: "CASCADE",
+  });
+
+  return Feedback;
+};

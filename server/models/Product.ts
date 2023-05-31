@@ -1,39 +1,32 @@
-import { Sequelize, BelongsTo, DataTypes, Model } from "sequelize";
-import { createDB } from "../db";
-import User from "./User";
-import Feedback from "./Feedback";
+import { Model, DataTypes, BuildOptions } from "sequelize";
 
-import container from "server/di/container";
+import IContextContainer from "server/di/interfaces/IContextContainer";
 
-//const sequelize = container.resolve("db");
+import { IUser } from "./User";
+import { IFeedback } from "./Feedback";
 
-const sequelize = createDB();
+export interface IProduct extends Model {
+  id: number;
+  userId: number;
+  title: string;
+  description: string;
+  SKU: string;
+  category: string;
+  price: number;
+  createdAt: number;
+  updatedAt: number;
 
-/*id int NOT NULL AUTO_INCREMENT,
-user_id int DEFAULT NULL,
-title varchar(45) NOT NULL,
-description text,
-SKU varchar(45) NOT NULL,
-category varchar(45) NOT NULL,
-price decimal(10,0) NOT NULL,
-created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-updated_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,*/
-class Product extends Model {
-  public id: number;
-  public userId: number;
-  public title: string;
-  public description: string;
-  public SKU: string;
-  public category: string;
-  public price: number;
-  public createdAt: number;
-  public updatedAt: number;
-
-  public vendor?: User;
-  public feedbacks?: [Feedback];
+  vendor?: IUser;
+  feedbacks?: [IFeedback];
 }
-Product.init(
-  {
+
+export type ProductType = typeof Model & {
+  new (values?: object, options?: BuildOptions): IProduct;
+  //bind(): void;
+};
+
+export default (ctx: IContextContainer) => {
+  const Product = <ProductType>ctx.db.define("products", {
     id: {
       allowNull: false,
       autoIncrement: true,
@@ -99,19 +92,27 @@ Product.init(
       allowNull: false,
       type: DataTypes.BIGINT,
     },
-  },
+  });
 
-  {
-    sequelize,
-    modelName: "products",
-  }
-);
+  Product.belongsTo(ctx.User, {
+    foreignKey: "user_id",
+    as: "vendor",
+  });
 
-Product.belongsTo(User, {
-  foreignKey: "user_id",
-  as: "vendor",
-});
+  ctx.User.hasMany(Product, {
+    as: "products",
+    sourceKey: "id",
+    foreignKey: "user_id",
+    onDelete: "SET NULL",
+  });
 
-User.hasMany(Product, { as: "products" });
+  /*Product.bind = () => {
+   
 
-export default Product;
+   
+  };
+
+  Product.bind();*/
+
+  return Product;
+};
