@@ -7,7 +7,7 @@ import SearchFilters from "../../components/searchFilters";
 import getConfig from "next/config";
 
 //import productController from "server/controllers/ProductController";
-import container from "server/di";
+import container from "server/di/container";
 import Link from "next/link";
 
 const {

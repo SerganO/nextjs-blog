@@ -7,8 +7,6 @@ export default class BaseContext {
 
   constructor(opts: IContextContainer) {
     this.di = opts;
-    console.log("dI: ", opts);
-    console.log("config: ", opts.config);
     //trace();
     /*if (!BaseContext.stopInit) {
             opts.initModels();

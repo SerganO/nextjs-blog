@@ -2,7 +2,7 @@ import { asClass } from "awilix";
 import UserController from "controllers/UserController";
 import ProductController from "controllers/ProductController";
 
-export interface IHelpersContainer {
+export interface IControllerContainer {
   UserController: UserController;
   ProductController: ProductController;
 }

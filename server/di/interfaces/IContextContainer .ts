@@ -1,11 +1,11 @@
 //import { IModelContainer } from "./IModelContainer";
 import { IServicesContainer } from "./IServicesContainer";
-import { IHelpersContainer } from "./IHelpersContainer";
+import { IControllerContainer } from "./IControllerContainer";
 import { Sequelize } from "sequelize";
 
 export default interface IContextContainer /* IModelContainer,*/
   extends IServicesContainer,
-    IHelpersContainer {
+    IControllerContainer {
   config: any;
 
   db: Sequelize;

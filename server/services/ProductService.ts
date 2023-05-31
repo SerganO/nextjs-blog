@@ -3,8 +3,16 @@ import Feedback from "server/models/Feedback";
 import User from "server/models/User";
 import { Op, FindOptions } from "sequelize";
 import BaseContext from "server/di/BaseContext";
+import IContextContainer from "server/di/interfaces/IContextContainer ";
 
 export default class ProductService extends BaseContext {
+  constructor(opts: IContextContainer) {
+    super(opts);
+    this.di = opts;
+    console.log("ProductService init: ", this);
+    console.log("di: ", this.di);
+  }
+
   /**
    * findProductsFeedbackIndluded
    */
@@ -38,7 +46,7 @@ export default class ProductService extends BaseContext {
     return Product.findAll(queryOptions);
   }
 
-    /**
+  /**
    * findProductsPaginated
    */
   public findProductsPaginated(
@@ -109,7 +117,7 @@ queryOptions.nest = true;*/
           include: [{ model: User, as: "author" }],
         },
       ],
-    })
+    });
   }
 }
 

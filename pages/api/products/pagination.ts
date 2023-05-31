@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
 //import productController from "server/controllers/ProductController";
-import container from "server/di";
+import container from "server/di/container";
 
 
 const router = createRouter<NextApiRequest, NextApiResponse>();

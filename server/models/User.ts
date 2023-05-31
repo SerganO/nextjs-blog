@@ -2,9 +2,11 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 import { createDB } from "../db";
 import Product from "./Product";
 import Feedback from "./Feedback";
+import container from "server/di/container";
+
+//const sequelize = container.resolve("db");
 
 const sequelize = createDB();
-
 /*
 id int NOT NULL AUTO_INCREMENT,
     first_name varchar(45) NOT NULL,

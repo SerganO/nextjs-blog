@@ -3,7 +3,7 @@ import { createRouter } from "next-connect";
 
 //import userController from "server/controllers/UserController";
 
-import container from "server/di";
+import container from "server/di/container";
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const userController = container.resolve("UserController");
 

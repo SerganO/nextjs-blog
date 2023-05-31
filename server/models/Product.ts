@@ -3,6 +3,10 @@ import { createDB } from "../db";
 import User from "./User";
 import Feedback from "./Feedback";
 
+import container from "server/di/container";
+
+//const sequelize = container.resolve("db");
+
 const sequelize = createDB();
 
 /*id int NOT NULL AUTO_INCREMENT,

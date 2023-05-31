@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import container from "server/di";
+import container from "server/di/container";
 
 //import productController from "server/controllers/ProductController";
 import { useEffect, useState } from "react";

@@ -1,6 +1,6 @@
 import IModelContainer from "./interfaces/IModelContainer";
 import IServicesContainer from "./interfaces/IServicesContainer";
-import IHelpersContainer from "./interfaces/IHelpersContainer";
+import IControllerContainer from "./interfaces/IControllerContainer";
 import { createDB } from "../db";
 import { config } from "coreConfig";
 
@@ -14,7 +14,7 @@ container.register({
   config: awilix.asValue(config),
   db: awilix.asFunction(createDB).singleton(),
   //...IModelContainer,
-  ...IHelpersContainer,
+  ...IControllerContainer,
   ...IServicesContainer,
 });
 

@@ -9,14 +9,11 @@ import ProductPlate from "../components/productPlate";
 import getConfig from "next/config";
 import Product from "server/models/Product";
 
-import container from "server/di";
-
+import container from "server/di/container";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
-
-
 
 export default function Base({ products }) {
   const [productsData, setProductsData] = useState<[Product]>(products);
@@ -65,6 +62,6 @@ export default function Base({ products }) {
   );
 }
 
-//const productController = container.resolve("ProductController");
-//export const getServerSideProps = productController.getServerSidePropsMainPage;
+const productController = container.resolve("ProductController");
+export const getServerSideProps = productController.getServerSidePropsMainPage;
 

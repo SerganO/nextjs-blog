@@ -2,8 +2,10 @@ import { Sequelize } from "sequelize";
 import IContextContainer from "./di/interfaces/IContextContainer ";
 import { config } from "coreConfig";
 import { trace } from "console";
-import container from "./di";
+import container from "./di/container";
 
+
+//const config = container.resolve("config");
 
 export function createDB() {
     return new Sequelize(config.db.database,config.db.username, config.db.password, {

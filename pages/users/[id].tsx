@@ -5,7 +5,7 @@ import SearchFilters from "../../components/searchFilters";
 import User from "server/models/User";
 
 //import userController from "server/controllers/UserController";
-import container from "server/di";
+import container from "server/di/container";
 import getConfig from "next/config";
 import Link from "next/link";
 
