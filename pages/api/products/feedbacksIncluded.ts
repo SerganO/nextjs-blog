@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+/*import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 //import productController from "server/controllers/ProductController";
 import container from "server/di/container";
@@ -13,4 +13,33 @@ export default router.handler({
     console.error(error.stack);
     res.status(500).end(error.message);
   },
-});
+});*/
+
+/*
+
+enum {
+  productsPagination,
+  productFeedback
+
+}
+
+manager(productPagination)
+
+*/
+
+import {
+  Action,
+  RequestType,
+  addActionHandler,
+  addErrorHandler,
+} from "server/requestManager/RequestManager";
+
+var router = addActionHandler(RequestType.get, Action.productsFeedbackIncluded);
+
+router = addActionHandler(
+  RequestType.post,
+  Action.productsFeedbackIncluded,
+  router
+);
+
+export default addErrorHandler(router);

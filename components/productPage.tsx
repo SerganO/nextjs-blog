@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import Product from "../server/models/Product";
+import { IProduct } from "../server/models/Product";
 import Star from "./star";
 import FeedbackView from "./feedback";
 import FeedbackForm from "./feedbackForm";
 import Link from "next/link";
 
-export default function ProductPage(product: Product) {
+export default function ProductPage(product: IProduct) {
   var [feedbackShown, setFeedbackShown] = useState(false);
 
   const fullname = `${product?.vendor?.firstName} ${product?.vendor?.lastName}`;
@@ -74,7 +74,7 @@ export default function ProductPage(product: Product) {
             {product?.title}
             <span className="ml-1 text-xs text-gray-600">/{product?.SKU}</span>
           </h4>
-          <h6>{product.description}</h6>
+          <h6>{product?.description}</h6>
           <div className="mt-1">
             <span className="text-gray-900">{product?.price}₴</span>
           </div>

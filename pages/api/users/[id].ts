@@ -1,9 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
+/*import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 
 //import userController from "server/controllers/UserController";
 
 import container from "server/di/container";
+
 const router = createRouter<NextApiRequest, NextApiResponse>();
 const userController = container.resolve("UserController");
 
@@ -15,5 +16,12 @@ export default router.handler({
     console.error(error.stack);
     res.status(500).end(error.message);
   },
-});
-  
+});*/
+
+import {
+  Action,
+  RequestType,
+  completeBaseHandler,
+} from "server/requestManager/RequestManager";
+
+export default completeBaseHandler(RequestType.get, Action.usersBaseInfo);

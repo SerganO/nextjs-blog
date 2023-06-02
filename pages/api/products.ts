@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { Op, FindOptions } from "sequelize";
 import { createRouter } from "next-connect";
 
-import Product from "../../server/models/Product";
+/*import Product from "../../server/models/Product";
+
 
 const router = createRouter<NextApiRequest, NextApiResponse>();
 
@@ -34,4 +35,4 @@ export default router.handler({
     console.error(error.stack);
     res.status(500).end(error.message);
   },
-});
+});*/
