@@ -19,13 +19,13 @@ export default router.handler({
   },
 });*/
 
-import {
-  Action,
-  RequestType,
-  addAction,
-  handler,
-} from "server/requestManager/RequestManager";
+import ProductController from "server/controllers/ProductController";
+import container from "server/di/container";
 
-const router = addAction(RequestType.get, Action.findProductExtendedInfo);
+const productController =
+  container.resolve<ProductController>("ProductController");
 
-export default handler(router);
+export default productController
+  .prepare()
+  .get(productController.findProductExtendedInfo)
+  .handler();

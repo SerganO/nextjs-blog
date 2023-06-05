@@ -18,14 +18,13 @@ export default router.handler({
   },
 });*/
 
-import { RequestType } from "server/controllers/BaseController";
+import ProductController from "server/controllers/ProductController";
 import container from "server/di/container";
 
-const productController = container.resolve("ProductController");
+const productController =
+  container.resolve<ProductController>("ProductController");
 
-productController.addAction(
-  RequestType.get,
-  productController.findProductsPaginated
-);
-
-export default productController.handler();
+export default productController
+  .prepare()
+  .get(productController.findProductsPaginated)
+  .handler();

@@ -2,8 +2,10 @@ import { NextApiRequest, NextApiResponse } from "next";
 import BaseContext from "server/di/BaseContext";
 //import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
+import BaseController from "./BaseController";
+import { RequestType } from "./BaseController";
 
-export default class ProductController extends BaseContext {
+export default class ProductController extends BaseController {
   constructor(opts: IContextContainer) {
     super(opts);
     console.log("ProductController init: ", this);
@@ -23,61 +25,38 @@ export default class ProductController extends BaseContext {
   /**
    * findProductExtendedInfo
    */
-  public findProductExtendedInfo(req: NextApiRequest, res: NextApiResponse) {
-    const id = req.query["id"] as string;
+  public findProductExtendedInfo(query: any) {
+    const id = query["id"] as string;
     const { ProductService } = this.di;
-    return ProductService.findProductExtendedInfo(id)
-      .then((product) => {
-        res.status(200).json(product);
-      })
-      .catch((error) => {
-        res.status(404).send({ error: error });
-      });
+    return ProductService.findProductExtendedInfo(id);
   }
 
   /**
    * findProductsFeedbackIncluded
    */
-  public findProductsFeedbackIncluded(
-    req: NextApiRequest,
-    res: NextApiResponse
+  public findProductsFeedbackIncluded(query: any
   ) {
-    const userId = req.query["user"] as string;
+    const userId = query["user"] as string;
 
-    const limit = parseInt(req.query["l"] as string);
-    const offset = parseInt(req.query["o"] as string);
+    const limit = parseInt(query["l"] as string);
+    const offset = parseInt(query["o"] as string);
     const { ProductService } = this.di;
-    return ProductService.findProductsFeedbackIndluded(userId, offset, limit)
-      .then((products) => {
-        res.status(200).json(products);
-      })
-      .catch((error) => {
-        res.status(404).send({ error: error });
-      });
+    return ProductService.findProductsFeedbackIndluded(userId, offset, limit);
   }
 
   /**
    * findProductsPaginated
    */
-  public findProductsPaginated = (
-    req: NextApiRequest,
-    res: NextApiResponse
-  ) => {
+  public findProductsPaginated = (query: any) => {
     // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
-    const userId = req.query["user"] as string;
-    const limit = parseInt(req.query["l"] as string);
-    const offset = parseInt(req.query["o"] as string);
+    const userId = query["user"] as string;
+    const limit = parseInt(query["l"] as string);
+    const offset = parseInt(query["o"] as string);
 
     const { ProductService } = this.di;
     console.log("call element: ", this);
     console.log("findProductsPaginated dI: ", this.di);
-    return ProductService.findProductsPaginated(userId, offset, limit)
-      .then((pageData) => {
-        res.status(200).json(pageData);
-      })
-      .catch((error) => {
-        res.status(404).send({ error: error });
-      });
+    return ProductService.findProductsPaginated(userId, offset, limit);
   };
 
   /**
