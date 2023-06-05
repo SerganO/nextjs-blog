@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 
@@ -44,7 +43,3 @@ export default class UserController extends BaseController {
     };
   }
 }
-
-/*const userController = new UserController();
-
-export default userController;*/

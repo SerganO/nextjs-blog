@@ -1,5 +1,5 @@
-import IModelContainer from "./interfaces/IModelContainer";
-import IServicesContainer from "./interfaces/IServicesContainer";
+import IModelContainer from "server/models/IModelContainer";
+import services from "server/services";
 import controllers from "server/controllers";
 import { createDB } from "../db";
 import { config } from "coreConfig";
@@ -15,7 +15,7 @@ container.register({
   db: awilix.asFunction(createDB).singleton(),
   ...IModelContainer,
   ...controllers,
-  ...IServicesContainer,
+  ...services,
 });
 
 export default container;
