@@ -20,17 +20,12 @@ export default router.handler({
 });*/
 
 import {
+  Action,
   RequestType,
-  completeCustomHandler,
+  addAction,
+  handler,
 } from "server/requestManager/RequestManager";
 
-import container from "server/di/container";
-import ProductController from "server/controllers/ProductController";
+const router = addAction(RequestType.get, Action.findProductExtendedInfo);
 
-const productController =
-  container.resolve<ProductController>("ProductController");
-
-export default completeCustomHandler(
-  RequestType.get,
-  productController.findProductExtendedInfo
-);
+export default handler(router);

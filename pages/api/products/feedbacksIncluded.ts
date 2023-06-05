@@ -27,19 +27,26 @@ manager(productPagination)
 
 */
 
-import {
-  Action,
-  RequestType,
-  addActionHandler,
-  addErrorHandler,
-} from "server/requestManager/RequestManager";
+// import {
+//   Action,
+//   RequestType,
+//   addAction,
+//   handler,
+// } from "server/requestManager/RequestManager";
 
-var router = addActionHandler(RequestType.get, Action.productsFeedbackIncluded);
+// var router = addAction(RequestType.get, Action.productsFeedbackIncluded);
 
-router = addActionHandler(
-  RequestType.post,
-  Action.productsFeedbackIncluded,
-  router
-);
+// router = addAction(RequestType.post, Action.productsFeedbackIncluded, router);
 
-export default addErrorHandler(router);
+// export default handler(router);
+
+
+import { RequestType } from "server/controllers/BaseController";
+import container from "server/di/container";
+
+const productController = container.resolve("ProductController");
+
+productController.get(productController.findProductsFeedbackIncluded)
+.get();
+
+export default productController.handler();

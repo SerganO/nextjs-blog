@@ -18,10 +18,14 @@ export default router.handler({
   },
 });*/
 
-import {
-  Action,
-  RequestType,
-  completeBaseHandler,
-} from "server/requestManager/RequestManager";
+import { RequestType } from "server/controllers/BaseController";
+import container from "server/di/container";
 
-export default completeBaseHandler(RequestType.get, Action.productsPagination);
+const productController = container.resolve("ProductController");
+
+productController.addAction(
+  RequestType.get,
+  productController.findProductsPaginated
+);
+
+export default productController.handler();
