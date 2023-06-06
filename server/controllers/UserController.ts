@@ -8,23 +8,49 @@ export default class UserController extends BaseController {
     console.log("UserController init: ", this);
     console.log("di: ", this.di);
 
+    this.getAllUsers = this.getAllUsers.bind(this);
     this.findUserInfo = this.findUserInfo.bind(this);
+    this.getUserInfoFeedbacksIncluded =
+      this.getUserInfoFeedbacksIncluded.bind(this);
+    this.getUserInfoProductsIncluded =
+      this.getUserInfoProductsIncluded.bind(this);
+    this.addUser = this.addUser.bind(this);
     this.getServerSideUser = this.getServerSideUser.bind(this);
+  }
+
+  /**
+   * getAllUsers
+   */
+  public getAllUsers(query: any) {
+    const { UserService } = this.di;
+    return UserService.getAllUsersInfo();
   }
 
   /**
    * findUserInfo
    */
-  public findUserInfo(req: NextApiRequest, res: NextApiResponse) {
-    const id = req.query["id"] as string;
+  public findUserInfo(query: any) {
+    const id = query["id"] as string;
     const { UserService } = this.di;
-    return UserService.findUserInfo(id)
-      .then((user) => {
-        res.status(200).json(user);
-      })
-      .catch((error) => {
-        res.status(404).send({ error: error });
-      });
+    return UserService.findUserInfo(id);
+  }
+
+  /**
+   * getUserInfoFeedbacksIncluded
+   */
+  public getUserInfoFeedbacksIncluded(query: any) {
+    const id = parseInt(query["id"] as string);
+    const { UserService } = this.di;
+    return UserService.getUserInfoFeedbacksIncluded(id);
+  }
+
+  /**
+   * getUserInfoProductsIncluded
+   */
+  public getUserInfoProductsIncluded(query: any) {
+    const id = parseInt(query["id"] as string);
+    const { UserService } = this.di;
+    return UserService.getUserInfoProductsIncluded(id);
   }
 
   /**
@@ -41,5 +67,32 @@ export default class UserController extends BaseController {
         user,
       },
     };
+  }
+
+  /**
+   * addUser
+   */
+  public addUser(body: any) {
+    let bodyString = JSON.stringify(body);
+    let bodyData = JSON.parse(bodyString);
+
+    const firstName = bodyData["firstName"] as string;
+    const lastName = bodyData["lastName"] as string;
+    const userEmail = bodyData["userEmail"] as string;
+    const password = bodyData["password"] as string;
+    const role = bodyData["role"] as string;
+
+    if (firstName && lastName && userEmail && password && role) {
+      const { UserService } = this.di;
+      return UserService.addUser(
+        firstName,
+        lastName,
+        userEmail,
+        password,
+        role
+      );
+    } else {
+      throw Error("not full data");
+    }
   }
 }

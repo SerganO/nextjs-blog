@@ -1,38 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { Op, FindOptions } from "sequelize";
-import { createRouter } from "next-connect";
+import ProductController from "server/controllers/ProductController";
+import container from "server/di/container";
 
-/*import Product from "../../server/models/Product";
+const productController =
+  container.resolve<ProductController>("ProductController");
 
-
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
-router.get(async (req, res) => {
-  const userId = req.query["user"];
-  console.log("get q");
-  console.log("userId: ", userId);
-  const queryOptions: FindOptions = {};
-
-  if (userId !== null && userId !== undefined) {
-    queryOptions.where = {
-      ...queryOptions.where,
-      user_id: { [Op.eq]: userId },
-    };
-  }
-
-  await Product.findAll(queryOptions)
-    .then((products) => {
-      res.status(200).json(products);
-    })
-    .catch((error) => {
-      res.status(404).send({ error: error });
-    });
-});
-
-export default router.handler({
-  onError: (err, req, res) => {
-    const error = err as Error;
-    console.error(error.stack);
-    res.status(500).end(error.message);
-  },
-});*/
+export default productController
+  .prepare()
+  .get(productController.getAllProducts)
+  .handler();

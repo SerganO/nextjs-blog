@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
-import { NodeRouter } from "next-connect/dist/types/node";
 
 import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
@@ -37,8 +36,6 @@ export default class BaseController extends BaseContext {
     return this;
   }
 
-  private run() {}
-
   public get(callback: any) {
     return this.addAction(RequestType.get, callback);
   }
@@ -65,13 +62,27 @@ export default class BaseController extends BaseContext {
 
   public addAction(type: RequestType, action: any) {
     const run = (req, res) => {
-      action(req.query)
-        .then((data) => {
-          res.status(200).json(data);
-        })
-        .catch((error) => {
-          res.status(404).send({ error: error });
-        });
+      var newAction: any
+      switch (type) {
+        case RequestType.get:
+          newAction = action(req.query);
+          break;
+        default:
+          newAction = action(req.body);
+          break;
+      }
+
+      try {
+        newAction
+          .then((data) => {
+            res.status(200).json(data);
+          })
+          .catch((error) => {
+            res.status(404).send({ error: error });
+          });
+      } catch (error) {
+        res.status(404).send({ error: error });
+      }
     };
 
     switch (type) {
@@ -109,15 +120,5 @@ export default class BaseController extends BaseContext {
         res.status(500).end(error.message);
       },
     });
-  }
-
-  public runt(req: NextApiRequest, res: NextApiResponse, action: any) {
-    return action(req.query)
-      .then((data) => {
-        res.status(200).json(data);
-      })
-      .catch((error) => {
-        res.status(404).send({ error: error });
-      });
   }
 }

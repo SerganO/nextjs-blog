@@ -14,6 +14,24 @@ export default class ProductService extends BaseContext {
   }
 
   /**
+   * getAllProductsInfo
+   */
+  public getAllProductsInfo(userId: number) {
+    const { Product } = this.di;
+
+    const queryOptions: FindOptions = {};
+
+    if (userId !== null && userId !== undefined && !isNaN(userId)) {
+      queryOptions.where = {
+        ...queryOptions.where,
+        user_id: { [Op.eq]: userId },
+      };
+    }
+
+    return Product.findAll(queryOptions);
+  }
+
+  /**
    * findProductsFeedbackIndluded
    */
   public findProductsFeedbackIndluded(
@@ -41,8 +59,7 @@ export default class ProductService extends BaseContext {
     /*queryOptions.raw = true;
     queryOptions.nest = true;*/
 
-    const { Product } = this.di;
-    const { Feedback } = this.di;
+    const { Product, Feedback } = this.di;
 
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
@@ -86,9 +103,7 @@ export default class ProductService extends BaseContext {
     /*queryOptions.raw = true;
 queryOptions.nest = true;*/
 
-    const { Product } = this.di;
-    const { Feedback } = this.di;
-    const { User } = this.di;
+    const { Product, Feedback, User } = this.di;
 
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
@@ -115,9 +130,7 @@ queryOptions.nest = true;*/
    * findProductExtendedInfo
    */
   public findProductExtendedInfo(productId: string) {
-    const { Product } = this.di;
-    const { Feedback } = this.di;
-    const { User } = this.di;
+    const { Product, Feedback, User } = this.di;
 
     return Product.findByPk(productId, {
       include: [
@@ -128,6 +141,60 @@ queryOptions.nest = true;*/
           include: [{ model: User, as: "author" }],
         },
       ],
+    });
+  }
+
+  /**
+   * getProductFeedbacksIncluded
+   */
+  public getProductFeedbacksIncluded(id: number) {
+    const { Product, Feedback, User } = this.di;
+
+    return Product.findByPk(id, {
+      include: {
+        model: Feedback,
+        as: "feedbacks",
+        include: [{ model: User, as: "author" }],
+      },
+    });
+  }
+
+  /**
+   * getProductVendorIncluded
+   */
+  public getProductVendorIncluded(id: number) {
+    const { Product, User } = this.di;
+    return Product.findByPk(id, { include: { model: User, as: "vendor" } });
+  }
+
+  /**
+   * getProductBaseInfo
+   */
+  public getProductBaseInfo(id: number) {
+    const { Product } = this.di;
+    return Product.findByPk(id);
+  }
+
+  /**
+   * addProduct
+   */
+  public addProduct(
+    userId: number,
+    title: string,
+    description: string,
+    SKU: string,
+    category: string,
+    price: number
+  ) {
+    const { Product } = this.di;
+
+    return Product.create({
+      userId: userId,
+      title: title,
+      description: description,
+      SKU: SKU,
+      category: category,
+      price: price,
     });
   }
 }

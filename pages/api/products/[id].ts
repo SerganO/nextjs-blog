@@ -1,27 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { createRouter } from "next-connect";
+import ProductController from "server/controllers/ProductController";
+import container from "server/di/container";
 
-import Product from "../../../server/models/Product";
+const productController =
+  container.resolve<ProductController>("ProductController");
 
-const router = createRouter<NextApiRequest, NextApiResponse>();
-
-router.get(async (req, res) => {
-  const id = parseInt(req.query.id as string);
-
-  await Product.findByPk(id)
-    .then((product) => {
-      res.status(200).json(product);
-    })
-    .catch((error) => {
-      res.status(404).send({ error: error });
-    });
-});
-
-export default router.handler({
-  onError: (err, req, res) => {
-    const error = err as Error;
-    console.error(error.stack);
-    res.status(500).end(error.message);
-  },
-});
-    
+export default productController
+  .prepare()
+  .get(productController.getProductBaseInfo)
+  .handler();
