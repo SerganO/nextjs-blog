@@ -9,15 +9,16 @@ import getConfig from "next/config";
 //import productController from "server/controllers/ProductController";
 import container from "server/di/container";
 import Link from "next/link";
+import ProductController from "server/controllers/ProductController";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function paginationSSR({ pageData }) {
+export default function paginationSSR({ data }) {
   const router = useRouter();
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
-  const [productsPageData, setProductsPageData] = useState(pageData);
+  const [productsPageData, setProductsPageData] = useState(data);
 
   let userId = router.query.user;
 
@@ -29,8 +30,7 @@ export default function paginationSSR({ pageData }) {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        BASE_URL +
-          `/api/products/pagination?o=${(page - 1) * 20}&l=20${userString}`
+        BASE_URL + `/api/products/pagination?page=${page}${userString}`
       );
       const newData = await response.json();
       console.log("updating page data");
@@ -155,5 +155,5 @@ export default function paginationSSR({ pageData }) {
   );
 }
 
-const productController = container.resolve("ProductController");
-export const getServerSideProps = productController.getServerSidePaginated;
+const productController = container.resolve<ProductController>("ProductController");
+export const getServerSideProps = productController.getServerSideProps(productController.findProductsPaginated);

@@ -17,6 +17,7 @@ export default class ProductController extends BaseController {
     this.findProductExtendedInfo = this.findProductExtendedInfo.bind(this);
     this.findProductsFeedbackIncluded =
       this.findProductsFeedbackIncluded.bind(this);
+      this.getProductFeedbacksIncludedFirstSet = this.getProductFeedbacksIncludedFirstSet.bind(this)
 
     this.getProductFeedbacksIncluded =
       this.getProductFeedbacksIncluded.bind(this);
@@ -74,16 +75,28 @@ export default class ProductController extends BaseController {
    */
   public findProductsPaginated = (query: any) => {
     // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
-    
+
     const userId = query["user"] as string;
-    const limit = parseInt(query["l"] as string);
-    const offset = parseInt(query["o"] as string);
+    const page = parseInt(query["page"] as string);
+
+    const offset = (page - 1) * 20;
+    const limit = 20;
 
     const { ProductService } = this.di;
     console.log("call element: ", this);
     console.log("findProductsPaginated dI: ", this.di);
     return ProductService.findProductsPaginated(userId, offset, limit);
   };
+
+  /**
+   * getProductFeedbacksIncludedFirstSet
+   */
+  public getProductFeedbacksIncludedFirstSet(query: any) {
+
+    const { ProductService } = this.di;
+
+    return ProductService.findProductsFeedbackIndludedFirstSet();
+  }
 
   /**
    * getProductFeedbacksIncluded
@@ -197,7 +210,7 @@ export default class ProductController extends BaseController {
     if (context.query.page) {
       page = parseInt(context.query.page);
     }
-    console.log("context.query: ", context.query)
+    console.log("context.query: ", context.query);
     const userId = context.query.user;
     console.log("userId: ", userId);
     const offset = (page - 1) * 20;

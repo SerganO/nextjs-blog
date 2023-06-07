@@ -8,15 +8,16 @@ import container from "server/di/container";
 //import productController from "server/controllers/ProductController";
 import { useEffect, useState } from "react";
 import getConfig from "next/config";
+import ProductController from "server/controllers/ProductController";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function Base({ product }) {
+export default function Base({ data }) {
   const router = useRouter();
 
-  const [productData, setProductData] = useState(product);
+  const [productData, setProductData] = useState(data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -55,5 +56,5 @@ export default function Base({ product }) {
   );
 }
 
-const productController = container.resolve("ProductController");
-export const getServerSideProps = productController.getServerSideProduct;
+const productController = container.resolve<ProductController>("ProductController");
+export const getServerSideProps = productController.getServerSideProps(productController.findProductExtendedInfo);

@@ -8,15 +8,16 @@ import { IUser } from "server/models/User";
 import container from "server/di/container";
 import getConfig from "next/config";
 import Link from "next/link";
+import UserController from "server/controllers/UserController";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function Base({ user }) {
+export default function Base({ data }) {
   const router = useRouter();
 
-  const [userData, setUserData] = useState<IUser>(user);
+  const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,5 +84,5 @@ export default function Base({ user }) {
   );
 }
 
-const userController = container.resolve("UserController");
-export const getServerSideProps = userController.getServerSideUser;
+const userController = container.resolve<UserController>("UserController");
+export const getServerSideProps = userController.getServerSideProps(userController.findUserInfo)

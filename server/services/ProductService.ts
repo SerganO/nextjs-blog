@@ -32,6 +32,22 @@ export default class ProductService extends BaseContext {
   }
 
   /**
+   * findProductsFeedbackIndludedFirstSet
+   */
+  public findProductsFeedbackIndludedFirstSet() {
+    const queryOptions: FindOptions = {};
+
+    queryOptions.offset = 0;
+    queryOptions.limit = 20;
+
+    const { Product, Feedback } = this.di;
+
+    queryOptions.include = { model: Feedback, as: "feedbacks" };
+
+    return Product.findAll(queryOptions);
+  }
+
+  /**
    * findProductsFeedbackIndluded
    */
   public findProductsFeedbackIndluded(

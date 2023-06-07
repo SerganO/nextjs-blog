@@ -10,19 +10,20 @@ import getConfig from "next/config";
 import { IProduct } from "server/models/Product";
 
 import container from "server/di/container";
+import ProductController from "server/controllers/ProductController";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function Base({ products }) {
-  const [productsData, setProductsData] = useState<[IProduct]>(products);
+export default function Base({ data }) {
+  const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        BASE_URL + "/api/products/feedbacksIncluded?o=0&l=20"
+        BASE_URL + "/api/products/feedbacksIncluded/firstSet"
       );
       const newData = await response.json();
       setProductsData(newData);
@@ -62,6 +63,6 @@ export default function Base({ products }) {
   );
 }
 
-const productController = container.resolve("ProductController");
-export const getServerSideProps = productController.getServerSidePropsMainPage;
+const productController = container.resolve<ProductController>("ProductController");
+export const getServerSideProps = productController.getServerSideProps(productController.getProductFeedbacksIncludedFirstSet);
 

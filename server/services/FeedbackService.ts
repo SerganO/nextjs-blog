@@ -16,10 +16,6 @@ export default class FeedbackService extends BaseContext {
   public getAllFeedbacksInfo(userId: number, productId: number) {
     const { Feedback } = this.di;
 
-    console.log("userId: ", userId)
-    console.log("productId: ", productId)
-
-
     const queryOptions: FindOptions = {};
   
     if (userId !== null && userId !== undefined && !isNaN(userId)) {

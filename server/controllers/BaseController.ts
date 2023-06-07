@@ -11,7 +11,7 @@ export enum RequestType {
   post,
   put,
   patch,
-  delete,
+  delete
 }
 
 export default class BaseController extends BaseContext {
@@ -59,6 +59,21 @@ export default class BaseController extends BaseContext {
   public delete(callback: any) {
     return this.addAction(RequestType.delete, callback);
   }
+
+  public getServerSideProps(action: any) {
+   return async (context) => {
+      let data = await action(context.query)
+      data = JSON.parse(JSON.stringify(data));
+      return {
+        props: {
+          data,
+        },
+      };
+   }
+
+
+  }
+
 
   public addAction(type: RequestType, action: any) {
     const run = (req, res) => {

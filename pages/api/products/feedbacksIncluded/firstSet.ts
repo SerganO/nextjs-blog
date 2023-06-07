@@ -4,5 +4,5 @@ const productController = container.resolve("ProductController");
 
 export default productController
   .prepare()
-  .get(productController.findProductsFeedbackIncluded)
+  .get(productController.getProductFeedbacksIncludedFirstSet)
   .handler();
