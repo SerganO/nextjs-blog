@@ -17,17 +17,13 @@ export default class ProductController extends BaseController {
     this.findProductExtendedInfo = this.findProductExtendedInfo.bind(this);
     this.findProductsFeedbackIncluded =
       this.findProductsFeedbackIncluded.bind(this);
-      this.getProductFeedbacksIncludedFirstSet = this.getProductFeedbacksIncludedFirstSet.bind(this)
+    this.getProductFeedbacksIncludedFirstSet =
+      this.getProductFeedbacksIncludedFirstSet.bind(this);
 
     this.getProductFeedbacksIncluded =
       this.getProductFeedbacksIncluded.bind(this);
     this.getProductVendorIncluded = this.getProductVendorIncluded.bind(this);
     this.addProduct = this.addProduct.bind(this);
-
-    this.getServerSidePaginated = this.getServerSidePaginated.bind(this);
-    this.getServerSidePropsMainPage =
-      this.getServerSidePropsMainPage.bind(this);
-    this.getServerSideProduct = this.getServerSideProduct.bind(this);
   }
 
   /**
@@ -92,7 +88,6 @@ export default class ProductController extends BaseController {
    * getProductFeedbacksIncludedFirstSet
    */
   public getProductFeedbacksIncludedFirstSet(query: any) {
-
     const { ProductService } = this.di;
 
     return ProductService.findProductsFeedbackIndludedFirstSet();
@@ -175,73 +170,6 @@ export default class ProductController extends BaseController {
     return {
       props: {
         products,
-      },
-    };
-  }
-
-  /**
-   * getServerSidePropsMainPage
-   */
-  public async getServerSidePropsMainPage(context) {
-    var offset = 0;
-    var limit = 20;
-
-    const { ProductService } = this.di;
-
-    let products = await ProductService.findProductsFeedbackIndluded(
-      null,
-      offset,
-      limit
-    );
-    products = JSON.parse(JSON.stringify(products));
-
-    return {
-      props: {
-        products,
-      },
-    };
-  }
-
-  /**
-   * getServerSidePaginated
-   */
-  public async getServerSidePaginated(context) {
-    let page = 1;
-    if (context.query.page) {
-      page = parseInt(context.query.page);
-    }
-    console.log("context.query: ", context.query);
-    const userId = context.query.user;
-    console.log("userId: ", userId);
-    const offset = (page - 1) * 20;
-    const limit = 20;
-    const { ProductService } = this.di;
-    let pageData = await ProductService.findProductsPaginated(
-      userId,
-      offset,
-      limit
-    );
-
-    pageData = JSON.parse(JSON.stringify(pageData));
-
-    return {
-      props: {
-        data: pageData,
-      },
-    };
-  }
-
-  /**
-   * getServerSideProduct
-   */
-  public async getServerSideProduct(context) {
-    const id = context.params.id;
-    const { ProductService } = this.di;
-    let product = await ProductService.findProductExtendedInfo(id);
-    product = JSON.parse(JSON.stringify(product));
-    return {
-      props: {
-        product,
       },
     };
   }

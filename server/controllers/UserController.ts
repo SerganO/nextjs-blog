@@ -15,7 +15,6 @@ export default class UserController extends BaseController {
     this.getUserInfoProductsIncluded =
       this.getUserInfoProductsIncluded.bind(this);
     this.addUser = this.addUser.bind(this);
-    this.getServerSideUser = this.getServerSideUser.bind(this);
   }
 
   /**
@@ -51,22 +50,6 @@ export default class UserController extends BaseController {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
     return UserService.getUserInfoProductsIncluded(id);
-  }
-
-  /**
-   * getServerSideUser
-   */
-  public async getServerSideUser(context) {
-    const id = context.params.id;
-    const { UserService } = this.di;
-    let user = await UserService.findUserInfo(id);
-    user = JSON.parse(JSON.stringify(user));
-
-    return {
-      props: {
-        user,
-      },
-    };
   }
 
   /**
