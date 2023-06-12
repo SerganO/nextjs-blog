@@ -3,7 +3,4 @@ import container from "server/di/container";
 
 const userController = container.resolve<UserController>("UserController");
 
-export default userController
-  .prepare()
-  .get(userController.findUserInfo)
-  .handler();
+userController.handler("api/users/[id]");

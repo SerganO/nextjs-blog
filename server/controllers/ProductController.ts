@@ -1,34 +1,24 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import BaseContext from "server/di/BaseContext";
-//import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
-import { RequestType } from "./BaseController";
+import decorators from "server/decorators";
+
+let GET = decorators.GET;
+let POST = decorators.POST;
+let SSR = decorators.SSR;
 
 export default class ProductController extends BaseController {
   constructor(opts: IContextContainer) {
     super(opts);
     console.log("ProductController init: ", this);
     console.log("di: ", this.di);
-
-    this.getAllProducts = this.getAllProducts.bind(this);
-    this.getProductBaseInfo = this.getProductBaseInfo.bind(this);
-    this.findProductsPaginated = this.findProductsPaginated.bind(this);
-    this.findProductExtendedInfo = this.findProductExtendedInfo.bind(this);
-    this.findProductsFeedbackIncluded =
-      this.findProductsFeedbackIncluded.bind(this);
-    this.getProductFeedbacksIncludedFirstSet =
-      this.getProductFeedbacksIncludedFirstSet.bind(this);
-
-    this.getProductFeedbacksIncluded =
-      this.getProductFeedbacksIncluded.bind(this);
-    this.getProductVendorIncluded = this.getProductVendorIncluded.bind(this);
-    this.addProduct = this.addProduct.bind(this);
   }
 
   /**
    * getAllProducts
    */
+  @GET("api/products")
   public getAllProducts(query: any) {
     const { ProductService } = this.di;
     const userId = parseInt(query["user"]);
@@ -38,6 +28,7 @@ export default class ProductController extends BaseController {
   /**
    * getProductBaseInfo
    */
+  @GET("api/products/[id]")
   public getProductBaseInfo(query: any) {
     const id = parseInt(query.id as string);
 
@@ -48,6 +39,8 @@ export default class ProductController extends BaseController {
   /**
    * findProductExtendedInfo
    */
+  @GET("api/products/[id]/extended")
+  @SSR("products/[id]")
   public findProductExtendedInfo(query: any) {
     const id = query["id"] as string;
     const { ProductService } = this.di;
@@ -57,6 +50,7 @@ export default class ProductController extends BaseController {
   /**
    * findProductsFeedbackIncluded
    */
+  @GET("api/products/feedbacksIncluded")
   public findProductsFeedbackIncluded(query: any) {
     const userId = query["user"] as string;
 
@@ -69,6 +63,8 @@ export default class ProductController extends BaseController {
   /**
    * findProductsPaginated
    */
+  @GET("api/products/pagination")
+  @SSR("products/index")
   public findProductsPaginated = (query: any) => {
     // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
 
@@ -87,7 +83,10 @@ export default class ProductController extends BaseController {
   /**
    * getProductFeedbacksIncludedFirstSet
    */
+  @GET("api/products/feedbacksIncluded/firstSet")
+  @SSR("index")
   public getProductFeedbacksIncludedFirstSet(query: any) {
+    console.log("getProductFeedbacksIncludedFirstSet in");
     const { ProductService } = this.di;
 
     return ProductService.findProductsFeedbackIndludedFirstSet();
@@ -96,6 +95,7 @@ export default class ProductController extends BaseController {
   /**
    * getProductFeedbacksIncluded
    */
+  @GET("api/products/[id]/feedbacks")
   public getProductFeedbacksIncluded(query: any) {
     const id = parseInt(query.id as string);
 
@@ -107,6 +107,7 @@ export default class ProductController extends BaseController {
   /**
    * getProductVendorIncluded
    */
+  @GET("api/products/[id]/vendor")
   public getProductVendorIncluded(query: any) {
     const id = parseInt(query.id as string);
 
@@ -118,6 +119,7 @@ export default class ProductController extends BaseController {
   /**
    * addProduct
    */
+  @POST("api/products/add")
   public addProduct(body: any) {
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
@@ -142,36 +144,6 @@ export default class ProductController extends BaseController {
     } else {
       throw Error("not full data");
     }
-  }
-
-  /**
-   * getServerSidePropsFeedbackIncluded
-   */
-  public async getServerSidePropsFeedbackIncluded(context) {
-    const userId = context.query.user as string;
-    var offset = null;
-    var limit = null;
-    if (context.query.o) {
-      offset = parseInt(context.query.o as string);
-    }
-
-    if (context.query.l) {
-      limit = parseInt(context.query.l as string);
-    }
-
-    const { ProductService } = this.di;
-
-    let products = await ProductService.findProductsFeedbackIndluded(
-      userId,
-      offset,
-      limit
-    );
-    products = JSON.parse(JSON.stringify(products));
-    return {
-      props: {
-        products,
-      },
-    };
   }
 }
 

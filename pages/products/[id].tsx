@@ -56,5 +56,6 @@ export default function Base({ data }) {
   );
 }
 
-const productController = container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.getServerSideProps(productController.findProductExtendedInfo);
+const productController =
+  container.resolve<ProductController>("ProductController");
+export const getServerSideProps = productController.handler("products/[id]");

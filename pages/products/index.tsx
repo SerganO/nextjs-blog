@@ -155,5 +155,6 @@ export default function paginationSSR({ data }) {
   );
 }
 
-const productController = container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.getServerSideProps(productController.findProductsPaginated);
+const productController =
+  container.resolve<ProductController>("ProductController");
+export const getServerSideProps = productController.handler("products/index");

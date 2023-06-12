@@ -1,25 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
+import decorators from "server/decorators";
+
+let GET = decorators.GET;
+let POST = decorators.POST;
+let SSR = decorators.SSR;
 
 export default class UserController extends BaseController {
   constructor(opts: IContextContainer) {
     super(opts);
     console.log("UserController init: ", this);
     console.log("di: ", this.di);
-
-    this.getAllUsers = this.getAllUsers.bind(this);
-    this.findUserInfo = this.findUserInfo.bind(this);
-    this.getUserInfoFeedbacksIncluded =
-      this.getUserInfoFeedbacksIncluded.bind(this);
-    this.getUserInfoProductsIncluded =
-      this.getUserInfoProductsIncluded.bind(this);
-    this.addUser = this.addUser.bind(this);
   }
 
   /**
    * getAllUsers
    */
+  @GET("api/users")
   public getAllUsers(query: any) {
     const { UserService } = this.di;
     return UserService.getAllUsersInfo();
@@ -28,6 +26,8 @@ export default class UserController extends BaseController {
   /**
    * findUserInfo
    */
+  @GET("api/users/[id]")
+  @SSR("users/[id]")
   public findUserInfo(query: any) {
     const id = query["id"] as string;
     const { UserService } = this.di;
@@ -37,6 +37,7 @@ export default class UserController extends BaseController {
   /**
    * getUserInfoFeedbacksIncluded
    */
+  @GET("api/users/[id]/feedbacks")
   public getUserInfoFeedbacksIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
@@ -46,6 +47,7 @@ export default class UserController extends BaseController {
   /**
    * getUserInfoProductsIncluded
    */
+  @GET("api/users/[id]/products")
   public getUserInfoProductsIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
@@ -55,6 +57,7 @@ export default class UserController extends BaseController {
   /**
    * addUser
    */
+  @POST("api/users/add")
   public addUser(body: any) {
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
