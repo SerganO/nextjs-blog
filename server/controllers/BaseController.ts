@@ -45,13 +45,18 @@ export default class BaseController extends BaseContext {
             }
           };
           router[methodName](run);
-          result = router.handler({
-            onError: (err, req, res) => {
-              const error = err as Error;
-              console.error(error.stack);
-              res.status(500).end(error.message);
-            },
-          });
+
+          if(i >= members[method].length - 1) {
+            result = router.handler({
+              onError: (err, req, res) => {
+                const error = err as Error;
+                console.error(error.stack);
+                res.status(500).end(error.message);
+              },
+            });
+          }
+
+          
         } else if (methodName == "ssr") {
           const action = members[method][i];
           const callback = this[action].bind(this);
