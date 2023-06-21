@@ -9,6 +9,7 @@ export default function GET(
       properties.GET.push(propertyKey);
     } else {
       properties = { ...properties, GET: [propertyKey] };
+      console.log("define data:", routeName, "::", properties,"::", target)
       Reflect.defineMetadata(routeName, properties, target);
     }
   };

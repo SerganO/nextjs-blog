@@ -1,5 +1,6 @@
 import GET from "./get"
 import POST from "./post"
 import SSR from "./ssr"
+import USE from "./use"
 
-export default {GET, POST, SSR}
+export {GET, POST, SSR, USE}

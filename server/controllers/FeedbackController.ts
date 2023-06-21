@@ -1,11 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
-import decorators from "server/decorators";
-
-let GET = decorators.GET;
-let POST = decorators.POST;
-let SSR = decorators.SSR;
+import {GET, POST, SSR, USE} from "server/decorators";
 
 export default class FeedbackController extends BaseController {
   constructor(opts: IContextContainer) {
@@ -63,6 +59,9 @@ export default class FeedbackController extends BaseController {
       const { FeedbackService } = this.di;
       return FeedbackService.addFeedback(userId, productId, rating, message);
     } else {
+      //const { FeedbackService } = this.di;
+      //return FeedbackService.addFeedback(userId, productId, rating, message);
+   
       throw Error("not full data");
     }
   }

@@ -2,22 +2,47 @@ import { NextApiRequest, NextApiResponse } from "next";
 import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
-import decorators from "server/decorators";
+import {GET, POST, SSR, USE} from "server/decorators";
 
-let GET = decorators.GET;
-let POST = decorators.POST;
-let SSR = decorators.SSR;
+//@USE((req, res, next) => {
 
+//})
+//@USE((){}
+//@USE(f1, f2, f3)
+@USE((req, res, next) => {
+  console.log("class use 1")
+  next()
+})
+@USE([(req, res, next) => {
+  console.log("class use 2, req:",  req.query)
+  next();
+}, (req, res, next) => {
+  console.log("class use 3, req:",  req.query)
+  next();
+},
+(req, res, next) => {
+  console.log("class use 4, req:",  req.query)
+  next();
+}])
 export default class ProductController extends BaseController {
-  constructor(opts: IContextContainer) {
-    super(opts);
-    console.log("ProductController init: ", this);
-    console.log("di: ", this.di);
-  }
-
   /**
    * getAllProducts
    */
+ @USE((req, res, next) => {
+  console.log("method use 1")
+  next();
+ })
+ @USE([(req, res, next) => {
+  console.log("method use 2, req:",  req.query)
+  next();
+}, (req, res, next) => {
+  console.log("method use 3, req:",  req.query)
+  next();
+},
+(req, res, next) => {
+  console.log("method use 4, req:",  req.query)
+  next();
+}])
   @GET("api/products")
   public getAllProducts(query: any) {
     const { ProductService } = this.di;
