@@ -20,7 +20,7 @@ export default function USE(
       } else {
         funcs = [...middleware, ...funcs]; //!!! the order is important. 1) middleware 2) func
       }
-      console.log("define data:", key,"::", funcs,"::", store)
+      //console.log("define data:", key,"::", funcs,"::", store)
       Reflect.defineMetadata(key, funcs, store);
     };
   }

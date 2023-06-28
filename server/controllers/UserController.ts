@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
+import validate,  { validateProps} from "server/middleware/validate";
 
 export default class UserController extends BaseController {
   constructor(opts: IContextContainer) {
@@ -53,6 +54,28 @@ export default class UserController extends BaseController {
   /**
    * addUser
    */
+  @USE(
+    validate({
+      type: 'object',
+      properties: {
+        firstName: {type: "string", minLength: 2},
+        lastName: {type: "string", minLength: 2},
+        userEmail: validateProps.email,
+        password: validateProps.password,
+        role: {type: "string"},
+      },
+      validateProperty: {
+        role: true,
+      },
+      required: ['firstName', 'lastName','userEmail','password','role'],
+      additionalProperties: false,
+      errorMessage: {
+        properties: {
+          userEmail: "data.userEmail must contain email adress"
+        },
+      },
+    })
+  )
   @POST("api/users/add")
   public addUser(body: any) {
     let bodyString = JSON.stringify(body);

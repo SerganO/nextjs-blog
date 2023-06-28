@@ -3,12 +3,9 @@ import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
+import validate, {validateProps} from "server/middleware/validate";
 
-//@USE((req, res, next) => {
 
-//})
-//@USE((){}
-//@USE(f1, f2, f3)
 @USE((req, res, next) => {
   console.log("class use 1")
   next()
@@ -53,6 +50,14 @@ export default class ProductController extends BaseController {
   /**
    * getProductBaseInfo
    */
+  @USE(validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+    },
+    required: ['id'],
+    additionalProperties: false,
+  }))
   @GET("api/products/[id]")
   public getProductBaseInfo(query: any) {
     const id = parseInt(query.id as string);
@@ -64,9 +69,18 @@ export default class ProductController extends BaseController {
   /**
    * findProductExtendedInfo
    */
+  @USE(validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+    },
+    required: ['id'],
+    additionalProperties: false,
+  }))
   @GET("api/products/[id]/extended")
   @SSR("products/[id]")
   public findProductExtendedInfo(query: any) {
+    console.log("in")
     const id = query["id"] as string;
     const { ProductService } = this.di;
     return ProductService.findProductExtendedInfo(id);
@@ -120,6 +134,14 @@ export default class ProductController extends BaseController {
   /**
    * getProductFeedbacksIncluded
    */
+  @USE(validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+    },
+    required: ['id'],
+    additionalProperties: false,
+  }))
   @GET("api/products/[id]/feedbacks")
   public getProductFeedbacksIncluded(query: any) {
     const id = parseInt(query.id as string);
@@ -132,6 +154,14 @@ export default class ProductController extends BaseController {
   /**
    * getProductVendorIncluded
    */
+  @USE(validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+    },
+    required: ['id'],
+    additionalProperties: false,
+  }))
   @GET("api/products/[id]/vendor")
   public getProductVendorIncluded(query: any) {
     const id = parseInt(query.id as string);
@@ -144,7 +174,22 @@ export default class ProductController extends BaseController {
   /**
    * addProduct
    */
-  @POST("api/products/add")
+  @USE(
+    validate({
+      type: 'object',
+      properties: {
+        user_id: validateProps.id,
+        title: {type: "string"},
+        description: {type: "string"},
+        SKU: {type: "string"},
+        category: {type: "string"},
+        price: {type: "number", minimum: 0.00},
+      },
+      required: ['user_id', 'title','description','SKU','category', 'price'],
+      additionalProperties: false,
+    })
+  )
+  @POST("api/products/")
   public addProduct(body: any) {
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);

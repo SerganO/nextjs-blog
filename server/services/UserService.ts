@@ -5,7 +5,6 @@ import IContextContainer from "server/di/interfaces/IContextContainer";
 export default class UserService extends BaseContext {
   constructor(opts: IContextContainer) {
     super(opts);
-    this.di = opts;
     console.log("UserService init: ", this);
     console.log("di: ", this.di);
   }
@@ -42,6 +41,18 @@ export default class UserService extends BaseContext {
   public getUserInfoProductsIncluded(id: number) {
     const { User, Product } = this.di;
     return User.findByPk(id, { include: { model: Product, as: "products" } });
+  }
+
+  /**
+   * findUserWithEmailAndPassword
+   */
+  public findUserWithEmailAndPassword(email: string, password: string) {
+    const { User } = this.di;
+
+    return User.findOne({ where: {
+        user_email: email,
+        password: password,
+     }})
   }
 
   /**

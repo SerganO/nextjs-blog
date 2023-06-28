@@ -3,6 +3,7 @@ import { createRouter } from "next-connect";
 import next from "next/types";
 
 import BaseContext from "server/di/BaseContext";
+import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class BaseController extends BaseContext {
@@ -12,67 +13,90 @@ export default class BaseController extends BaseContext {
 
   private useClassdMiddleware() {
     const key = this.constructor.name;
-    console.log("key: ", key)
+    console.log("key: ", key);
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
   }
 
   private useMethodMiddleware(methodName: string) {
-    const key = this.constructor.name + '_' + methodName;
-    console.log("key: ", key)
+    const key = this.constructor.name + "_" + methodName;
+    console.log("key: ", key);
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
   }
 
-
   public handler(routeName: string) {
+    //let cargs = this.useClassdMiddleware();
     const members: any = Reflect.getMetadata(routeName, this);
-    if ('SSR' in members) {
+    if ("SSR" in members) {
       return async (context) => {
-          const action = members['SSR'][0];
-          const callback = this[action].bind(this);  
-          let data = await callback(context.query);
-          data = JSON.parse(JSON.stringify(data));
-          return {
-            props: {
-              data,
-            },
-          };
+        const action = members["SSR"][0];
+        const callback = this[action].bind(this);
+        let data = await callback(context.query);
+        data = JSON.parse(JSON.stringify(data));
+        return {
+          props: {
+            data,
+          },
+        };
       };
     }
-   
-    let cargs = this.useClassdMiddleware()
-   
+
+    /*if ("VSSR" in members) {
+      return async (context) => {
+        const action = members["VSSR"][0];
+        const validateAction = members["VSSR"][1];
+        const callback = this[action].bind(this);
+        let data = await callback(context.query);
+        data = JSON.parse(JSON.stringify(data));
+        return {
+          props: {
+            data,
+          },
+        };
+      };
+    }*/
+
+    let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
+
     Object.keys(members).map((method) => {
       for (let i = 0; i < members[method].length; i++) {
         const methodName: string = method.toLowerCase(); //GET, POST, PUT, etc
         const action = members[method][i];
         const callback = this[action].bind(this);
         if (typeof router[methodName] === "function") {
-          let margs = this.useMethodMiddleware(action)
-          router[methodName](routeName, ...cargs, ...margs, (req, res) => {
-            callback(methodName === 'get'?req.query: req.body)
+          let margs = this.useMethodMiddleware(action);
+          //NEED CLEARIFY ABOUT routeName
+          //router[methodName](routeName, ...cargs, ...margs, (req, res) => {
+          router[methodName](...cargs, ...margs, (req, res) => {
+            console.log("in");
+            callback(methodName === "get" ? req.query : req.body)
               .then((data) => {
                 res.status(200).json(data);
               })
               .catch((error) => {
+                console.log("catch");
                 res.status(404).send({ error: error });
               });
           });
-        } 
+          console.log("after");
+        }
       }
     });
 
-    return  router.handler({
+    return router.handler({
       onError: (err, req, res) => {
         const error = err as Error;
         console.error(error.stack);
         res.status(500).end(error.message);
       },
     });
+  }
 
+  protected json(params:any) {
+    return JSON.parse(JSON.stringify(params))
   }
 }

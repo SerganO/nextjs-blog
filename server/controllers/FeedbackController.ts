@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
+import validate from "server/middleware/validate";
 
 export default class FeedbackController extends BaseController {
   constructor(opts: IContextContainer) {
@@ -44,6 +45,19 @@ export default class FeedbackController extends BaseController {
   /**
    * addFeedback
    */
+  @USE(
+    validate({
+      type: 'object',
+      properties: {
+        user_id: {type: "number"},
+        product_id: {type: "number"},
+        rating: {type: "number"},
+        message: {type: "string"},
+      },
+      required: ['user_id', 'product_id','rating','message'],
+      additionalProperties: false,
+    })
+  )
   @POST("api/feedbacks/add")
   public addFeedback(body: any) {
     console.log("controller add feedback ");
