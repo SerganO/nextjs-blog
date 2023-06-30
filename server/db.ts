@@ -23,7 +23,11 @@ export const createDB = (ctx: IContextContainer) => {
     {
       dialect: "mysql",
       dialectModule: mysql2,
-    }
+      logging: (sql, queryObject) => {
+        console.log("EXEC SQL")
+      },
+    },
+    
   );
 };
 

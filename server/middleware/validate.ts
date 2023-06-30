@@ -44,10 +44,11 @@ export default function validate(schema) {
       return r;
     }, {});
 
-    console.log(param);
+    console.log("validate param: ",param);
 
     const valid = ajv.validate(schema, param);
     if (!valid) {
+      console.log("invalid data")
       res.status(400).json({
         error: ajv.errorsText(),
       });

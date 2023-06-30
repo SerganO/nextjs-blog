@@ -71,10 +71,11 @@ export default class BaseController extends BaseContext {
           let margs = this.useMethodMiddleware(action);
           //NEED CLEARIFY ABOUT routeName
           //router[methodName](routeName, ...cargs, ...margs, (req, res) => {
-          router[methodName](...cargs, ...margs, (req, res) => {
-            console.log("in");
+          router[methodName](routeName,...cargs, ...margs, (req, res) => {
+            console.log("handler callback");
             callback(methodName === "get" ? req.query : req.body)
               .then((data) => {
+                console.log("return res data");
                 res.status(200).json(data);
               })
               .catch((error) => {
@@ -82,11 +83,12 @@ export default class BaseController extends BaseContext {
                 res.status(404).send({ error: error });
               });
           });
-          console.log("after");
+          //console.log("after");
         }
       }
     });
 
+    console.log("handler return")
     return router.handler({
       onError: (err, req, res) => {
         const error = err as Error;

@@ -77,10 +77,11 @@ export default class ProductController extends BaseController {
     required: ['id'],
     additionalProperties: false,
   }))
-  @GET("api/products/[id]/extended")
+  @GET("api/products/:id/extended")
   @SSR("products/[id]")
   public findProductExtendedInfo(query: any) {
-    console.log("in")
+    console.log("findProductExtendedInfo in")
+    console.log("query[id]: ", query["id"])
     const id = query["id"] as string;
     const { ProductService } = this.di;
     return ProductService.findProductExtendedInfo(id);

@@ -1,8 +1,9 @@
-export default function Star(filled: boolean) {
+export default function Star(filled: boolean, id: number) {
   const color = filled ? "text-teal-500" : "text-gray-500";
   const clasName = color + " h-4 w-4 fill-current";
   return (
     <svg
+    key={id}
       viewBox="0 0 24 24"
       className={clasName}
       xmlns="http://www.w3.org/2000/svg"

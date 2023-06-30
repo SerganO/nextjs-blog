@@ -23,7 +23,7 @@ export default class UserController extends BaseController {
   /**
    * findUserInfo
    */
-  @GET("api/users/[id]")
+  @GET("api/users/:id")
   @SSR("users/[id]")
   public findUserInfo(query: any) {
     const id = query["id"] as string;

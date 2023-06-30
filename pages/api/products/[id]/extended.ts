@@ -9,4 +9,4 @@ const productController =
     res.status(200).json({ id, extendedData: '...' });
   };*/
 
-export default productController.handler("api/products/[id]/extended");
+export default productController.handler("api/products/:id/extended");

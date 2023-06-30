@@ -6,9 +6,9 @@ export default function USE(
     
     return (target: any, propertyKey?: string | undefined): void => 
     {
-        console.log("USE")
-        console.log("target: ", target)
-        console.log("propertyKey: ", propertyKey)
+        //console.log("USE")
+        //console.log("target: ", target)
+        //console.log("propertyKey: ", propertyKey)
       let key: string = propertyKey
         ? target.constructor.name + '_' + propertyKey
         : target.name;

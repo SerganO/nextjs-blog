@@ -29,7 +29,7 @@ export default function Base({ data }) {
     fetchData();
   }, []);
 
-  const fullname = `${userData.firstName} ${userData.lastName}`;
+  const fullname = `${userData?.firstName} ${userData?.lastName}`;
 
   const handleGoBack = () => {
     router.back();
@@ -65,12 +65,12 @@ export default function Base({ data }) {
               </div>
             </div>
             <div
-              hidden={userData.role != "vendor"}
+              hidden={userData?.role != "vendor"}
               className="mt-8 flex justify-center"
             >
               <Link
-                href={`/products?user=${userData.id}`}
-                hidden={userData.role != "vendor"}
+                href={`/products?user=${userData?.id}`}
+                hidden={userData?.role != "vendor"}
                 className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
                 //onClick={goToProductsPage}
               >
@@ -84,5 +84,6 @@ export default function Base({ data }) {
   );
 }
 
-const userController = container.resolve<UserController>("UserController");
+/*const userController = container.resolve<UserController>("UserController");
 export const getServerSideProps = userController.handler("users/[id]");
+*/
