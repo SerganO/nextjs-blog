@@ -25,7 +25,7 @@ export default class FeedbackController extends BaseController {
   /**
    * getFeedbackInfo
    */
-  @GET("api/feedbacks/[id]")
+  @GET("api/feedbacks/:id")
   public getFeedbackInfo(query: any) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;
@@ -35,7 +35,7 @@ export default class FeedbackController extends BaseController {
   /**
    * getFeedbackExtendedInfo
    */
-  @GET("api/feedbacks/[id]/extended")
+  @GET("api/feedbacks/:id/extended")
   public getFeedbackExtendedInfo(query: any) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;

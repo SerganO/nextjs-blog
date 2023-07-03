@@ -1,4 +1,6 @@
 import { useRouter } from "next/router";
+import { notFound } from 'next/navigation'
+ 
 
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
@@ -20,11 +22,17 @@ export default function Base({ data }) {
   const [productData, setProductData] = useState(data);
 
   useEffect(() => {
+    console.log("fetch")
     const fetchData = async () => {
+      console.log("fetch in")
       const response = await fetch(
         BASE_URL + `/api/products/${router.query.id}/extended`
       );
       const newData = await response.json();
+      console.log("newData: ", newData)
+      if(newData["error"]) {
+        router.push("/404")
+      }
       setProductData(newData);
     };
 
@@ -56,6 +64,6 @@ export default function Base({ data }) {
   );
 }
 
-/*const productController =
+const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("products/[id]");*/
+export const getServerSideProps = productController.handler("products/:id");

@@ -27,10 +27,10 @@ export default function FeedbackView(feedback: IFeedback) {
           <div className="flex items-center">
             <span className="mr-2 text-sm">{feedback.rating}</span>
             {Array.from({ length: feedback.rating }).map((_, index) =>
-              Star(true)
+              Star(true, index)
             )}
             {Array.from({ length: 5 - feedback.rating }).map((_, index) =>
-              Star(false)
+              Star(false, feedback.rating + index)
             )}
           </div>
         </div>

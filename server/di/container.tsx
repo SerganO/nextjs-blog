@@ -14,8 +14,9 @@ container.register({
   config: awilix.asValue(config),
   db: awilix.asFunction(createDB).singleton(),
   ...IModelContainer,
-  ...controllers,
   ...services,
+  ...controllers,
+  
 });
 
 export default container;

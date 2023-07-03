@@ -24,7 +24,7 @@ export default class UserController extends BaseController {
    * findUserInfo
    */
   @GET("api/users/:id")
-  @SSR("users/[id]")
+  @SSR("users/:id")
   public findUserInfo(query: any) {
     const id = query["id"] as string;
     const { UserService } = this.di;
@@ -34,7 +34,7 @@ export default class UserController extends BaseController {
   /**
    * getUserInfoFeedbacksIncluded
    */
-  @GET("api/users/[id]/feedbacks")
+  @GET("api/users/:id/feedbacks")
   public getUserInfoFeedbacksIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
@@ -44,7 +44,7 @@ export default class UserController extends BaseController {
   /**
    * getUserInfoProductsIncluded
    */
-  @GET("api/users/[id]/products")
+  @GET("api/users/:id/products")
   public getUserInfoProductsIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;

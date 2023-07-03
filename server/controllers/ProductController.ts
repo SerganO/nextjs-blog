@@ -5,7 +5,6 @@ import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
 import validate, {validateProps} from "server/middleware/validate";
 
-
 @USE((req, res, next) => {
   console.log("class use 1")
   next()
@@ -58,7 +57,7 @@ export default class ProductController extends BaseController {
     required: ['id'],
     additionalProperties: false,
   }))
-  @GET("api/products/[id]")
+  @GET("api/products/:id")
   public getProductBaseInfo(query: any) {
     const id = parseInt(query.id as string);
 
@@ -78,7 +77,7 @@ export default class ProductController extends BaseController {
     additionalProperties: false,
   }))
   @GET("api/products/:id/extended")
-  @SSR("products/[id]")
+  @SSR("products/:id")
   public findProductExtendedInfo(query: any) {
     console.log("findProductExtendedInfo in")
     console.log("query[id]: ", query["id"])
@@ -143,7 +142,7 @@ export default class ProductController extends BaseController {
     required: ['id'],
     additionalProperties: false,
   }))
-  @GET("api/products/[id]/feedbacks")
+  @GET("api/products/:id/feedbacks")
   public getProductFeedbacksIncluded(query: any) {
     const id = parseInt(query.id as string);
 
@@ -163,7 +162,7 @@ export default class ProductController extends BaseController {
     required: ['id'],
     additionalProperties: false,
   }))
-  @GET("api/products/[id]/vendor")
+  @GET("api/products/:id/vendor")
   public getProductVendorIncluded(query: any) {
     const id = parseInt(query.id as string);
 

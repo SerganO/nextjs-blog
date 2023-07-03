@@ -84,6 +84,5 @@ export default function Base({ data }) {
   );
 }
 
-/*const userController = container.resolve<UserController>("UserController");
-export const getServerSideProps = userController.handler("users/[id]");
-*/
+const userController = container.resolve<UserController>("UserController");
+export const getServerSideProps = userController.handler("users/:id");

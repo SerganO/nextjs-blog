@@ -28,39 +28,46 @@ export default class BaseController extends BaseContext {
   }
 
   public handler(routeName: string) {
-    //let cargs = this.useClassdMiddleware();
+    console.log("routeName: ", routeName)
+
     const members: any = Reflect.getMetadata(routeName, this);
+    let cargs = this.useClassdMiddleware();
+    const router = createRouter<NextApiRequest, NextApiResponse>();
+   
     if ("SSR" in members) {
       return async (context) => {
         const action = members["SSR"][0];
         const callback = this[action].bind(this);
+        let margs = this.useMethodMiddleware(action);
+        
         let data = await callback(context.query);
         data = JSON.parse(JSON.stringify(data));
+        
         return {
           props: {
             data,
           },
         };
+
+        router.get(routeName,...cargs, ...margs,async () => {
+
+          let data = await callback(context.query);
+          data = JSON.parse(JSON.stringify(data));
+          
+          return {
+            props: {
+              data,
+            },
+          };
+        })
+
+
+        /*let r = await 
+        console.log("r: ", r)*/
+        return await router.run(context.req, context.res)
+      
       };
     }
-
-    /*if ("VSSR" in members) {
-      return async (context) => {
-        const action = members["VSSR"][0];
-        const validateAction = members["VSSR"][1];
-        const callback = this[action].bind(this);
-        let data = await callback(context.query);
-        data = JSON.parse(JSON.stringify(data));
-        return {
-          props: {
-            data,
-          },
-        };
-      };
-    }*/
-
-    let cargs = this.useClassdMiddleware();
-    const router = createRouter<NextApiRequest, NextApiResponse>();
 
     Object.keys(members).map((method) => {
       for (let i = 0; i < members[method].length; i++) {
@@ -83,7 +90,6 @@ export default class BaseController extends BaseContext {
                 res.status(404).send({ error: error });
               });
           });
-          //console.log("after");
         }
       }
     });
@@ -91,8 +97,10 @@ export default class BaseController extends BaseContext {
     console.log("handler return")
     return router.handler({
       onError: (err, req, res) => {
+       
         const error = err as Error;
         console.error(error.stack);
+        console.log("error: ", error)
         res.status(500).end(error.message);
       },
     });

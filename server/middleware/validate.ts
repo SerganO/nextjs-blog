@@ -37,7 +37,11 @@ ajv.addKeyword(validatePropertyKeyword);
 
 export default function validate(schema) {
   return (req, res, next) => {
-    const param = [req.body, req.query].reduce(function (r, o) {
+
+    console.log("req: ", req)
+    console.log("res: ", res)
+
+    const param = [req.body ?? {}, req.query ?? {}].reduce(function (r, o) {
       Object.keys(o).forEach(function (k) {
         r[k] = o[k];
       });
