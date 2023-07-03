@@ -8,7 +8,7 @@ import BaseController from "./BaseController";
 @USE([session, ...actions])
 export default class AuthController extends BaseController {
 
-  @POST('/api/login')
+  @POST('api/login')
   @USE(
     validate({
       type: 'object',
@@ -22,7 +22,8 @@ export default class AuthController extends BaseController {
   )
   @USE(passportAuth)
   public async login({ identity }) {
-    console.log('/api/login');
+    console.log('api/login');
+    console.log("identity: ",identity)
     return this.json({ identity });
   }
 

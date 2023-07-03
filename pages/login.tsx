@@ -8,12 +8,6 @@ const {
 } = getConfig();
 
 
-
-function goAfterLogin() {
-    const router = useRouter();
-    router.push("/")
-}
-
 function showNotification(message: string) {
   window.alert(message);
 }
@@ -21,6 +15,12 @@ function showNotification(message: string) {
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+
+  const goAfterLogin = () => {
+    
+   //router.push("/")
+}
 
   const handleSubmit = async (e: React.FormEvent) => {
     console.log("start login")
@@ -34,8 +34,9 @@ const Login = () => {
         },
         body: JSON.stringify({ email: email, password: password }),
       });
-
+      console.log("response build")
       if (response.ok) {
+        console.log("response.ok")
         console.log("all ok");
         const responseBody = await response.json();
         console.log("responseBody: ", responseBody);

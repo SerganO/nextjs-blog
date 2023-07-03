@@ -4,9 +4,18 @@ import RedisStore from 'connect-redis';
 import nextSession from 'next-session';
 import { expressSession, promisifyStore } from 'next-session/lib/compat';
 
+import getConfig from "next/config";
+
+const {
+  publicRuntimeConfig: { REDIS_HOST, REDIS_PORT },
+} = getConfig();
+
+
 //const RedisStore = connectRedis(expressSession);
 const redisOptions = {
   legacyMode: true,
+  host: REDIS_HOST,
+  port:REDIS_PORT,
 };
 // if (config.redis.password) {
 //   redisOptions['password'] = config.redis.password;

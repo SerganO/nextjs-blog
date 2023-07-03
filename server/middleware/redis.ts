@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+/*import Redis from 'ioredis';
 import getConfig from "next/config";
 
 const {
@@ -11,4 +11,4 @@ const {
     port: REDIS_PORT
   });
   
-  export default redis;
+  export default redis;*/

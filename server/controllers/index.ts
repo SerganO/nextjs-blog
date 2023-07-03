@@ -8,12 +8,12 @@ export interface IControllerContainer {
   UserController: UserController;
   ProductController: ProductController;
   FeedbackController: FeedbackController;
-  //AuthController: AuthController;
+  AuthController: AuthController;
 }
 
 export default {
   UserController: asClass(UserController).singleton(),
   ProductController: asClass(ProductController).singleton(),
   FeedbackController: asClass(FeedbackController).singleton(),
-  //AuthController: asClass(AuthController).singleton(),
+  AuthController: asClass(AuthController).singleton(),
 };

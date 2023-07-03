@@ -33,7 +33,7 @@ export default class BaseController extends BaseContext {
     const members: any = Reflect.getMetadata(routeName, this);
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
-   
+    console.log("members: ", members)
     if ("SSR" in members) {
       return async (context) => {
         const action = members["SSR"][0];
@@ -82,6 +82,7 @@ export default class BaseController extends BaseContext {
             console.log("handler callback");
             callback(methodName === "get" ? req.query : req.body)
               .then((data) => {
+                console.log("data: ", data)
                 console.log("return res data");
                 res.status(200).json(data);
               })
