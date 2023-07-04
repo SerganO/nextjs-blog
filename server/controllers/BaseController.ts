@@ -28,44 +28,42 @@ export default class BaseController extends BaseContext {
   }
 
   public handler(routeName: string) {
-    console.log("routeName: ", routeName)
+    console.log("routeName: ", routeName);
 
     const members: any = Reflect.getMetadata(routeName, this);
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
-    console.log("members: ", members)
+    console.log("members: ", members);
+    console.log("cargs: ", cargs);
     if ("SSR" in members) {
       return async (context) => {
         const action = members["SSR"][0];
         const callback = this[action].bind(this);
         let margs = this.useMethodMiddleware(action);
-        
+
         let data = await callback(context.query);
         data = JSON.parse(JSON.stringify(data));
-        
+
         return {
           props: {
             data,
           },
         };
 
-        router.get(routeName,...cargs, ...margs,async () => {
-
+        router.get(routeName, ...cargs, ...margs, async () => {
           let data = await callback(context.query);
           data = JSON.parse(JSON.stringify(data));
-          
+
           return {
             props: {
               data,
             },
           };
-        })
-
+        });
 
         /*let r = await 
         console.log("r: ", r)*/
-        return await router.run(context.req, context.res)
-      
+        return await router.run(context.req, context.res);
       };
     }
 
@@ -76,13 +74,12 @@ export default class BaseController extends BaseContext {
         const callback = this[action].bind(this);
         if (typeof router[methodName] === "function") {
           let margs = this.useMethodMiddleware(action);
-          //NEED CLEARIFY ABOUT routeName
-          //router[methodName](routeName, ...cargs, ...margs, (req, res) => {
-          router[methodName](routeName,...cargs, ...margs, (req, res) => {
+
+          router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             console.log("handler callback");
             callback(methodName === "get" ? req.query : req.body)
               .then((data) => {
-                console.log("data: ", data)
+                console.log("data: ", data);
                 console.log("return res data");
                 res.status(200).json(data);
               })
@@ -95,19 +92,18 @@ export default class BaseController extends BaseContext {
       }
     });
 
-    console.log("handler return")
+    console.log("handler return");
     return router.handler({
       onError: (err, req, res) => {
-       
         const error = err as Error;
         console.error(error.stack);
-        console.log("error: ", error)
+        console.log("error: ", error);
         res.status(500).end(error.message);
       },
     });
   }
 
-  protected json(params:any) {
-    return JSON.parse(JSON.stringify(params))
+  protected json(params: any) {
+    return JSON.parse(JSON.stringify(params));
   }
 }

@@ -1,6 +1,5 @@
 import { createClient } from 'redis';
-import RedisStore from 'connect-redis';
-
+import connectRedis from 'connect-redis';
 import nextSession from 'next-session';
 import { expressSession, promisifyStore } from 'next-session/lib/compat';
 
@@ -11,7 +10,7 @@ const {
 } = getConfig();
 
 
-//const RedisStore = connectRedis(expressSession);
+const RedisStore = connectRedis(expressSession);
 const redisOptions = {
   legacyMode: true,
   host: REDIS_HOST,
@@ -42,6 +41,10 @@ const getSession = nextSession({
 });
 
 export default async function session(req, res, next) {
+  console.log("sesion action")
   await getSession(req, res);
+  console.log(req.session)
+  console.log(req.session.id)
+  
   await next();
 }
