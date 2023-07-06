@@ -67,3 +67,9 @@ export default function Base({ data }) {
 const productController =
   container.resolve<ProductController>("ProductController");
 export const getServerSideProps = productController.handler("products/:id");
+
+/*export async function getServerSideProps({ req, res }) {
+  const r = await productController.handler("products/:id")
+  console.log('rr', r)
+  return r ;
+}*/

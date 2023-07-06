@@ -5,20 +5,20 @@ import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
 import validate, {validateProps} from "server/middleware/validate";
 
-@USE((req, res, next) => {
+@USE(async (req, res, next) => {
   console.log("class use 1")
-  next()
+  return await next()
 })
-@USE([(req, res, next) => {
-  console.log("class use 2, req:",  req.query)
-  next();
-}, (req, res, next) => {
-  console.log("class use 3, req:",  req.query)
-  next();
+@USE([async (req, res, next) => {
+  console.log("class use 2, req:",  req.query ?? req.params)
+  return await next();
+}, async (req, res, next) => {
+  console.log("class use 3, req:",  req.query ?? req.params)
+  return await next();
 },
-(req, res, next) => {
-  console.log("class use 4, req:",  req.query)
-  next();
+async (req, res, next) => {
+  console.log("class use 4, req:",  req.query ?? req.params)
+  return await next();
 }])
 export default class ProductController extends BaseController {
   /**
@@ -68,6 +68,10 @@ export default class ProductController extends BaseController {
   /**
    * findProductExtendedInfo
    */
+  @USE(async (req, res, next) => {
+    console.log("method extended use 1")
+    return await next();
+   })
   @USE(validate({
     type: 'object',
     properties: {
@@ -102,6 +106,10 @@ export default class ProductController extends BaseController {
   /**
    * findProductsPaginated
    */
+  @USE((req, res, next) => {
+    console.log("method extended use 1")
+    return next();
+   })
   @GET("api/products/pagination")
   @SSR("products/index")
   public findProductsPaginated = (query: any) => {
@@ -122,6 +130,10 @@ export default class ProductController extends BaseController {
   /**
    * getProductFeedbacksIncludedFirstSet
    */
+  @USE((req, res, next) => {
+    console.log("method use 1")
+    return next();
+   })
   @GET("api/products/feedbacksIncluded/firstSet")
   @SSR("index")
   public getProductFeedbacksIncludedFirstSet(query: any) {

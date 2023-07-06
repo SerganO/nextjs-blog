@@ -41,19 +41,10 @@ export default class BaseController extends BaseContext {
         const callback = this[action].bind(this);
         let margs = this.useMethodMiddleware(action);
 
-        let data = await callback(context.query);
-        data = JSON.parse(JSON.stringify(data));
-
-        return {
-          props: {
-            data,
-          },
-        };
-
-        router.get(routeName, ...cargs, ...margs, async () => {
+        console.log("IN FUNCTION");
+        router.use(routeName, ...cargs, ...margs).get(async () => {
           let data = await callback(context.query);
           data = JSON.parse(JSON.stringify(data));
-
           return {
             props: {
               data,
@@ -61,9 +52,30 @@ export default class BaseController extends BaseContext {
           };
         });
 
-        /*let r = await 
-        console.log("r: ", r)*/
-        return await router.run(context.req, context.res);
+        return router.run(context.req, context.res);
+
+        /*let data = await callback(context.query);
+        data = JSON.parse(JSON.stringify(data));
+        console.log("old ssr data: ", data)
+
+        return {
+          props: {
+            data,
+          },
+        };*/
+
+        /*router.get(async (req, res) => {
+          console.log("SSR FUNC CALL")
+          let data = await callback(context.query);
+          data = JSON.parse(JSON.stringify(data));
+          return {
+            props: {
+              data,
+            },
+          };
+        });
+
+        return router.run(context.req, context.res);*/
       };
     }
 
@@ -77,9 +89,11 @@ export default class BaseController extends BaseContext {
 
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             console.log("handler callback");
-            callback(methodName === "get" ? req.query : req.body)
+            console.log("req.user: ", req.user)
+            const user = this.json(req.user.dataValues)
+            callback(methodName === "get" ? req.query : req.body, user, req.session)
               .then((data) => {
-                console.log("data: ", data);
+                //console.log("data: ", data);
                 console.log("return res data");
                 res.status(200).json(data);
               })

@@ -37,27 +37,49 @@ ajv.addKeyword(validatePropertyKeyword);
 
 export default function validate(schema) {
   return (req, res, next) => {
-
     //console.log("req: ", req)
     //console.log("res: ", res)
 
-    const param = [req.body ?? {}, req.query ?? {}].reduce(function (r, o) {
-      Object.keys(o).forEach(function (k) {
-        r[k] = o[k];
-      });
-      return r;
-    }, {});
+    const param = [req.body ?? {}, req.query ?? {}, req.params ?? {}].reduce(
+      function (r, o) {
+        Object.keys(o).forEach(function (k) {
+          r[k] = o[k];
+        });
+        return r;
+      },
+      {}
+    );
 
-    console.log("validate param: ",param);
+    console.log("validate param: ", param);
 
     const valid = ajv.validate(schema, param);
     if (!valid) {
-      console.log("invalid data")
-      res.status(400).json({
-        error: ajv.errorsText(),
-      });
+      console.log("invalid data");
+      console.log("res.status: ", typeof res.status)
+
+      if (typeof res.status != "undefined") {
+        res.status(400).json({
+          error: ajv.errorsText(),
+        });
+      } else {
+        return {
+          props: {
+            error: ajv.errorsText(),
+          }
+        };
+      }
+
+      /*if (typeof document == "undefined") {
+       
+      } else {
+       
+      }*/
     } else {
-      next();
+      if (typeof document == "undefined") {
+        return next();
+      } else {
+        next();
+      }
     }
   };
 }
@@ -72,9 +94,9 @@ export function validateSSR(schema) {
   };
 }
 
-export const validateProps  = {
+export const validateProps = {
   queryId: { type: "string", pattern: "\\d" },
-  id:  {type: "number", minimum: 1},
+  id: { type: "number", minimum: 1 },
   email: { type: "string", format: "email" },
   password: { type: "string", format: "password", minLength: 8 },
 };

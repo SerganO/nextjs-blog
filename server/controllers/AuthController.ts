@@ -21,11 +21,11 @@ export default class AuthController extends BaseController {
     })
   )
   @USE(passportAuth)
-  public async login(data) {
-  //public async login({identity}}) {
+  public async login(query, user, session) {
+  //public async login({identity}) {
     console.log('api/login');
-    console.log("identity: ",data)
-    return data;
+    console.log("data: ",user)
+    return user;
   }
 
  

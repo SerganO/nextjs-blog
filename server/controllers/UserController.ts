@@ -23,6 +23,14 @@ export default class UserController extends BaseController {
   /**
    * findUserInfo
    */
+  @USE(validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+    },
+    required: ['id'],
+    additionalProperties: false,
+  }))
   @GET("api/users/:id")
   @SSR("users/:id")
   public findUserInfo(query: any) {
