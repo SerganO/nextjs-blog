@@ -1,3 +1,4 @@
+import xfetch from "functions/xfetch";
 import getConfig from "next/config";
 import { useState } from "react";
 
@@ -33,19 +34,18 @@ const AddUserForm = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${BASE_URL}/api/users/add`, {
+
+    xfetch(
+      `/api/users/add`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
-      });
-
-      if (response.ok) {
-        console.log("all ok");
-        const responseBody = await response.json();
-        console.log("responseBody: ", responseBody);
+      },
+      (data) => {
+        console.log("responseBody: ", data);
         setUser({
           firstName: "",
           lastName: "",
@@ -54,14 +54,8 @@ const AddUserForm = () => {
           role: "",
         });
         showNotification("User added successfully");
-      } else {
-        const responseBody = await response.text();
-        showNotification("error:" + responseBody);
       }
-    } catch (error) {
-      console.error(error);
-      showNotification("error:" + error);
-    }
+    );
   };
 
   return (

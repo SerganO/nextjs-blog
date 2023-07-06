@@ -12,6 +12,8 @@ import { useEffect, useState } from "react";
 import getConfig from "next/config";
 import ProductController from "server/controllers/ProductController";
 
+import xfetch from "functions/xfetch";
+
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
@@ -22,21 +24,13 @@ export default function Base({ data }) {
   const [productData, setProductData] = useState(data);
 
   useEffect(() => {
-    console.log("fetch")
-    const fetchData = async () => {
-      console.log("fetch in")
-      const response = await fetch(
-        BASE_URL + `/api/products/${router.query.id}/extended`
-      );
-      const newData = await response.json();
-      console.log("newData: ", newData)
-      if(newData["error"]) {
+    xfetch(`/api/products/${router.query.id}/extended`, {}, (data) => {
+      if(data["error"]) {
         router.push("/404")
       }
-      setProductData(newData);
-    };
+      setProductData(data);
+    })
 
-    fetchData();
   }, []);
 
   const handleGoBack = () => {

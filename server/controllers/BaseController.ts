@@ -90,7 +90,10 @@ export default class BaseController extends BaseContext {
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             console.log("handler callback");
             console.log("req.user: ", req.user)
-            const user = this.json(req.user.dataValues)
+            let user = null
+            if(req.user != undefined) {
+              user = this.json(req.user?.dataValues)
+            }
             callback(methodName === "get" ? req.query : req.body, user, req.session)
               .then((data) => {
                 //console.log("data: ", data);

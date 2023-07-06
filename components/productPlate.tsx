@@ -43,10 +43,10 @@ export default function ProductPlate(product: IProduct) {
               <div className="flex items-center">
                 <span className="mr-2 text-sm">{rating.toFixed(2)}</span>
                 {Array.from({ length: roundedRaiting }).map((_, index) =>
-                  Star(true)
+                  Star(true, index)
                 )}
                 {Array.from({ length: 5 - roundedRaiting }).map((_, index) =>
-                  Star(false)
+                  Star(false, index)
                 )}
               </div>
               <span className="ml-2 text-sm text-gray-600">

@@ -9,6 +9,7 @@ import container from "server/di/container";
 import getConfig from "next/config";
 import Link from "next/link";
 import UserController from "server/controllers/UserController";
+import xfetch from "functions/xfetch";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -20,13 +21,9 @@ export default function Base({ data }) {
   const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(BASE_URL + `/api/users/${router.query.id}`);
-      const newData = await response.json();
-      setUserData(newData);
-    };
-
-    fetchData();
+    xfetch(`/api/users/${router.query.id}`, {}, (data) => {
+      setUserData(data);
+    });
   }, []);
 
   const fullname = `${userData?.firstName} ${userData?.lastName}`;

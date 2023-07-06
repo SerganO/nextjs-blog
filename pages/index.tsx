@@ -11,6 +11,7 @@ import { IProduct } from "server/models/Product";
 
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
+import xfetch from "functions/xfetch";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -21,15 +22,10 @@ export default function Base({ data }) {
   const router = useRouter();
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        BASE_URL + "/api/products/feedbacksIncluded/firstSet"
-      );
-      const newData = await response.json();
-      setProductsData(newData);
-    };
-
-    fetchData();
+    console.log("fetch")
+    xfetch("/api/products/feedbacksIncluded/firstSet", {}, (data) => {
+      setProductsData(data);
+    });
   }, []);
 
   const goToProductsPage = () => {
@@ -63,9 +59,9 @@ export default function Base({ data }) {
   );
 }
 
-const productController =
+/*const productController =
   container.resolve<ProductController>("ProductController");
-  export const getServerSideProps = productController.handler("index");
+export const getServerSideProps = productController.handler("index");*/
 
 /*export async function getServerSideProps({ req, res }) {
   const r = await productController.handler("index")

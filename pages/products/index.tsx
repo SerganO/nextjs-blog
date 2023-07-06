@@ -10,6 +10,7 @@ import getConfig from "next/config";
 import container from "server/di/container";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
+import xfetch from "functions/xfetch";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -28,34 +29,20 @@ export default function paginationSSR({ data }) {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        BASE_URL + `/api/products/pagination?page=${page}${userString}`
-      );
-      const newData = await response.json();
-      console.log("updating page data");
-      setProductsPageData(newData);
-    };
-
-    fetchData();
+    xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
+      setProductsPageData(data);
+    });
   }, [page]);
 
   const goToProductsPage = () => {
     userId = "";
     userString = "";
 
-    const fetchData = async () => {
-      const response = await fetch(
-        BASE_URL + `/api/products/pagination?o=0&l=20`
-      );
-      const newData = await response.json();
-      console.log("updating page data");
-      setProductsPageData(newData);
-    };
-
-    fetchData();
-    router.replace("/products?page=1").then(() => {
-      setPage(1);
+    xfetch(`/api/products/pagination?o=0&l=20`, {}, (data) => {
+      setProductsPageData(data);
+      router.replace("/products?page=1").then(() => {
+        setPage(1);
+      });
     });
   };
 
@@ -155,6 +142,6 @@ export default function paginationSSR({ data }) {
   );
 }
 
-const productController =
+/*const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("products/index");
+export const getServerSideProps = productController.handler("products/index");*/
