@@ -59,9 +59,9 @@ export default function Base({ data }) {
   );
 }
 
-/*const productController =
+const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("index");*/
+export const getServerSideProps = productController.handler("index");
 
 /*export async function getServerSideProps({ req, res }) {
   const r = await productController.handler("index")

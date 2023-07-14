@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import getConfig from "next/config";
+import { addFeedback, removeFeedback } from "../store/actionCreators"
+import { Dispatch } from "redux"
+import { useDispatch } from "react-redux"
 
 type FeedbackData = {
   user_id: number;
@@ -14,7 +17,7 @@ const {
 } = getConfig();
 
 export default function FeedbackForm(product_id: number) {
-  const [feedBackData, setFeedbackData] = useState<FeedbackData>({
+  const [currentFeedbackData, setFeedbackData] = useState<FeedbackData>({
     rating: 0,
     message: "",
     user_id: 51,
@@ -34,8 +37,8 @@ export default function FeedbackForm(product_id: number) {
     console.log("message lenght: ", feedback.length);
     setSendEnabled(rating !== undefined && feedback.length >= 6);
     console.log("sendEnabled: ", sendEnabled);
-    feedBackData.rating = rating;
-    feedBackData.message = feedback;
+    currentFeedbackData.rating = rating;
+    currentFeedbackData.message = feedback;
     setButtonBackground(sendEnabled ? "bg-indigo-500" : "bg-gray-500");
   }, [rating, feedback, sendEnabled]);
 
@@ -53,33 +56,53 @@ export default function FeedbackForm(product_id: number) {
     window.alert(message);
   }
 
+  const dispatch: Dispatch<any> = useDispatch()
+
+  const saveFeedback = React.useCallback(
+    (feedback: IFeedbackPostData, success, failure) => dispatch(addFeedback(feedback, success, failure)),
+    [dispatch]
+  )
+
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await fetch(`${BASE_URL}/api/feedbacks/add`, {
+
+
+    let feedbackData: IFeedbackPostData = {
+      user_id: currentFeedbackData.user_id,
+      product_id: currentFeedbackData.product_id,
+      rating: currentFeedbackData.rating,
+      message: currentFeedbackData.message
+  }
+
+  saveFeedback(feedbackData, (data) => {
+    console.log("responseBody: ", data);
+    setFeedback("");
+    setRating(undefined);
+    showNotification("Feedback added successfully");
+    router.reload();
+  }, showNotification)
+
+
+
+    /*xfetch(
+      `/api/feedbacks/add`,
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(feedBackData),
-      });
-
-      if (response.ok) {
-        console.log("all ok");
-        const responseBody = await response.json();
-        console.log("responseBody: ", responseBody);
+        body: JSON.stringify(currentFeedbackData),
+      },
+      (data) => {
+        console.log("responseBody: ", data);
         setFeedback("");
         setRating(undefined);
-        showNotification("feedback added successfully");
+        showNotification("Feedback added successfully");
         router.reload();
-      } else {
-        const responseBody = await response.text();
-        showNotification("error:" + responseBody);
       }
-    } catch (error) {
-      console.error(error);
-      showNotification("error:" + error);
-    }
+    );*/
   };
 
   return (
