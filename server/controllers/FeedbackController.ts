@@ -3,6 +3,8 @@ import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
 import validate from "server/middleware/validate";
+import session from "server/middleware/session";
+import { actions } from "server/middleware/pasport";
 
 export default class FeedbackController extends BaseController {
   constructor(opts: IContextContainer) {
@@ -45,6 +47,7 @@ export default class FeedbackController extends BaseController {
   /**
    * addFeedback
    */
+  @USE([session])
   @USE(
     validate({
       type: 'object',

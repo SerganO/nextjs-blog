@@ -37,8 +37,10 @@ export default function FeedbackForm(product_id: number) {
     console.log("message lenght: ", feedback.length);
     setSendEnabled(rating !== undefined && feedback.length >= 6);
     console.log("sendEnabled: ", sendEnabled);
-    currentFeedbackData.rating = rating;
-    currentFeedbackData.message = feedback;
+    let feedbackData = currentFeedbackData
+    feedbackData.rating = rating;
+    feedbackData.message = feedback;
+    setFeedbackData(feedbackData)
     setButtonBackground(sendEnabled ? "bg-indigo-500" : "bg-gray-500");
   }, [rating, feedback, sendEnabled]);
 

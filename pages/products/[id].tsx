@@ -1,18 +1,14 @@
 import { useRouter } from "next/router";
-import { notFound } from 'next/navigation'
- 
-
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import container from "server/di/container";
-
-//import productController from "server/controllers/ProductController";
 import React, {useEffect, useState } from "react";
 import getConfig from "next/config";
 import { getProduct } from "store/actionCreators";
 import { Dispatch } from "redux"
 import { useDispatch } from "react-redux"
+import container from "server/di/container";
+import ProductController from "server/controllers/ProductController";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -31,18 +27,11 @@ function Base({ data }) {
     [dispatch]
   )
   
-
   const router = useRouter();
 
   const [productData, setProductData] = useState(data);
 
-  useEffect(() => {
-    /*xfetch(`/api/products/${router.query.id}/extended`, {}, (data) => {
-      if(data["error"]) {
-        router.push("/404")
-      }
-      setProductData(data);
-    })*/
+  /*useEffect(() => {
     recieveProduct(router.query.id,  (data) => {
       if(data["error"]) {
         router.push("/404")
@@ -50,7 +39,7 @@ function Base({ data }) {
       setProductData(data);
     }, showNotification)
 
-  }, []);
+  }, []);*/
 
   const handleGoBack = () => {
     router.back();
@@ -95,9 +84,9 @@ export default connect(
 
 export default Base
 
-/*const productController =
+const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("products/:id");*/
+export const getServerSideProps = productController.handler("products/:id");
 
 /*export async function getServerSideProps({ req, res }) {
   const r = await productController.handler("products/:id")

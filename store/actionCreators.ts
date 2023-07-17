@@ -3,8 +3,8 @@ import * as actionTypes from "./actionTypes";
 import { IFeedback } from "server/models/Feedback";
 
 export function addFeedback(feedback: IFeedbackPostData, success, failure) {
-  return (dispatch: DispatchType) => {
-    xfetch(
+  return async (dispatch: DispatchType) => {
+    await xfetch(
       `/api/feedbacks/add`,
       {
         method: "POST",

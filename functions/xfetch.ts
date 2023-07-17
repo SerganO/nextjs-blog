@@ -8,7 +8,7 @@ function showNotification(error: Error) {
   window.alert(error.message);
 }
 
-export default (url, additionalProperties = {}, success, failure = showNotification) => {
+export default async (url, additionalProperties = {}, success, failure = showNotification) => {
   const fetchData = async () => {
     try {
       console.log("url: ", BASE_URL + url);
@@ -25,5 +25,5 @@ export default (url, additionalProperties = {}, success, failure = showNotificat
       failure(error);
     }
   };
-  fetchData();
+  await fetchData();
 };
