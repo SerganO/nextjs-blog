@@ -12,20 +12,51 @@ import { IProduct } from "server/models/Product";
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
 import xfetch from "functions/xfetch";
+import { Dispatch } from "redux";
+import { connect, useDispatch } from "react-redux";
+import { saveFirstSetToRedux } from "store/actionCreators";
+import { showErrorNotification } from "functions/showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function Base({ data }) {
-  const [productsData, setProductsData] = useState<[IProduct]>(data);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    saveFirstSetToRedux: (user) => dispatch(saveFirstSetToRedux(user)),
+  };
+};
+
+const mapStateToProps = (state) => (
+  {
+  data: state.productReducer.pages[state.productReducer.pages.length - 1]
+});
+
+
+function Base({ data }) {
+
+  const productsData = data
+
+  //const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
+  const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
-    console.log("fetch")
+    /*console.log("fetch")
     xfetch("/api/products/feedbacksIncluded/firstSet", {}, (data) => {
       setProductsData(data);
-    });
+    });*/
+    xfetch(
+      "/api/products/feedbacksIncluded/firstSet",
+      {},
+      (products) => {
+        dispatch(saveFirstSetToRedux({
+          count: products.lenght,
+          products: products
+        }))
+      },
+      showErrorNotification
+    );
   }, []);
 
   const goToProductsPage = () => {
@@ -51,13 +82,18 @@ export default function Base({ data }) {
         </button>
         <div className="mt-6 sm:overflow-x-auto sm:px-4 ">
           <div className="px-4 sm:-ml-2 sm:inline-flex sm:px-0 sm:pb-8">
-            {productsData?.map((product, index) => ProductPlate(product))};
+            {productsData?.products?.map((product, index) => ProductPlate(product))};
           </div>
         </div>
       </main>
     </div>
   );
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Base)
 
 const productController =
   container.resolve<ProductController>("ProductController");

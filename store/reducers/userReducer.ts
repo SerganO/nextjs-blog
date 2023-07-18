@@ -24,6 +24,12 @@ const userReducer = (
           ...state,
           users: updatedUsers,
         }
+        case actionTypes.GET_USER:
+          const receivedUser = action.payload.data
+          return {
+            ...state,
+            users: state.users.concat(receivedUser),
+          }
     }
     return state
   }

@@ -1,3 +1,4 @@
+import { showMessageNotification } from "functions/showNotification";
 import xfetch from "functions/xfetch";
 import getConfig from "next/config";
 import { useState } from "react";
@@ -14,9 +15,6 @@ type UserData = {
   role: string;
 };
 
-function showNotification(message: string) {
-  window.alert(message);
-}
 
 const AddUserForm = () => {
   const [user, setUser] = useState<UserData>({
@@ -53,7 +51,7 @@ const AddUserForm = () => {
           password: "",
           role: "",
         });
-        showNotification("User added successfully");
+        showMessageNotification("User added successfully");
       }
     );
   };

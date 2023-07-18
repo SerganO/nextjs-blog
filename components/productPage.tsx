@@ -9,16 +9,26 @@ import Link from "next/link";
 export default function ProductPage(product: IProduct) {
   var [feedbackShown, setFeedbackShown] = useState(false);
 
-  const fullname = `${product?.vendor?.firstName} ${product?.vendor?.lastName}`;
+
+  const vendor = product?.vendor
+  const feedbacks = product?.feedbacks
+  const productId = product?.id
+  const title = product?.title
+  const description = product?.description
+  const SKU = product?.SKU
+  const price = product?.price
+
+
+  const fullname = `${vendor?.firstName} ${vendor?.lastName}`;
 
   var rating = 0;
   var roundedRaiting = 0;
-  if (product?.feedbacks?.length > 0) {
-    rating = product?.feedbacks?.reduce(
+  if (feedbacks?.length > 0) {
+    rating = feedbacks?.reduce(
       (sum, current) => sum + current.rating,
       0
     );
-    rating = rating / product?.feedbacks?.length;
+    rating = rating / feedbacks?.length;
     roundedRaiting = Math.round(rating);
   }
 
@@ -27,7 +37,8 @@ export default function ProductPage(product: IProduct) {
   };
 
   return (
-    <div className="">
+   
+    <div className="" hidden = {product==undefined}>
       <div className="sm:flex sm:flex-wrap sm:justify-center">
         <div className="sm:mx-10 sm:flex">
           <div className="m-4 sm:w-3/4">
@@ -41,7 +52,7 @@ export default function ProductPage(product: IProduct) {
             <div className="h-fit justify-center rounded-lg bg-white px-4 py-3 shadow-lg ">
               <div className="flex h-fit flex-wrap items-center justify-center gap-x-4">
                 <Link
-                  href={`/users/${product?.vendor?.id}`}
+                  href={`/users/${vendor?.id}`}
                   className="mt-2  h-12 w-12 shrink-0"
                   //onClick={goToUserPage}
                 >
@@ -59,7 +70,7 @@ export default function ProductPage(product: IProduct) {
               </div>
               <div className="mt-8 flex justify-center">
                 <Link
-                  href={`/products?user=${product?.vendor?.id}`}
+                  href={`/products?user=${vendor?.id}`}
                   className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
                   //onClick={goToProductsPage}
                 >
@@ -71,12 +82,12 @@ export default function ProductPage(product: IProduct) {
         </div>
         <div className="p-4 sm:w-4/5 ">
           <h4 className="mt-1 text-lg font-semibold text-gray-900">
-            {product?.title}
-            <span className="ml-1 text-xs text-gray-600">/{product?.SKU}</span>
+            {title}
+            <span className="ml-1 text-xs text-gray-600">/{SKU}</span>
           </h4>
-          <h6>{product?.description}</h6>
+          <h6>{description}</h6>
           <div className="mt-1">
-            <span className="text-gray-900">{product?.price}₴</span>
+            <span className="text-gray-900">{price}₴</span>
           </div>
           <div className="flex justify-center">
             <button
@@ -97,20 +108,20 @@ export default function ProductPage(product: IProduct) {
               )}
             </div>
             <span className="ml-2 text-sm text-gray-600">
-              {product?.feedbacks?.length} feedbacks
+              {feedbacks?.length} feedbacks
             </span>
 
             <button
-              hidden={product?.feedbacks?.length <= 0}
+              hidden={feedbacks?.length <= 0}
               className="mx-4 my-4 rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
               onClick={toggle}
             >
               {feedbackShown ? "Hide" : "Show"}
             </button>
           </div>
-          {FeedbackForm(product?.id)}
+          {FeedbackForm(productId)}
           <div hidden={!feedbackShown}>
-            {product?.feedbacks?.map((feedback, index) =>
+            {feedbacks?.map((feedback, index) =>
               FeedbackView(feedback)
             )}
           </div>

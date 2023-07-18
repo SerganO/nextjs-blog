@@ -10,20 +10,50 @@ import getConfig from "next/config";
 import Link from "next/link";
 import UserController from "server/controllers/UserController";
 import xfetch from "functions/xfetch";
+import { saveUserToRedux } from "store/actionCreators";
+import { Dispatch } from "redux";
+import { connect, useDispatch } from "react-redux";
+import { showErrorNotification } from "functions/showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function Base({ data }) {
-  const router = useRouter();
 
-  const [userData, setUserData] = useState<IUser>(data);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    saveUserToRedux: (user) => dispatch(saveUserToRedux(user)),
+  };
+};
+
+const mapStateToProps = (state) => (
+  {
+  data: state.userReducer.users[state.userReducer.users.length - 1]
+});
+
+
+function Base({ data }) {
+  const router = useRouter();
+  const dispatch: Dispatch<any> = useDispatch();
+
+
+  const userData = data
+
+  //const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
-    xfetch(`/api/users/${router.query.id}`, {}, (data) => {
+    xfetch(
+      `/api/users/${router.query.id}`,
+      {},
+      (user) => {
+        dispatch(saveUserToRedux(user))
+      },
+      showErrorNotification
+    );
+    /*xfetch(`/api/users/${router.query.id}`, {}, (data) => {
       setUserData(data);
-    });
+    });*/
   }, []);
 
   const fullname = `${userData?.firstName} ${userData?.lastName}`;
@@ -80,6 +110,11 @@ export default function Base({ data }) {
     </div>
   );
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Base)
 
 const userController = container.resolve<UserController>("UserController");
 export const getServerSideProps = userController.handler("users/:id");

@@ -28,7 +28,11 @@ type UserState = {
 }
 
 type ProductState = {
-    products: IProduct[]
+    products: IProduct[],
+    pages: {
+        count: number
+        products: IProduct[]
+    }[],
 }
 
 type FeedbackState = {

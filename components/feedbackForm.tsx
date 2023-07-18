@@ -4,6 +4,7 @@ import getConfig from "next/config";
 import { addFeedback, removeFeedback } from "../store/actionCreators"
 import { Dispatch } from "redux"
 import { useDispatch } from "react-redux"
+import { showMessageNotification } from "functions/showNotification";
 
 type FeedbackData = {
   user_id: number;
@@ -17,11 +18,12 @@ const {
 } = getConfig();
 
 export default function FeedbackForm(product_id: number) {
+  const productId = product_id
   const [currentFeedbackData, setFeedbackData] = useState<FeedbackData>({
     rating: 0,
     message: "",
     user_id: 51,
-    product_id: product_id,
+    product_id: productId,
   });
 
   const router = useRouter();
@@ -54,10 +56,6 @@ export default function FeedbackForm(product_id: number) {
     setFeedback(event.target.value);
   };
 
-  function showNotification(message: string) {
-    window.alert(message);
-  }
-
   const dispatch: Dispatch<any> = useDispatch()
 
   const saveFeedback = React.useCallback(
@@ -73,7 +71,7 @@ export default function FeedbackForm(product_id: number) {
 
     let feedbackData: IFeedbackPostData = {
       user_id: currentFeedbackData.user_id,
-      product_id: currentFeedbackData.product_id,
+      product_id: productId,
       rating: currentFeedbackData.rating,
       message: currentFeedbackData.message
   }
@@ -82,9 +80,9 @@ export default function FeedbackForm(product_id: number) {
     console.log("responseBody: ", data);
     setFeedback("");
     setRating(undefined);
-    showNotification("Feedback added successfully");
+    showMessageNotification("Feedback added successfully");
     router.reload();
-  }, showNotification)
+  }, showMessageNotification)
 
 
 
@@ -101,7 +99,7 @@ export default function FeedbackForm(product_id: number) {
         console.log("responseBody: ", data);
         setFeedback("");
         setRating(undefined);
-        showNotification("Feedback added successfully");
+        showMessageNotification("Feedback added successfully");
         router.reload();
       }
     );*/

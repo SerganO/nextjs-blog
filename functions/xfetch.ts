@@ -1,14 +1,11 @@
 import getConfig from "next/config";
+import { showErrorNotification } from "./showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-function showNotification(error: Error) {
-  window.alert(error.message);
-}
-
-export default async (url, additionalProperties = {}, success, failure = showNotification) => {
+export default async (url, additionalProperties = {}, success, failure = showErrorNotification) => {
   const fetchData = async () => {
     try {
       console.log("url: ", BASE_URL + url);

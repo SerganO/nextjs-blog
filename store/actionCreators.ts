@@ -57,6 +57,26 @@ export function getProduct(id, success, failure) {
   }
 }
 
+export const saveProductToRedux = (product) => ({
+  type: actionTypes.GET_PRODUCT,
+  payload: {data: product },
+});
+
+export const saveUserToRedux = (user) => ({
+  type: actionTypes.GET_USER,
+  payload: {data: user },
+});
+
+export const saveFirstSetToRedux = (products) => ({
+  type: actionTypes.GET_FIRST_SET,
+  payload: {data: products },
+});
+
+export const saveProductsPageToRedux = (products) => ({
+  type: actionTypes.GET_PRODUCT_PAGE,
+  payload: {data: products },
+});
+
 export function simulateHttpRequest(action: StoreAction) {
   return (dispatch: DispatchType) => {
     setTimeout(() => {

@@ -2,15 +2,12 @@ import { useState } from "react";
 import getConfig from "next/config";
 import SiteHeader from "components/siteHeader";
 import { useRouter } from "next/router";
+import { showMessageNotification } from "functions/showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-
-function showNotification(message: string) {
-  window.alert(message);
-}
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -45,11 +42,11 @@ const Login = () => {
         goAfterLogin();
       } else {
         const responseBody = await response.text();
-        showNotification("error:" + responseBody);
+        showMessageNotification("error:" + responseBody);
       }
     } catch (error) {
       console.error(error);
-      showNotification("error:" + error);
+      showMessageNotification("error:" + error);
     }
   };
 

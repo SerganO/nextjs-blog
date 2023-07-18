@@ -6,20 +6,40 @@ import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import getConfig from "next/config";
 
-//import productController from "server/controllers/ProductController";
 import container from "server/di/container";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
 import xfetch from "functions/xfetch";
+import { saveProductsPageToRedux } from "store/actionCreators";
+import { Dispatch } from "redux";
+import { connect, useDispatch } from "react-redux";
+import { showErrorNotification } from "functions/showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-export default function paginationSSR({ data }) {
+const mapDispatchToProps = (dispatch) => {
+  return {
+    saveProductsPageToRedux: (user) => dispatch(saveProductsPageToRedux(user)),
+  };
+};
+
+const mapStateToProps = (state) => (
+  {
+  data: state.productReducer.pages[state.productReducer.pages.length - 1]
+});
+
+
+function Base({ data }) {
   const router = useRouter();
+  const dispatch: Dispatch<any> = useDispatch();
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
-  const [productsPageData, setProductsPageData] = useState(data);
+  
+  
+  const productsPageData = data;
+
+  //const [productsPageData, setProductsPageData] = useState(data);
 
   let userId = router.query.user;
 
@@ -29,9 +49,17 @@ export default function paginationSSR({ data }) {
   }
 
   useEffect(() => {
-    xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
+   /* xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
       setProductsPageData(data);
-    });
+    });*/
+    xfetch(
+      `/api/products/pagination?page=${page}${userString}`,
+      {},
+      (products) => {
+        dispatch(saveProductsPageToRedux(products))
+      },
+      showErrorNotification
+    );
   }, [page]);
 
   const goToProductsPage = () => {
@@ -39,7 +67,8 @@ export default function paginationSSR({ data }) {
     userString = "";
 
     xfetch(`/api/products/pagination?o=0&l=20`, {}, (data) => {
-      setProductsPageData(data);
+      //setProductsPageData(data);
+      dispatch(saveProductsPageToRedux(data))
       router.replace("/products?page=1").then(() => {
         setPage(1);
       });
@@ -141,6 +170,11 @@ export default function paginationSSR({ data }) {
     </div>
   );
 }
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Base)
 
 /*const productController =
   container.resolve<ProductController>("ProductController");

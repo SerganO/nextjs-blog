@@ -64,14 +64,17 @@ export default class FeedbackController extends BaseController {
   @POST("api/feedbacks/add")
   public addFeedback(body: any, user, session) {
     console.log("controller add feedback ");
+    console.log("session: ", session)
+    console.log("session.passport: ", session.passport)
+    console.log("session.passport.user: ", session.passport.user)
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
 
-    let userId: number = parseInt(bodyData["user_id"] as string);
+    const userId: number = parseInt(bodyData["user_id"] as string);
 
-    if(!userId) {
+    /*if(!userId) {
       userId = user?.id
-    }
+    }*/
 
     const productId: number = parseInt(bodyData["product_id"] as string);
     const rating: number = parseInt(bodyData["rating"] as string);
