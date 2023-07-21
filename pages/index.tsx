@@ -98,28 +98,19 @@ export default connect(
 )(Base)
 
 
-const productController =
-  container.resolve<ProductController>("ProductController");
+const productController = container.resolve<ProductController>("ProductController");
 //export const getServerSideProps = productController.handler("index");
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
-  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  await xfetch(
-    "/api/products/feedbacksIncluded/firstSet",
-    {},
-    (products) => {
-      store.dispatch(saveFirstSetToRedux({
-        count: 0,
-        products: products
-      }))
-    },
-    showErrorNotification
-  );
-  return {
-    props: {
+  
+  const res = await (productController.handler("index") as ((context: any) => Promise<any>))(context)
 
-    }
-  }
+  store.dispatch(saveFirstSetToRedux({
+    count: 0,
+    products:  res.props.data
+  }))
+
+  return res
 });
 
 

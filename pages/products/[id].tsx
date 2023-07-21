@@ -102,17 +102,11 @@ const productController =
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
   //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  await  xfetch(
-    `/api/products/${context.query.id}/extended`,
-    {},
-    (product) => {
-      store.dispatch(saveProductToRedux(product))
-    },
-    showErrorNotification
-  );
-  return {
-    props: {
+  const res = await (
+    productController.handler("products/:id") as (context: any) => Promise<any>
+  )(context);
 
-    }
-  }
+  store.dispatch(saveProductToRedux(res.props.data));
+
+  return res;
 });

@@ -20,26 +20,21 @@ const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-
-
 const mapDispatchToProps = (dispatch) => {
   return {
     saveUserToRedux: (user) => dispatch(saveUserToRedux(user)),
   };
 };
 
-const mapStateToProps = (state) => (
-  {
-  data: state.userReducer.users[state.userReducer.users.length - 1]
+const mapStateToProps = (state) => ({
+  data: state.userReducer.users[state.userReducer.users.length - 1],
 });
-
 
 function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
 
-
-  const userData = data
+  const userData = data;
 
   //const [userData, setUserData] = useState<IUser>(data);
 
@@ -48,7 +43,7 @@ function Base({ data }) {
       `/api/users/${router.query.id}`,
       {},
       (user) => {
-        dispatch(saveUserToRedux(user))
+        dispatch(saveUserToRedux(user));
       },
       showErrorNotification
     );
@@ -115,25 +110,21 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  (state => state)
-)(Base)
+  (state) => state
+)(Base);
 
 const userController = container.resolve<UserController>("UserController");
 //export const getServerSideProps = userController.handler("users/:id");
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
-  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  await  xfetch(
-    `/api/users/${context.query.id}`,
-    {},
-    (user) => {
-      store.dispatch(saveUserToRedux(user))
-    },
-    showErrorNotification
-  );
-  return {
-    props: {
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    const res = await (
+      userController.handler("users/:id") as (context: any) => Promise<any>
+    )(context);
 
-    }
+    store.dispatch(saveUserToRedux(res.props.data));
+
+    return res;
   }
-});
+);

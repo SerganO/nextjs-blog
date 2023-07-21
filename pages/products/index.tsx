@@ -26,18 +26,15 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => (
-  {
-  data: state.productReducer.pages[state.productReducer.pages.length - 1]
+const mapStateToProps = (state) => ({
+  data: state.productReducer.pages[state.productReducer.pages.length - 1],
 });
-
 
 function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
-  
-  
+
   const productsPageData = data;
 
   //const [productsPageData, setProductsPageData] = useState(data);
@@ -50,14 +47,14 @@ function Base({ data }) {
   }
 
   useEffect(() => {
-   /* xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
+    /* xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
       setProductsPageData(data);
     });*/
     xfetch(
       `/api/products/pagination?page=${page}${userString}`,
       {},
       (products) => {
-        dispatch(saveProductsPageToRedux(products))
+        dispatch(saveProductsPageToRedux(products));
       },
       showErrorNotification
     );
@@ -69,7 +66,7 @@ function Base({ data }) {
 
     xfetch(`/api/products/pagination?o=0&l=20`, {}, (data) => {
       //setProductsPageData(data);
-      dispatch(saveProductsPageToRedux(data))
+      dispatch(saveProductsPageToRedux(data));
       router.replace("/products?page=1").then(() => {
         setPage(1);
       });
@@ -176,25 +173,21 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   (state) => state
-)(Base)
+)(Base);
 
-/*const productController =
+const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("products/index");*/
+/*export const getServerSideProps = productController.handler("products/index");*/
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
-  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  await  xfetch(
-    `/api/products/pagination?page=1`,
-    {},
-    (products) => {
-      store.dispatch(saveProductsPageToRedux(products))
-    },
-    showErrorNotification
-  );
-  return {
-    props: {
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    const res = await (
+      productController.handler("products/index") as (context: any) => Promise<any>
+    )(context);
 
-    }
+    store.dispatch(saveProductsPageToRedux(res.props.data));
+
+    return res;
   }
-});
+);
