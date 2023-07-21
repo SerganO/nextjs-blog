@@ -14,6 +14,7 @@ import { saveUserToRedux } from "store/actionCreators";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { showErrorNotification } from "functions/showNotification";
+import { wrapper } from "store";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -114,7 +115,25 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
+  (state => state)
 )(Base)
 
 const userController = container.resolve<UserController>("UserController");
-export const getServerSideProps = userController.handler("users/:id");
+//export const getServerSideProps = userController.handler("users/:id");
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
+  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+  await  xfetch(
+    `/api/users/${context.query.id}`,
+    {},
+    (user) => {
+      store.dispatch(saveUserToRedux(user))
+    },
+    showErrorNotification
+  );
+  return {
+    props: {
+
+    }
+  }
+});

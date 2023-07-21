@@ -14,6 +14,7 @@ import { saveProductsPageToRedux } from "store/actionCreators";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { showErrorNotification } from "functions/showNotification";
+import { wrapper } from "store";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -174,8 +175,26 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
+  (state) => state
 )(Base)
 
 /*const productController =
   container.resolve<ProductController>("ProductController");
 export const getServerSideProps = productController.handler("products/index");*/
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
+  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+  await  xfetch(
+    `/api/products/pagination?page=1`,
+    {},
+    (products) => {
+      store.dispatch(saveProductsPageToRedux(products))
+    },
+    showErrorNotification
+  );
+  return {
+    props: {
+
+    }
+  }
+});

@@ -16,6 +16,7 @@ import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { saveFirstSetToRedux } from "store/actionCreators";
 import { showErrorNotification } from "functions/showNotification";
+import { wrapper } from "store";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -41,23 +42,23 @@ function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
 
-  useEffect(() => {
+  /*useEffect(() => {
     /*console.log("fetch")
     xfetch("/api/products/feedbacksIncluded/firstSet", {}, (data) => {
       setProductsData(data);
-    });*/
+    });
     xfetch(
       "/api/products/feedbacksIncluded/firstSet",
       {},
       (products) => {
         dispatch(saveFirstSetToRedux({
-          count: products.lenght,
+          count: 0,
           products: products
         }))
       },
       showErrorNotification
     );
-  }, []);
+  }, []);*/
 
   const goToProductsPage = () => {
     router.push("/products");
@@ -93,11 +94,35 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
+  (state => state)
 )(Base)
+
 
 const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("index");
+//export const getServerSideProps = productController.handler("index");
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
+  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+  await xfetch(
+    "/api/products/feedbacksIncluded/firstSet",
+    {},
+    (products) => {
+      store.dispatch(saveFirstSetToRedux({
+        count: 0,
+        products: products
+      }))
+    },
+    showErrorNotification
+  );
+  return {
+    props: {
+
+    }
+  }
+});
+
+
 
 /*export async function getServerSideProps({ req, res }) {
   const r = await productController.handler("index")

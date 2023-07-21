@@ -1,14 +1,13 @@
 import "../styles/global.css";
 import ErrorPage from "next/error";
-import { AppProps } from "next/app";
-import { createStore, applyMiddleware, Store } from "redux";
+
 import { Provider } from "react-redux";
-import thunk from "redux-thunk";
+import { wrapper } from "store";
 
-import rootReducrer  from "../store/reducers";
 
-const store = createStore(rootReducrer, applyMiddleware(thunk));
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, ...rest}) {
+  const {store, props} = wrapper.useWrappedStore(rest);
+  const pageProps = props.pageProps
   if (pageProps.error) {
     return <ErrorPage statusCode={404} />;
   }

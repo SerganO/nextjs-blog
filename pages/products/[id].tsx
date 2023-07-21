@@ -11,6 +11,7 @@ import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
 import xfetch from "functions/xfetch";
 import { showErrorNotification } from "functions/showNotification";
+import { wrapper } from "store";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -90,10 +91,28 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
+  (state) => state
 )(Base)
 
 /*export default Base;*/
 
 const productController =
   container.resolve<ProductController>("ProductController");
-export const getServerSideProps = productController.handler("products/:id");
+//export const getServerSideProps = productController.handler("products/:id");
+
+export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
+  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+  await  xfetch(
+    `/api/products/${context.query.id}/extended`,
+    {},
+    (product) => {
+      store.dispatch(saveProductToRedux(product))
+    },
+    showErrorNotification
+  );
+  return {
+    props: {
+
+    }
+  }
+});
