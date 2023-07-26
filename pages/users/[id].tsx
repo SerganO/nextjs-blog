@@ -2,9 +2,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
-import { IUser } from "server/models/User";
-
-//import userController from "server/controllers/UserController";
 import container from "server/di/container";
 import getConfig from "next/config";
 import Link from "next/link";
@@ -15,6 +12,8 @@ import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { showErrorNotification } from "functions/showNotification";
 import { wrapper } from "store";
+import { saveUserAction, userRequestAction } from "store/actionCreators";
+import * as actionTypes from "store/actionTypes";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -22,14 +21,15 @@ const {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveUserToRedux: (user) => dispatch(saveUserToRedux(user)),
+    saveUserAction: (data) => dispatch(saveUserAction(data)),
   };
 };
 
 const mapStateToProps = (state) => ({
-  data: state.userReducer.users[state.userReducer.users.length - 1],
+  data: state.userReducer.users.findLast(
+    (i) => i.id == state.userReducer.selectedUser
+  ),
 });
-
 function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
@@ -39,14 +39,15 @@ function Base({ data }) {
   //const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
-    xfetch(
+    dispatch(userRequestAction({ payload: { id: router.query.id } }));
+    /*xfetch(
       `/api/users/${router.query.id}`,
       {},
       (user) => {
         dispatch(saveUserToRedux(user));
       },
       showErrorNotification
-    );
+    );*/
     /*xfetch(`/api/users/${router.query.id}`, {}, (data) => {
       setUserData(data);
     });*/
@@ -116,7 +117,7 @@ export default connect(
 const userController = container.resolve<UserController>("UserController");
 //export const getServerSideProps = userController.handler("users/:id");
 
-export const getServerSideProps = wrapper.getServerSideProps(
+/*export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     const res = await (
@@ -124,6 +125,25 @@ export const getServerSideProps = wrapper.getServerSideProps(
     )(context);
 
     store.dispatch(saveUserToRedux(res.props.data));
+
+    return res;
+  }
+);*/
+
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    store.dispatch(
+      actionTypes.action(actionTypes.SELECT_USER, {
+        payload: { data: parseInt(context.query.id as string) },
+      })
+    );
+    const res = await (
+      userController.handler("users/:id") as (
+        context: any
+      ) => Promise<any>
+    )(context);
+    store.dispatch(saveUserAction({ data: res.props.data }));
 
     return res;
   }

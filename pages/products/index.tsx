@@ -4,30 +4,25 @@ import { useRouter } from "next/router";
 import ProductPlate from "../../components/productPlate";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
-import getConfig from "next/config";
-
 import container from "server/di/container";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
-import xfetch from "functions/xfetch";
-import { saveProductsPageToRedux } from "store/actionCreators";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { showErrorNotification } from "functions/showNotification";
 import { wrapper } from "store";
-
-const {
-  publicRuntimeConfig: { BASE_URL },
-} = getConfig();
+import { saveProductPageAction, productPageRequestAction } from "store/actionCreators";
+import * as actionTypes from "store/actionTypes";
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveProductsPageToRedux: (user) => dispatch(saveProductsPageToRedux(user)),
+    saveProductPageAction: (data) => dispatch(saveProductPageAction(data)),
   };
 };
 
 const mapStateToProps = (state) => ({
-  data: state.productReducer.pages[state.productReducer.pages.length - 1],
+  data: state.productReducer.pages.findLast(
+    (i) => i.page == state.productReducer.selectedPage
+  ),
 });
 
 function Base({ data }) {
@@ -47,29 +42,14 @@ function Base({ data }) {
   }
 
   useEffect(() => {
-    /* xfetch(`/api/products/pagination?page=${page}${userString}`, {}, (data) => {
-      setProductsPageData(data);
-    });*/
-    xfetch(
-      `/api/products/pagination?page=${page}${userString}`,
-      {},
-      (products) => {
-        dispatch(saveProductsPageToRedux(products));
-      },
-      showErrorNotification
-    );
+    dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
   }, [page]);
 
   const goToProductsPage = () => {
     userId = "";
     userString = "";
-
-    xfetch(`/api/products/pagination?o=0&l=20`, {}, (data) => {
-      //setProductsPageData(data);
-      dispatch(saveProductsPageToRedux(data));
-      router.replace("/products?page=1").then(() => {
-        setPage(1);
-      });
+    router.replace("/products?page=1").then(() => {
+      setPage(1)
     });
   };
 
@@ -177,17 +157,23 @@ export default connect(
 
 const productController =
   container.resolve<ProductController>("ProductController");
-/*export const getServerSideProps = productController.handler("products/index");*/
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    store.dispatch(
+      actionTypes.action(actionTypes.SELECT_PAGE, {
+        payload: { data: (parseInt(context.query.page as string) || 1) },
+      })
+    );
     const res = await (
-      productController.handler("products/index") as (context: any) => Promise<any>
+      productController.handler("products/index") as (
+        context: any
+      ) => Promise<any>
     )(context);
-
-    store.dispatch(saveProductsPageToRedux(res.props.data));
+    store.dispatch(saveProductPageAction({ data: res.props.data }));
 
     return res;
   }
 );
+

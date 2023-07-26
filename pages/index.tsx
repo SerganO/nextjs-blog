@@ -5,32 +5,22 @@ import SiteHeader from "../components/siteHeader";
 import SearchFilters from "../components/searchFilters";
 import ProductPlate from "../components/productPlate";
 
-//import productController from "server/controllers/ProductController";
-import getConfig from "next/config";
-import { IProduct } from "server/models/Product";
-
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
-import xfetch from "functions/xfetch";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { saveFirstSetToRedux } from "store/actionCreators";
-import { showErrorNotification } from "functions/showNotification";
+import { mainProductPageRequestAction, saveMainProductPageAction } from "store/actionCreators";
 import { wrapper } from "store";
-
-const {
-  publicRuntimeConfig: { BASE_URL },
-} = getConfig();
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveFirstSetToRedux: (user) => dispatch(saveFirstSetToRedux(user)),
+    saveMainProductPageAction: (data) => dispatch(saveMainProductPageAction(data)),
   };
 };
 
 const mapStateToProps = (state) => (
   {
-  data: state.productReducer.pages[state.productReducer.pages.length - 1]
+  data: state.productReducer.mainPageInfo
 });
 
 
@@ -42,23 +32,9 @@ function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
 
-  /*useEffect(() => {
-    /*console.log("fetch")
-    xfetch("/api/products/feedbacksIncluded/firstSet", {}, (data) => {
-      setProductsData(data);
-    });
-    xfetch(
-      "/api/products/feedbacksIncluded/firstSet",
-      {},
-      (products) => {
-        dispatch(saveFirstSetToRedux({
-          count: 0,
-          products: products
-        }))
-      },
-      showErrorNotification
-    );
-  }, []);*/
+  useEffect(() => {
+    dispatch(mainProductPageRequestAction())
+  }, []);
 
   const goToProductsPage = () => {
     router.push("/products");
@@ -104,19 +80,6 @@ const productController = container.resolve<ProductController>("ProductControlle
 export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
   
   const res = await (productController.handler("index") as ((context: any) => Promise<any>))(context)
-
-  store.dispatch(saveFirstSetToRedux({
-    count: 0,
-    products:  res.props.data
-  }))
-
+  store.dispatch(saveMainProductPageAction({ data: { products: res.props.data} }));
   return res
 });
-
-
-
-/*export async function getServerSideProps({ req, res }) {
-  const r = await productController.handler("index")
-  console.log('rr', r)
-  return r ;
-}*/

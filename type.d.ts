@@ -24,15 +24,23 @@ interface IFeedbackPostData {
 
 
 type UserState = {
-    users: IUser[]
+    users: IUser[],
+    selectedUser: number,
 }
 
 type ProductState = {
+    mainPageInfo: {
+        products: IProduct[],
+    }
     products: IProduct[],
     pages: {
+        page: number,
         count: number
-        products: IProduct[]
+        products: IProduct[],
+        vendor?: IUser
     }[],
+    selectedProductId: number,
+    selectedPage: number,
 }
 
 type FeedbackState = {

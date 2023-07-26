@@ -11,9 +11,9 @@
     "start": "next start"
   },
   "dependencies": {
-    "@material-ui/core": "^4.12.4",
-    "@material-ui/lab": "^4.0.0-alpha.61",
-    "@tailwindcss/custom-forms": "^0.2.1",
+
+    "@reduxjs/toolkit": "^1.9.5",
+    
     "ajv": "^8.12.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
@@ -40,13 +40,17 @@
     "react-redux": "^8.1.1",
     "redis": "^4.6.6",
     "redux": "^4.2.1",
+    "redux-saga": "^1.2.3",
     "redux-thunk": "^2.4.2",
     "remark": "^14.0.2",
     "remark-html": "^15.0.2",
     "sequelize": "^6.31.1",
     "sequelize-auto": "^0.8.8",
     "tls": "^0.0.1",
-    "webpack-node-externals": "^3.0.0"
+    "webpack-node-externals": "^3.0.0",
+    "@material-ui/core": "^4.12.4",
+    "@material-ui/lab": "^4.0.0-alpha.61",
+    "@tailwindcss/custom-forms": "^0.2.1"
   },
   "devDependencies": {
     "@types/node": "^18.16.3",

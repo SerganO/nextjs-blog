@@ -14,6 +14,30 @@ export default class ProductService extends BaseContext {
   }
 
   /**
+   * addFeedbackToProduct
+   */
+  public addFeedbackToProduct(
+    userId: number,
+    productId: number,
+    rating: number,
+    message: string
+  ) {
+
+    const { FeedbackService } = this.di
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        await FeedbackService.addFeedback(userId, productId, rating, message)
+        const response = await this.findProductExtendedInfo(`${productId}`)
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    })
+
+  }
+
+  /**
    * getAllProductsInfo
    */
   public getAllProductsInfo(userId: number) {

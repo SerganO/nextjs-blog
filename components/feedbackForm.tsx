@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import getConfig from "next/config";
-import { addFeedback, removeFeedback } from "../store/actionCreators"
+import { addFeedbackAction } from "../store/actionCreators"
 import { Dispatch } from "redux"
 import { useDispatch } from "react-redux"
 import { showMessageNotification } from "functions/showNotification";
@@ -58,12 +58,10 @@ export default function FeedbackForm(product_id: number) {
 
   const dispatch: Dispatch<any> = useDispatch()
 
-  const saveFeedback = React.useCallback(
-    (feedback: IFeedbackPostData, success, failure) => dispatch(addFeedback(feedback, success, failure)),
+  /*const saveFeedback = React.useCallback(
+    (feedback: IFeedbackPostData) => dispatch(addFeedbackAction(feedback)),
     [dispatch]
-  )
-
-
+  )*/
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -75,14 +73,8 @@ export default function FeedbackForm(product_id: number) {
       rating: currentFeedbackData.rating,
       message: currentFeedbackData.message
   }
-
-  saveFeedback(feedbackData, (data) => {
-    console.log("responseBody: ", data);
-    setFeedback("");
-    setRating(undefined);
-    showMessageNotification("Feedback added successfully");
-    router.reload();
-  }, showMessageNotification)
+  dispatch(addFeedbackAction({payload: { feedbackData }}))
+  //saveFeedback(feedbackData)
 
 
 

@@ -4,4 +4,4 @@ import container from "server/di/container";
 const productController =
   container.resolve<ProductController>("ProductController");
 
-export default productController.handler("api/products/:id/extended");
+export default productController.handler("api/products/:id/addFeedback");

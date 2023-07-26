@@ -103,6 +103,45 @@ export default class ProductController extends BaseController {
     return ProductService.findProductsFeedbackIndluded(userId, offset, limit);
   }
 
+/**
+   * addFeedback
+   */
+@USE(
+  validate({
+    type: 'object',
+    properties: {
+      id: validateProps.queryId,
+      user_id: {type: "number"},
+      product_id: {type: "number"},
+      rating: {type: "number"},
+      message: {type: "string"},
+    },
+    required: ['product_id','rating','message'],
+    additionalProperties: false,
+  })
+)
+@POST("api/products/:id/addFeedback")
+public addFeedback(body: any) {
+  console.log("controller add feedback ");
+  let bodyString = JSON.stringify(body);
+  let bodyData = JSON.parse(bodyString);
+
+  const userId: number = parseInt(bodyData["user_id"] as string);
+  const productId: number = parseInt(bodyData["product_id"] as string);
+  const rating: number = parseInt(bodyData["rating"] as string);
+  const message: string = bodyData["message"] as string;
+
+  if (userId && productId && rating && message) {
+    const { ProductService } = this.di;
+    return ProductService.addFeedbackToProduct(userId, productId, rating, message);
+  } else {
+    //const { FeedbackService } = this.di;
+    //return FeedbackService.addFeedback(userId, productId, rating, message);
+ 
+    throw Error("not full data");
+  }
+}
+
   /**
    * findProductsPaginated
    */
@@ -116,7 +155,7 @@ export default class ProductController extends BaseController {
     // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
 
     const userId = query["user"] as string;
-    const page = parseInt(query["page"] as string);
+    const page = parseInt(query["page"] as string) || 1;
 
     const offset = (page - 1) * 20;
     const limit = 20;
@@ -124,7 +163,16 @@ export default class ProductController extends BaseController {
     const { ProductService } = this.di;
     console.log("call element: ", this);
     console.log("findProductsPaginated dI: ", this.di);
-    return ProductService.findProductsPaginated(userId, offset, limit);
+    return ProductService.findProductsPaginated(userId, offset, limit).then(res => {
+      const result: any = res
+      return {
+        count: result.count,
+        products: result.products,
+        vendor: result.vendor,
+        page: page
+       }
+
+    });
   };
 
   /**

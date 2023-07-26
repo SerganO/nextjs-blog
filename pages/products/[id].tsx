@@ -3,64 +3,35 @@ import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
 import React, { useEffect, useState } from "react";
-import getConfig from "next/config";
-import { saveProductToRedux } from "store/actionCreators";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
-import xfetch from "functions/xfetch";
-import { showErrorNotification } from "functions/showNotification";
 import { wrapper } from "store";
-
-const {
-  publicRuntimeConfig: { BASE_URL },
-} = getConfig();
+import { saveProductAction, productRequestAction } from "store/actionCreators";
+import * as actionTypes from "store/actionTypes";
 
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveProductToRedux: (product) => dispatch(saveProductToRedux(product)),
+    saveProductAction: (data) => dispatch(saveProductAction(data)),
   };
 };
 
-const mapStateToProps = (state) => (
-  {
-  data: state.productReducer.products[state.productReducer.products.length - 1]
+const mapStateToProps = (state) => ({
+  data: state.productReducer.products.findLast(
+    (i) => i.id == state.productReducer.selectedProductId
+  ),
 });
 
 function Base({ data }) {
   const dispatch: Dispatch<any> = useDispatch();
 
-  /*const recieveProduct = React.useCallback(
-    (id, success, failure) => dispatch(getProduct(id, success, failure)),
-    [dispatch]
-  );*/
-
-
-
   const router = useRouter();
 
-  const productData = data
+  const productData = data;
   useEffect(() => {
-    xfetch(
-      `/api/products/${router.query.id}/extended`,
-      {},
-      (product) => {
-        dispatch(saveProductToRedux(product))
-      },
-      showErrorNotification
-    );
-   /* recieveProduct(
-      router.query.id,
-      (data) => {
-        if (data["error"]) {
-          router.push("/404");
-        }
-        setProductData(data);
-      },
-      showErrorNotification
-    );*/
+    dispatch(productRequestAction({ payload: { id: router.query.id } }));
   }, []);
 
   const handleGoBack = () => {
@@ -92,21 +63,26 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps,
   (state) => state
-)(Base)
-
-/*export default Base;*/
+)(Base);
 
 const productController =
   container.resolve<ProductController>("ProductController");
-//export const getServerSideProps = productController.handler("products/:id");
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
-  //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-  const res = await (
-    productController.handler("products/:id") as (context: any) => Promise<any>
-  )(context);
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    store.dispatch(
+      actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
+        payload: { data: parseInt(context.query.id as string) },
+      })
+    );
+    const res = await (
+      productController.handler("products/:id") as (
+        context: any
+      ) => Promise<any>
+    )(context);
+    store.dispatch(saveProductAction({ data: res.props.data }));
 
-  store.dispatch(saveProductToRedux(res.props.data));
-
-  return res;
-});
+    return res;
+  }
+);
