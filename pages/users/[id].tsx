@@ -6,8 +6,6 @@ import container from "server/di/container";
 import getConfig from "next/config";
 import Link from "next/link";
 import UserController from "server/controllers/UserController";
-import xfetch from "functions/xfetch";
-import { saveUserToRedux } from "store/actionCreators";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { showErrorNotification } from "functions/showNotification";

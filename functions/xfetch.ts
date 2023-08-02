@@ -30,7 +30,8 @@ export default async (
 };
 
 export async function _xfetch(url: string, additionalProperties = {}) {
-  return fetch(BASE_URL + url, additionalProperties).then((response) =>
+  const uri = '/api/v2/' + BASE_URL + url;
+  return fetch(uri, additionalProperties).then((response) =>
     response.json()
   ) .catch((error) => {
     throw error;

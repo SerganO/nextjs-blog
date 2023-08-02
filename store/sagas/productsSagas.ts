@@ -23,6 +23,11 @@ function* fetchProductPage(action) {
       type: actionTypes.PRODUCT_PAGE_FETCH_SUCCEEDED,
       payload: { data },
     });
+    yield put(
+      actionTypes.action(actionTypes.SELECT_PAGE, {
+        payload: { data: action.page },
+      })
+    );
   } catch (error) {
     yield put({ type: actionTypes.PRODUCT_PAGE_FETCH_FAILED, error });
   }
@@ -75,11 +80,6 @@ export function* watchFetchProduct() {
 export function* watchFetchProductPage() {
   while (true) {
     const { payload } = yield take(actionTypes.PRODUCT_PAGE_REQUESTED);
-    yield put(
-      actionTypes.action(actionTypes.SELECT_PAGE, {
-        payload: { data: payload.page },
-      })
-    );
     yield call(fetchProductPage, payload);
   }
 }

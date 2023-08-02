@@ -94,4 +94,22 @@ const productReducer = (
   return state;
 };
 
+/*case IMethod.UPDATE:
+                if (action.response) {
+                    const entitiesArr = action.response.entities;
+
+                    if (entitiesArr && entityReducer in entitiesArr) {
+                        if (state && state.size > 0) {
+                            Object.keys(entitiesArr[entityReducer]).map(id => {
+                                state = state.remove(id)
+;
+                            });
+                        }
+                        state = state.mergeDeep(
+                            fromJS(entitiesArr[entityReducer]),
+                        );
+                    }
+                    break;
+                }
+*/
 export default productReducer;
