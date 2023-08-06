@@ -12,6 +12,8 @@ import { connect, useDispatch } from "react-redux";
 import { wrapper } from "store";
 import { saveProductPageAction, productPageRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
+import { Schema, normalize, schema } from 'normalizr';
+import { mainPageInfo, page } from "functions/xfetch";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -19,11 +21,29 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => ({
-  data: state.productReducer.pages.findLast(
-    (i) => i.page == state.productReducer.selectedPage
-  ),
-});
+const mapStateToProps = (state) => {
+  const data = structuredClone(state.pageReducer.pages.find(
+    (i) => i.page == state.reducer.selectedPage
+  ))
+
+  if (data == null) return {}
+
+  data.products = data.products.map(
+    id => {
+      const product = structuredClone(state.productReducer.products.find((i) => i.id == id))
+
+      product.feedbacks = product.feedbacks.map(
+        feedId => {
+          return structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+        }
+      )
+
+      return product
+    }
+  )
+
+  return {data}
+};
 
 function Base({ data }) {
   const router = useRouter();
@@ -48,9 +68,20 @@ function Base({ data }) {
   const goToProductsPage = () => {
     userId = "";
     userString = "";
-    router.replace("/products?page=1").then(() => {
+    router.push(
+      {
+        query: {
+          page: 1
+        },
+      },
+      undefined,
+      { shallow: true }
+    );
+    setPage(1)
+    dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
+    /*router.replace("/products?page=1").then(() => {
       setPage(1)
-    });
+    });*/
   };
 
   const fullname = `${productsPageData?.vendor?.firstName ?? ""} ${
@@ -171,7 +202,10 @@ export const getServerSideProps = wrapper.getServerSideProps(
         context: any
       ) => Promise<any>
     )(context);
-    store.dispatch(saveProductPageAction({ data: res.props.data }));
+
+    const nData = normalize(res.props.data, page)
+    console.log("nData: ", nData)
+    store.dispatch(saveProductPageAction({ data: nData }));
 
     return res;
   }

@@ -5,7 +5,7 @@ const initialState: FeedbackState = {
   feedbacks: [],
 }
 
-const feedbackReducer = (
+/*const feedbackReducer = (
     state: FeedbackState = initialState,
     action: StoreAction
   ): FeedbackState => {
@@ -26,6 +26,90 @@ const feedbackReducer = (
         }
     }
     return state
+  }*/
+
+
+  const entityReducer = "feedbacks";
+const feedbackReducer = (
+  state: FeedbackState = initialState,
+  action: StoreAction
+): FeedbackState => {
+  switch (action.type) {
+    case actionTypes.GET:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            feedbacks: state.feedbacks.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+
+      break;
+    case actionTypes.ADD:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            feedbacks: state.feedbacks.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+
+      break;
+    case actionTypes.UPDATE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            feedbacks: state.feedbacks.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+      break;
+    case actionTypes.DELETE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          const ids = new Set(Object.keys(newData));
+          return {
+            ...state,
+            feedbacks: state.feedbacks.filter((d) => !ids.has(d.id.toString()))
+          };
+        }
+      }
+
+      break;
   }
+  return state;
+};
   
   export default feedbackReducer

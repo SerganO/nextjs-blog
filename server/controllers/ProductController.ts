@@ -188,7 +188,18 @@ public addFeedback(body: any) {
     console.log("getProductFeedbacksIncludedFirstSet in");
     const { ProductService } = this.di;
 
-    return ProductService.findProductsFeedbackIndludedFirstSet();
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        const products = await ProductService.findProductsFeedbackIndludedFirstSet();
+        let response = { id: 0, products};
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    })
+    
+   
   }
 
   /**

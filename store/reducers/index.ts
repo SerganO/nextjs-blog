@@ -2,11 +2,17 @@ import { combineReducers } from "redux"
 import feedbackReducer from "./feedbackReducer"
 import userReducer from "./userReducer"
 import productReducer from "./productReducer"
+import reducer from "./commonReducer"
+import pageReducer from "./pageReducer"
+import mainPageInfoReducer from "./mainPageInfoReducer"
 import {HYDRATE} from "next-redux-wrapper"
 const rootReducer = combineReducers({
     userReducer,
     productReducer,
-    feedbackReducer
+    feedbackReducer,
+    reducer,
+    pageReducer,
+    mainPageInfoReducer
 })
 
 export default (state, action) => {

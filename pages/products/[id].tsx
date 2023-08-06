@@ -10,6 +10,8 @@ import ProductController from "server/controllers/ProductController";
 import { wrapper } from "store";
 import { saveProductAction, productRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
+import { normalize } from "normalizr";
+import { product } from "functions/xfetch";
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -18,11 +20,29 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-const mapStateToProps = (state) => ({
-  data: state.productReducer.products.findLast(
-    (i) => i.id == state.productReducer.selectedProductId
-  ),
-});
+const mapStateToProps = (state) => {
+
+  const data =  structuredClone(state.productReducer.products.find(
+    (i) => i.id == state.reducer.selectedProductId
+  ))
+
+  if(!data) return {}
+
+  data.vendor = state.userReducer.users.find((u) => u.id == data.vendor)
+
+  data.feedbacks = data.feedbacks.map(
+    feedId => {
+      const feedback = structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+
+      feedback.author =  state.userReducer.users.find((u) => u.id ==  feedback.author)
+
+      return feedback
+    }
+  )
+
+
+  return {data}
+};
 
 function Base({ data }) {
   const dispatch: Dispatch<any> = useDispatch();
@@ -81,7 +101,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         context: any
       ) => Promise<any>
     )(context);
-    store.dispatch(saveProductAction({ data: res.props.data }));
+    const nData = normalize(res.props.data, product)
+    store.dispatch(saveProductAction({ data: nData }));
 
     return res;
   }

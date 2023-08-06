@@ -12,6 +12,8 @@ import { showErrorNotification } from "functions/showNotification";
 import { wrapper } from "store";
 import { saveUserAction, userRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
+import { normalize } from "normalizr";
+import { user } from "functions/xfetch";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -24,8 +26,8 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => ({
-  data: state.userReducer.users.findLast(
-    (i) => i.id == state.userReducer.selectedUser
+  data: state.userReducer.users.find(
+    (i) => i.id == state.reducer.selectedUser
   ),
 });
 function Base({ data }) {
@@ -141,7 +143,8 @@ export const getServerSideProps = wrapper.getServerSideProps(
         context: any
       ) => Promise<any>
     )(context);
-    store.dispatch(saveUserAction({ data: res.props.data }));
+    const nData = normalize(res.props.data, user)
+    store.dispatch(saveUserAction({ data: nData }));
 
     return res;
   }

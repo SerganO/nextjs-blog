@@ -6,19 +6,19 @@ export const productRequestAction = (data) =>
   actionTypes.action(actionTypes.PRODUCT_REQUESTED, data);
 
 export const saveUserAction = (data) =>
-  actionTypes.action(actionTypes.USER_FETCH_SUCCEEDED, { payload: data });
+  actionTypes.action(actionTypes.ADD, { payload: data });
 export const userRequestAction = (data) =>
   actionTypes.action(actionTypes.USER_REQUESTED, data);
 
 export const saveProductPageAction = (data) =>
-  actionTypes.action(actionTypes.PRODUCT_PAGE_FETCH_SUCCEEDED, {
+  actionTypes.action(actionTypes.ADD, {
     payload: data,
   });
 export const productPageRequestAction = (data) =>
   actionTypes.action(actionTypes.PRODUCT_PAGE_REQUESTED, data);
 
 export const saveMainProductPageAction = (data) =>
-  actionTypes.action(actionTypes.MAIN_PRODUCT_PAGE_FETCH_SUCCEEDED, {
+  actionTypes.action(actionTypes.ADD, {
     payload: data,
   });
 export const mainProductPageRequestAction = () =>

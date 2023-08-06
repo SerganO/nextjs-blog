@@ -35,6 +35,11 @@ export const MAIN_PRODUCT_PAGE_FETCH_SUCCEEDED = "MAIN_PRODUCT_PAGE_FETCH_SUCCEE
 export const MAIN_PRODUCT_PAGE_FETCH_FAILED = "MAIN_PRODUCT_PAGE_FETCH_FAILED";
 
 
+export const ADD = "ADD"
+export const UPDATE = "UPDATE"
+export const GET = "GET"
+export const DELETE = "DELETE"
+
 
 
 

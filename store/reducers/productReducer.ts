@@ -1,7 +1,15 @@
 import { IProduct } from "server/models/Product";
 import * as actionTypes from "../actionTypes";
 
-const initialState: ProductState = {
+type ProductStateNew = {
+  products: IProduct[];
+};
+
+const initialState: ProductStateNew = {
+  products: [],
+};
+
+/*const initialState: ProductState = {
   mainPageInfo: {
     products: [],
   },
@@ -9,9 +17,9 @@ const initialState: ProductState = {
   pages: [],
   selectedProductId: -1,
   selectedPage: -1,
-};
+};*/
 
-const productReducer = (
+/*const productReducer = (
   state: ProductState = initialState,
   action: StoreAction
 ): ProductState => {
@@ -92,24 +100,90 @@ const productReducer = (
       };
   }
   return state;
+};*/
+
+const entityReducer = "products";
+
+const productReducer = (
+  state: ProductStateNew = initialState,
+  action: StoreAction
+): ProductStateNew => {
+  switch (action.type) {
+    case actionTypes.GET:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+
+      break;
+    case actionTypes.ADD:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+
+      break;
+    case actionTypes.UPDATE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          
+          const ids = new Set(Object.keys(newData));
+          const newDataArr = Object.keys(newData).map(
+            id => {
+              return newData[id]
+            }
+          )
+          return {
+            ...state,
+            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+          };
+        }
+      }
+      break;
+    case actionTypes.DELETE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && entityReducer in entitiesArr) {
+          const newData = entitiesArr[entityReducer];
+          const ids = new Set(Object.keys(newData));
+          return {
+            ...state,
+            products: state.products.filter((d) => !ids.has(d.id.toString()))
+          };
+        }
+      }
+
+      break;
+  }
+  return state;
 };
 
-/*case IMethod.UPDATE:
-                if (action.response) {
-                    const entitiesArr = action.response.entities;
-
-                    if (entitiesArr && entityReducer in entitiesArr) {
-                        if (state && state.size > 0) {
-                            Object.keys(entitiesArr[entityReducer]).map(id => {
-                                state = state.remove(id)
-;
-                            });
-                        }
-                        state = state.mergeDeep(
-                            fromJS(entitiesArr[entityReducer]),
-                        );
-                    }
-                    break;
-                }
-*/
 export default productReducer;

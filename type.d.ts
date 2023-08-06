@@ -28,17 +28,21 @@ type UserState = {
     selectedUser: number,
 }
 
-type ProductState = {
-    mainPageInfo: {
-        products: IProduct[],
-    }
+type IPage = {
+    page: number,
+    count: number
     products: IProduct[],
-    pages: {
-        page: number,
-        count: number
-        products: IProduct[],
-        vendor?: IUser
-    }[],
+    vendor?: IUser
+}
+
+type MainPageInfo = {
+    products: IProduct[]
+}
+
+type ProductState = {
+    mainPageInfo: MainPageInfo,
+    products: IProduct[],
+    pages: IPage[],
     selectedProductId: number,
     selectedPage: number,
 }
@@ -50,6 +54,26 @@ type FeedbackState = {
 type StoreAction = {
     type: string
     payload: any
+}
+
+
+type StoreState = {
+    users: IUser[],
+    products: IProduct[],
+    feedbacks: IFeedback[],
+    pages: IPage[],
+    mainPageInfo: MainPageInfo,
+    selectedUser: number,
+    selectedProductId: number,
+    selectedPage: number,
+
+}
+
+type ValuesState = {
+    selectedUser: number,
+    selectedProductId: number,
+    selectedPage: number,
+
 }
 
 type DispatchType = (args: StoreAction) => StoreAction

@@ -9,31 +9,55 @@ import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { mainProductPageRequestAction, saveMainProductPageAction } from "store/actionCreators";
+import {
+  mainProductPageRequestAction,
+  saveMainProductPageAction,
+} from "store/actionCreators";
 import { wrapper } from "store";
+import { normalize } from "normalizr";
+import { mainPageInfo } from "functions/xfetch";
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveMainProductPageAction: (data) => dispatch(saveMainProductPageAction(data)),
+    saveMainProductPageAction: (data) =>
+      dispatch(saveMainProductPageAction(data)),
   };
 };
 
-const mapStateToProps = (state) => (
-  {
-  data: state.productReducer.mainPageInfo
-});
+const mapStateToProps = (state) => {
+  
+  const data = structuredClone(state.mainPageInfoReducer.info)
 
+  if (data == null) return {}
+
+  data.products = data.products.map(
+    id => {
+      const product = structuredClone(state.productReducer.products.find((i) => i.id == id))
+
+      product.feedbacks = product.feedbacks.map(
+        feedId => {
+          return structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+        }
+      )
+
+      return product
+    }
+  )
+
+  return {data}
+
+
+};
 
 function Base({ data }) {
-
-  const productsData = data
+  const productsData = data;
 
   //const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
-    dispatch(mainProductPageRequestAction())
+    dispatch(mainProductPageRequestAction());
   }, []);
 
   const goToProductsPage = () => {
@@ -59,7 +83,10 @@ function Base({ data }) {
         </button>
         <div className="mt-6 sm:overflow-x-auto sm:px-4 ">
           <div className="px-4 sm:-ml-2 sm:inline-flex sm:px-0 sm:pb-8">
-            {productsData?.products?.map((product, index) => ProductPlate(product))};
+            {productsData?.products?.map((product, index) =>
+              ProductPlate(product)
+            )}
+            ;
           </div>
         </div>
       </main>
@@ -70,16 +97,22 @@ function Base({ data }) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-  (state => state)
-)(Base)
+  (state) => state
+)(Base);
 
-
-const productController = container.resolve<ProductController>("ProductController");
+const productController =
+  container.resolve<ProductController>("ProductController");
 //export const getServerSideProps = productController.handler("index");
 
-export const getServerSideProps = wrapper.getServerSideProps(store => async context => {
-  
-  const res = await (productController.handler("index") as ((context: any) => Promise<any>))(context)
-  store.dispatch(saveMainProductPageAction({ data: { products: res.props.data} }));
-  return res
-});
+export const getServerSideProps = wrapper.getServerSideProps(
+  (store) => async (context) => {
+    const res = await (
+      productController.handler("index") as (context: any) => Promise<any>
+    )(context);
+    const nData = normalize(res.props.data, mainPageInfo)
+    store.dispatch(
+      saveMainProductPageAction({ data: nData  })
+    );
+    return res;
+  }
+);
