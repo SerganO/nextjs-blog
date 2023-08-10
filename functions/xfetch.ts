@@ -21,8 +21,6 @@ export const mainPageInfo = new schema.Entity("mainPageInfos", {
   products: [product]
 })
 
-
-
 export const page = new schema.Entity("pages", {
   products: [product],
 }, {idAttribute: "page"})
