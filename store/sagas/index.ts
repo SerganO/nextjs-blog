@@ -32,7 +32,7 @@ export default function* rootSaga() {
 }
 */
 
-/*
+
 export default function* rootSaga() {
   yield all([
     call(watchFetchProduct),
@@ -42,5 +42,5 @@ export default function* rootSaga() {
     call(watchFetchUser),
   ]);
 }
-*/
+
 

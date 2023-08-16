@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 
-export class UserEntity extends Entity {
+export default class UserEntity extends Entity {
   constructor(opts: any) {
     super(opts);
     this.initSchema("users",{},{});

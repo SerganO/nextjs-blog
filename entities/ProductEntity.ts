@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 
-export class ProductEntity extends Entity {
+export default class ProductEntity extends Entity {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
@@ -16,6 +16,10 @@ export class ProductEntity extends Entity {
       vendor: user,
       feedbacks: [feedback],
     });
+
+
+    this.watchFetchProduct = this.watchFetchProduct.bind(this)
+
   }
 
   /**fetchProduct(action) {

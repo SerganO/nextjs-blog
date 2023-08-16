@@ -2,6 +2,7 @@ import getConfig from "next/config";
 import { Schema, normalize, schema } from "normalizr";
 import { put } from "redux-saga/effects";
 import BaseContext from "server/di/BaseContext";
+import IContextContainer from "server/di/interfaces/IContextContainer";
 import * as actionTypes from "store/actionTypes";
 
 const {
@@ -17,7 +18,7 @@ export class Entity extends BaseContext {
   private _schema;
   private _entityName;
 
-  constructor(opts) {
+  constructor(opts: IContextContainer) {
     super(opts);
   }
 

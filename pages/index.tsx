@@ -16,6 +16,8 @@ import {
 import { wrapper } from "store";
 import { normalize } from "normalizr";
 import { mainPageInfo } from "functions/xfetch";
+import UserEntity from "entities/UserEntity";
+
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -57,6 +59,7 @@ function Base({ data }) {
   const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
+    
     dispatch(mainProductPageRequestAction());
   }, []);
 

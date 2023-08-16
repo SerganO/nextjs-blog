@@ -3,7 +3,7 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 
-export class MainPageInfoEntity extends Entity {
+export default class MainPageInfoEntity extends Entity {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
