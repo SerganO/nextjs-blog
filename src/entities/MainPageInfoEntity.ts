@@ -25,6 +25,34 @@ export default class MainPageInfoEntity extends Entity {
 
   }
 
+/*  @action()
+  public fetchMainProductPageInvokable(data, isSagaCall = false) {
+    function* saga(data) {
+      console.log("in fetchProductPageInvokable saga call");
+      yield call(
+        this.xRead,
+        `/products/pagination?page=${data.page}${data.userString}`
+      );
+      console.log("in fetchProductPageInvokable saga put");
+      yield put(
+        actionTypes.action(actionTypes.UPDATE_VALUE, {
+          payload: {
+            data: {
+              key: "SELECTED_PAGE",
+              value: data.page,
+            },
+          },
+        })
+      );
+    }
+    return this.invokableSaga(
+      "fetchProductPageInvokable",
+      isSagaCall,
+      saga,
+      data
+    );
+  }*/
+
   @action()
   *fetchMainProductPage() {
     yield call(

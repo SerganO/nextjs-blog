@@ -71,9 +71,12 @@ function Base({ data }) {
   }
 
   useEffect(() => {
+    
     const entity = clientContainer.resolve<PageEntity>("PageEntity")
-    dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
-    //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
+    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
+    const action = entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}})
+    console.log("invokableAction: ", action)
+    dispatch(action)
     //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
   }, [page]);
 

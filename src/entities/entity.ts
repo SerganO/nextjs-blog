@@ -152,7 +152,8 @@ export class Entity extends BaseClientContext {
 
   public invokableSaga(methodName, isSagaCall, saga, data?) {
     if (isSagaCall) {
-      saga(data).next();
+      const boundedSaga = saga.bind(this)
+      return boundedSaga(data)
     } else {
       const action = Entity._actions[this.constructor.name + "_" + methodName];
       const dispatchAction = action(data);

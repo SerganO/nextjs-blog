@@ -39,17 +39,13 @@ export default class PageEntity extends Entity {
       console.log("in fetchProductPageInvokable saga put");
       yield put(
         actionTypes.action(actionTypes.UPDATE_VALUE, {
-        
-          payload: { data: {
-            key: "SELECTED_PAGE",
-            value: data.page
-          } },
-        }
-      )
-        /*
-        actionTypes.action(actionTypes.SELECT_PAGE, {
-          payload: { data: data.page },
-        })*/
+          payload: {
+            data: {
+              key: "SELECTED_PAGE",
+              value: data.page,
+            },
+          },
+        })
       );
     }
     return this.invokableSaga(
@@ -69,13 +65,13 @@ export default class PageEntity extends Entity {
     );
     yield put(
       actionTypes.action(actionTypes.UPDATE_VALUE, {
-        
-        payload: { data: {
-          key: "SELECTED_PAGE",
-          value: data.page
-        } },
-      }
-    )
+        payload: {
+          data: {
+            key: "SELECTED_PAGE",
+            value: data.page,
+          },
+        },
+      })
       /*actionTypes.action(actionTypes.SELECT_PAGE, {
         payload: { data: data.page },
       })*/
