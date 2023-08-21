@@ -24,19 +24,25 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
 
-  const data =  structuredClone(state.productReducer.products.find(
-    (i) => i.id == state.reducer.selectedProductId
-  ))
+  /*const data =  structuredClone(state.commonReducer.entities.products.find(
+    //(i) => i.id == state.reducer.selectedProductId
+    (i) => i.id == state.valueReducer.values["SELECTED_PRODUCT_ID"]
+  ))*/
+  if(typeof state.commonReducer.entities.products == `undefined`) return {}
+  const data =  structuredClone(state.commonReducer.entities.products[state.valueReducer.values["SELECTED_PRODUCT_ID"]])
 
   if(!data) return {}
 
-  data.vendor = state.userReducer.users.find((u) => u.id == data.vendor)
+  //data.vendor = state.commonReducer.entities.users.find((u) => u.id == data.vendor)
+  data.vendor = state.commonReducer.entities.users[data.vendor]
 
   data.feedbacks = data.feedbacks.map(
     feedId => {
-      const feedback = structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+      //const feedback = structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
+      const feedback = structuredClone(state.commonReducer.entities.feedbacks[feedId])
 
-      feedback.author =  state.userReducer.users.find((u) => u.id ==  feedback.author)
+      //feedback.author =  state.commonReducer.entities.users.find((u) => u.id ==  feedback.author)
+      feedback.author =  state.commonReducer.entities.users[feedback.author]
 
       return feedback
     }
@@ -96,9 +102,18 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(
-      actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_PRODUCT_ID",
+          value: parseInt(context.query.id as string)
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
         payload: { data: parseInt(context.query.id as string) },
-      })
+      })*/
+      
     );
     const res = await (
       productController.handler("products/:id") as (

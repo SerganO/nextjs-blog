@@ -35,9 +35,17 @@ function* fetchProductPage(action) {
     });*/
     yield put({ type: actionTypes.ADD, payload: { data } });
     yield put(
-      actionTypes.action(actionTypes.SELECT_PAGE, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_PAGE",
+          value: action.page
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_PAGE, {
         payload: { data: action.page },
-      })
+      })*/
     );
   } catch (error) {
     yield put({ type: actionTypes.PRODUCT_PAGE_FETCH_FAILED, error });
@@ -98,9 +106,17 @@ export function* watchFetchProduct() {
   while (true) {
     const { payload } = yield take(actionTypes.PRODUCT_REQUESTED);
     yield put(
-      actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_PRODUCT_ID",
+          value: payload.id
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
         payload: { data: payload.id },
-      })
+      })*/
     );
     yield call(fetchProductNew, payload);
   }

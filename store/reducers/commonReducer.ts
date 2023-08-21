@@ -1,53 +1,72 @@
 import * as actionTypes from "../actionTypes";
 
-const initialState: ValuesState = {
-  selectedProductId: -1,
-  selectedPage: -1,
-  selectedUser: -1,
+const initialState: StoreEntitiesState = {
+  entities: {},
 };
 
-const reducer = (
-  state: ValuesState = initialState,
+const commonReducer = (
+  state: StoreEntitiesState = initialState,
   action: StoreAction
-): ValuesState => {
+): StoreEntitiesState => {
   switch (action.type) {
-    case actionTypes.SELECT_PAGE:
-      return {
-        ...state,
-        selectedPage: action.payload.data,
-      };
-    case actionTypes.SELECT_PRODUCT_ID:
-      return {
-        ...state,
-        selectedProductId: action.payload.data,
-      };
-    case actionTypes.SELECT_USER:
-      return {
-        ...state,
-        selectedUser: action.payload.data,
-      };
-  }
+    case actionTypes.GET:
+    case actionTypes.ADD:
+    case actionTypes.UPDATE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        let newValues: any = {};
+        Object.keys(entitiesArr).forEach((entityReducer) => {
+          if (entitiesArr && entityReducer in entitiesArr) {
+            const newData = entitiesArr[entityReducer];
+            const newEntityValues = [
+              state.entities[entityReducer] ?? {},
+              newData ?? {},
+            ].reduce(function (r, o) {
+              Object.keys(o).forEach(function (k) {
+                r[k] = o[k];
+              });
+              return r;
+            }, {});
 
+            newValues[entityReducer] = newEntityValues;
+          }
+        });
+
+        return {
+          ...state,
+          entities: {
+            ...state.entities,
+            ...newValues,
+          },
+        };
+      }
+      break;
+    case actionTypes.DELETE:
+      if (action.payload) {
+        const entitiesArr = action.payload.data.entities;
+        if (entitiesArr && action.entityReducer in entitiesArr) {
+          const dataForDelete = entitiesArr[action.entityReducer];
+          const newValues = state.entities[action.entityReducer] ?? {};
+
+          Object.keys(dataForDelete).forEach((key) => {
+            if (newValues.hasOwnProperty(key)) {
+              delete newValues[key];
+            }
+          });
+
+          return {
+            ...state,
+            entities: {
+              ...state.entities,
+              [action.entityReducer]: newValues,
+            },
+          };
+        }
+      }
+
+      break;
+  }
   return state;
 };
 
-export default reducer;
-
-/*case IMethod.UPDATE:
-                  if (action.response) {
-                      const entitiesArr = action.response.entities;
-  
-                      if (entitiesArr && entityReducer in entitiesArr) {
-                          if (state && state.size > 0) {
-                              Object.keys(entitiesArr[entityReducer]).map(id => {
-                                  state = state.remove(id)
-  ;
-                              });
-                          }
-                          state = state.mergeDeep(
-                              fromJS(entitiesArr[entityReducer]),
-                          );
-                      }
-                      break;
-                  }
-  */
+export default commonReducer;

@@ -17,11 +17,21 @@ function* fetchUser(action) {
 export function* watchFetchUser() {
   while (true) {
     const { payload } = yield take(actionTypes.USER_REQUESTED);
-    yield put(
-      actionTypes.action(actionTypes.SELECT_USER, {
+   
+      /*actionTypes.action(actionTypes.SELECT_USER, {
         payload: { data: payload.id },
-      })
-    );
+      })*/
+    
     yield call(fetchUser, payload);
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_USER",
+          value: payload.id
+        } },
+      }
+    )
+    );
   }
 }

@@ -121,7 +121,7 @@ export class Entity extends BaseClientContext {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
       const nData = normalize(sdata.response, this._schema);
-      yield put({ type: type, payload: { data: nData } });
+      yield put({ type: type, payload: { data: nData }, entityReducer: this._entityName });
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });
     }

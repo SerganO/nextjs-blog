@@ -24,19 +24,26 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  const data = structuredClone(state.pageReducer.pages.find(
-    (i) => i.page == state.reducer.selectedPage
-  ))
+  /*const data = structuredClone(state.commonReducer.entities.pages.find(
+    //(i) => i.page == state.reducer.selectedPage
+    (i) => i.page == state.valueReducer.values["SELECTED_PAGE"]
+  ))*/
+
+  if(typeof state.commonReducer.entities.pages == `undefined`) return {}
+  const data = structuredClone(state.commonReducer.entities.pages[state.valueReducer.values["SELECTED_PAGE"]])
+  
 
   if (data == null) return {}
 
   data.products = data.products.map(
     id => {
-      const product = structuredClone(state.productReducer.products.find((i) => i.id == id))
+      //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
+      const product = structuredClone(state.commonReducer.entities.products[id])
 
       product.feedbacks = product.feedbacks.map(
         feedId => {
-          return structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+          //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
+          return structuredClone(state.commonReducer.entities.feedbacks[feedId])
         }
       )
 
@@ -202,9 +209,17 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(
-      actionTypes.action(actionTypes.SELECT_PAGE, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+          payload: { data: {
+            key: "SELECTED_PAGE",
+            value: (parseInt(context.query.page as string) || 1)
+          } },
+        }
+      )
+      /*actionTypes.action(actionTypes.SELECT_PAGE, {
         payload: { data: (parseInt(context.query.page as string) || 1) },
-      })
+      })*/
     );
     const res = await (
       productController.handler("products/index") as (

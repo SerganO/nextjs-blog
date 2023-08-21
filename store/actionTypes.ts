@@ -42,6 +42,9 @@ export const UPDATE = "UPDATE"
 export const GET = "GET"
 export const DELETE = "DELETE"
 
+export const UPDATE_VALUE = "UPDATE_VALUE"
+
+
 
 
 

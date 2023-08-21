@@ -32,12 +32,21 @@ export default class ProductEntity extends Entity {
 
   @action()
   public *fetchProduct(data) {
-    yield put(
-      actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
-        payload: { data: data.id },
-      })
-    );
+
     yield call(this.xRead, `/products/${parseInt(data.id)}/extended`);
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_PRODUCT_ID",
+          value: data.id
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
+        payload: { data: data.id },
+      })*/
+    );
   }
 
 }

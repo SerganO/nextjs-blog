@@ -26,12 +26,13 @@ const mapDispatchToProps = (dispatch) => {
     saveUserAction: (data) => dispatch(saveUserAction(data)),
   };
 };
+const mapStateToProps = (state) => {
+    if(typeof state.commonReducer.entities.users == `undefined`) return {}
+    return {data: state.commonReducer.entities.users[state.valueReducer.values["SELECTED_USER"]]}
+}
 
-const mapStateToProps = (state) => ({
-  data: state.userReducer.users.find(
-    (i) => i.id == state.reducer.selectedUser
-  ),
-});
+
+
 function Base({ data }) {
   const router = useRouter();
   const dispatch: Dispatch<any> = useDispatch();
@@ -127,9 +128,17 @@ export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(
-      actionTypes.action(actionTypes.SELECT_USER, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_USER",
+          value: parseInt(context.query.id as string)
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_USER, {
         payload: { data: parseInt(context.query.id as string) },
-      })
+      })*/
     );
     const res = await (
       userController.handler("users/:id") as (

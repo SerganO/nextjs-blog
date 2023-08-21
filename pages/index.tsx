@@ -30,17 +30,20 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   
-  const data = structuredClone(state.mainPageInfoReducer.info)
-
+  //const data = structuredClone(state.mainPageInfoReducer.info)
+  if(typeof state.commonReducer.entities.mainPageInfos == `undefined`) return {}
+  const data = structuredClone(state.commonReducer.entities.mainPageInfos[0])
   if (data == null) return {}
 
   data.products = data.products.map(
     id => {
-      const product = structuredClone(state.productReducer.products.find((i) => i.id == id))
+      //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
+      const product = structuredClone(state.commonReducer.entities.products[id])
 
       product.feedbacks = product.feedbacks.map(
         feedId => {
-          return structuredClone(state.feedbackReducer.feedbacks.find((f) => f.id == feedId))
+          //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
+          return structuredClone(state.commonReducer.entities.feedbacks[feedId])
         }
       )
 

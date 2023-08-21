@@ -13,6 +13,16 @@ export default class UserEntity extends Entity {
   @action()
   public *fetchUser(data) {
     const id = parseInt(data.id);
-    yield call(this.xRead, `/api/users/${id}`);
+    yield call(this.xRead, `/users/${id}`);
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_USER",
+          value: id
+        } },
+      }
+    )
+    );
   }
 }

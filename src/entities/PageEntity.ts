@@ -38,9 +38,18 @@ export default class PageEntity extends Entity {
       );
       console.log("in fetchProductPageInvokable saga put");
       yield put(
+        actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+          payload: { data: {
+            key: "SELECTED_PAGE",
+            value: data.page
+          } },
+        }
+      )
+        /*
         actionTypes.action(actionTypes.SELECT_PAGE, {
           payload: { data: data.page },
-        })
+        })*/
       );
     }
     return this.invokableSaga(
@@ -59,9 +68,17 @@ export default class PageEntity extends Entity {
       `/products/pagination?page=${data.page}${data.userString}`
     );
     yield put(
-      actionTypes.action(actionTypes.SELECT_PAGE, {
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        
+        payload: { data: {
+          key: "SELECTED_PAGE",
+          value: data.page
+        } },
+      }
+    )
+      /*actionTypes.action(actionTypes.SELECT_PAGE, {
         payload: { data: data.page },
-      })
+      })*/
     );
   }
 }

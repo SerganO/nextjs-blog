@@ -53,7 +53,8 @@ type FeedbackState = {
 
 type StoreAction = {
     type: string
-    payload: any
+    payload: any,
+    entityReducer?: string
 }
 
 
@@ -69,10 +70,12 @@ type StoreState = {
 
 }
 
+type StoreEntitiesState = {
+    entities: any
+}
+
 type ValuesState = {
-    selectedUser: number,
-    selectedProductId: number,
-    selectedPage: number,
+    values: any
 
 }
 
