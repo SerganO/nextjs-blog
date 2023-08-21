@@ -8,12 +8,14 @@ import Link from "next/link";
 import UserController from "server/controllers/UserController";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
-import { showErrorNotification } from "functions/showNotification";
+import { showErrorNotification } from "src/functions/showNotification";
 import { wrapper } from "store";
 import { saveUserAction, userRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { normalize } from "normalizr";
-import { user } from "functions/xfetch";
+import { user } from "src/functions/xfetch";
+import clientContainer from "src/di/clientContainer";
+import UserEntity from "src/entities/UserEntity";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -39,18 +41,9 @@ function Base({ data }) {
   //const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
-    dispatch(userRequestAction({ payload: { id: router.query.id } }));
-    /*xfetch(
-      `/api/users/${router.query.id}`,
-      {},
-      (user) => {
-        dispatch(saveUserToRedux(user));
-      },
-      showErrorNotification
-    );*/
-    /*xfetch(`/api/users/${router.query.id}`, {}, (data) => {
-      setUserData(data);
-    });*/
+    const entity = clientContainer.resolve<UserEntity>("UserEntity")
+    dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
+    //dispatch(userRequestAction({ payload: { id: router.query.id } }));
   }, []);
 
   const fullname = `${userData?.firstName} ${userData?.lastName}`;

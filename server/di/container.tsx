@@ -1,7 +1,6 @@
 import IModelContainer from "server/models/IModelContainer";
 import services from "server/services";
 import controllers from "server/controllers";
-import entities from "entities";
 import { createDB } from "../db";
 import { config } from "coreConfig";
 
@@ -18,7 +17,6 @@ container.register({
   ...IModelContainer,
   ...services,
   ...controllers,
-  ...entities,
 });
 
 export default container;

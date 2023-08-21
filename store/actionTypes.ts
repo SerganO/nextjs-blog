@@ -7,6 +7,8 @@ export function action(type: string, payload = {}): Action {
 
 export const SELECT_PRODUCT_ID = "SELECT_PRODUCT_ID";
 
+export const ERROR = "ERROR"
+
 export const PRODUCT_REQUESTED = "PRODUCT_REQUESTED";
 export const PRODUCT_FETCH_SUCCEEDED = "PRODUCT_FETCH_SUCCEEDED";
 export const PRODUCT_FETCH_FAILED = "PRODUCT_FETCH_FAILED";

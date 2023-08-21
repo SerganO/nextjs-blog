@@ -1,6 +1,6 @@
 import { take, call, put } from "redux-saga/effects";
 
-import { _xfetch, feedback, mainPageInfo, page, product } from "functions/xfetch";
+import { _xfetch, feedback, mainPageInfo, page, product } from "src/functions/xfetch";
 import * as actionTypes from "../actionTypes";
 
 function* fetchProduct(action) {

@@ -110,45 +110,7 @@ const productReducer = (
 ): ProductStateNew => {
   switch (action.type) {
     case actionTypes.GET:
-      if (action.payload) {
-        const entitiesArr = action.payload.data.entities;
-        if (entitiesArr && entityReducer in entitiesArr) {
-          const newData = entitiesArr[entityReducer];
-          
-          const ids = new Set(Object.keys(newData));
-          const newDataArr = Object.keys(newData).map(
-            id => {
-              return newData[id]
-            }
-          )
-          return {
-            ...state,
-            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
-          };
-        }
-      }
-
-      break;
     case actionTypes.ADD:
-      if (action.payload) {
-        const entitiesArr = action.payload.data.entities;
-        if (entitiesArr && entityReducer in entitiesArr) {
-          const newData = entitiesArr[entityReducer];
-          
-          const ids = new Set(Object.keys(newData));
-          const newDataArr = Object.keys(newData).map(
-            id => {
-              return newData[id]
-            }
-          )
-          return {
-            ...state,
-            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
-          };
-        }
-      }
-
-      break;
     case actionTypes.UPDATE:
       if (action.payload) {
         const entitiesArr = action.payload.data.entities;
@@ -163,11 +125,12 @@ const productReducer = (
           )
           return {
             ...state,
-            products: state.products.filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
+            [entityReducer]: state[entityReducer].filter((d) => !ids.has(d.id.toString())).concat(newDataArr)
           };
         }
       }
       break;
+
     case actionTypes.DELETE:
       if (action.payload) {
         const entitiesArr = action.payload.data.entities;
@@ -176,7 +139,7 @@ const productReducer = (
           const ids = new Set(Object.keys(newData));
           return {
             ...state,
-            products: state.products.filter((d) => !ids.has(d.id.toString()))
+            [entityReducer]: state[entityReducer].filter((d) => !ids.has(d.id.toString()))
           };
         }
       }

@@ -1,6 +1,6 @@
 import { take, call, put } from "redux-saga/effects";
 
-import { _xfetch, user } from "functions/xfetch";
+import { _xfetch, user } from "src/functions/xfetch";
 import * as actionTypes from "../actionTypes";
 
 function* fetchUser(action) {

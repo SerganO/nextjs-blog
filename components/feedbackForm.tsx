@@ -4,7 +4,9 @@ import getConfig from "next/config";
 import { addFeedbackAction } from "../store/actionCreators"
 import { Dispatch } from "redux"
 import { useDispatch } from "react-redux"
-import { showMessageNotification } from "functions/showNotification";
+import { showMessageNotification } from "src/functions/showNotification";
+import clientContainer from "src/di/clientContainer";
+import ProductEntity from "src/entities/ProductEntity";
 
 type FeedbackData = {
   user_id: number;
@@ -73,7 +75,9 @@ export default function FeedbackForm(product_id: number) {
       rating: currentFeedbackData.rating,
       message: currentFeedbackData.message
   }
-  dispatch(addFeedbackAction({payload: { feedbackData }}))
+  const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
+  dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
+  //dispatch(addFeedbackAction({payload: { feedbackData }}))
   //saveFeedback(feedbackData)
 
 

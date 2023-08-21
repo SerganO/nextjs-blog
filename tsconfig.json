@@ -33,7 +33,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "server/di/index.js", "server/models/index.js"  ],
+, "server/di/index.js", "server/models/index.js", "src/node_modules/clientContainer.ts"  ],
   "exclude": [
     "node_modules"
   ]

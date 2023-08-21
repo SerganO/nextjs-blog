@@ -15,8 +15,10 @@ import {
 } from "store/actionCreators";
 import { wrapper } from "store";
 import { normalize } from "normalizr";
-import { mainPageInfo } from "functions/xfetch";
-import UserEntity from "entities/UserEntity";
+import { mainPageInfo } from "src/functions/xfetch";
+import UserEntity from "src/entities/UserEntity";
+import clientContainer from "src/di/clientContainer";
+import MainPageInfoEntity from "src/entities/MainPageInfoEntity";
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -59,8 +61,9 @@ function Base({ data }) {
   const dispatch: Dispatch<any> = useDispatch();
 
   useEffect(() => {
-    
-    dispatch(mainProductPageRequestAction());
+    const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
+    dispatch(entity.action("fetchMainProductPage"))
+    //dispatch(mainProductPageRequestAction());
   }, []);
 
   const goToProductsPage = () => {
@@ -109,6 +112,7 @@ const productController =
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
+    
     const res = await (
       productController.handler("index") as (context: any) => Promise<any>
     )(context);

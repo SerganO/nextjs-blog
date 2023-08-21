@@ -11,7 +11,9 @@ import { wrapper } from "store";
 import { saveProductAction, productRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { normalize } from "normalizr";
-import { product } from "functions/xfetch";
+import { product } from "src/functions/xfetch";
+import clientContainer from "src/di/clientContainer";
+import ProductEntity from "src/entities/ProductEntity";
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -51,7 +53,9 @@ function Base({ data }) {
 
   const productData = data;
   useEffect(() => {
-    dispatch(productRequestAction({ payload: { id: router.query.id } }));
+    const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
+    dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
+    //dispatch(productRequestAction({ payload: { id: router.query.id } }));
   }, []);
 
   const handleGoBack = () => {

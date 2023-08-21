@@ -6,7 +6,7 @@ import {
   watchAddFeedbackToProduct,
 } from "./productsSagas";
 import { watchFetchUser } from "./usersSagas";
-import container from "server/di/container";
+import { Entity } from "src/entities/entity";
 
 /*
 const entities = [
@@ -32,7 +32,10 @@ export default function* rootSaga() {
 }
 */
 
-
+export default function* rootSaga() {
+  yield all(Entity.sagas())
+}
+/*
 export default function* rootSaga() {
   yield all([
     call(watchFetchProduct),
@@ -41,6 +44,6 @@ export default function* rootSaga() {
     call(watchAddFeedbackToProduct),
     call(watchFetchUser),
   ]);
-}
+}*/
 
 

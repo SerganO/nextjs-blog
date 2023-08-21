@@ -5,6 +5,7 @@ import ProductPlate from "../../components/productPlate";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import container from "server/di/container";
+import clientContainer from "src/di/clientContainer";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
 import { Dispatch } from "redux";
@@ -13,7 +14,8 @@ import { wrapper } from "store";
 import { saveProductPageAction, productPageRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { Schema, normalize, schema } from 'normalizr';
-import { mainPageInfo, page } from "functions/xfetch";
+import { mainPageInfo, page } from "src/functions/xfetch";
+import PageEntity from "src/entities/PageEntity";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -62,7 +64,10 @@ function Base({ data }) {
   }
 
   useEffect(() => {
-    dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
+    const entity = clientContainer.resolve<PageEntity>("PageEntity")
+    dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
+    //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
+    //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
   }, [page]);
 
   const goToProductsPage = () => {
@@ -78,7 +83,11 @@ function Base({ data }) {
       { shallow: true }
     );
     setPage(1)
-    dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
+    const entity = clientContainer.resolve<PageEntity>("PageEntity")
+    dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
+    //dispatch(entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
+   
+    //dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
     /*router.replace("/products?page=1").then(() => {
       setPage(1)
     });*/
