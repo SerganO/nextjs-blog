@@ -155,9 +155,7 @@ export class Entity extends BaseClientContext {
       const boundedSaga = saga.bind(this)
       return boundedSaga(data)
     } else {
-      const action = Entity._actions[this.constructor.name + "_" + methodName];
-      const dispatchAction = action(data);
-      return dispatchAction;
+      return this.action(methodName, data)
     }
   }
 
