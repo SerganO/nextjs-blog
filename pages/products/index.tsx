@@ -73,8 +73,8 @@ function Base({ data }) {
   useEffect(() => {
     
     const entity = clientContainer.resolve<PageEntity>("PageEntity")
-    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
     dispatch( entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
+    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
     //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
   }, [page]);
 
@@ -92,9 +92,8 @@ function Base({ data }) {
     );
     setPage(1)
     const entity = clientContainer.resolve<PageEntity>("PageEntity")
-    //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
     dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
-   
+    //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
     //dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
     /*router.replace("/products?page=1").then(() => {
       setPage(1)

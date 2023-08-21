@@ -15,7 +15,6 @@ import { product } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import ProductEntity from "src/entities/ProductEntity";
 
-
 const mapDispatchToProps = (dispatch) => {
   return {
     saveProductAction: (data) => dispatch(saveProductAction(data)),
@@ -23,33 +22,35 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-
   /*const data =  structuredClone(state.commonReducer.entities.products.find(
     //(i) => i.id == state.reducer.selectedProductId
     (i) => i.id == state.valueReducer.values["SELECTED_PRODUCT_ID"]
   ))*/
-  if(typeof state.commonReducer.entities.products == `undefined`) return {}
-  const data =  structuredClone(state.commonReducer.entities.products[state.valueReducer.values["SELECTED_PRODUCT_ID"]])
+  if (typeof state.commonReducer.entities.products == `undefined`) return {};
+  const data = structuredClone(
+    state.commonReducer.entities.products[
+      state.valueReducer.values["SELECTED_PRODUCT_ID"]
+    ]
+  );
 
-  if(!data) return {}
+  if (!data) return {};
 
   //data.vendor = state.commonReducer.entities.users.find((u) => u.id == data.vendor)
-  data.vendor = state.commonReducer.entities.users[data.vendor]
+  data.vendor = state.commonReducer.entities.users[data.vendor];
 
-  data.feedbacks = data.feedbacks.map(
-    feedId => {
-      //const feedback = structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
-      const feedback = structuredClone(state.commonReducer.entities.feedbacks[feedId])
+  data.feedbacks = data.feedbacks.map((feedId) => {
+    //const feedback = structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
+    const feedback = structuredClone(
+      state.commonReducer.entities.feedbacks[feedId]
+    );
 
-      //feedback.author =  state.commonReducer.entities.users.find((u) => u.id ==  feedback.author)
-      feedback.author =  state.commonReducer.entities.users[feedback.author]
+    //feedback.author =  state.commonReducer.entities.users.find((u) => u.id ==  feedback.author)
+    feedback.author = state.commonReducer.entities.users[feedback.author];
 
-      return feedback
-    }
-  )
+    return feedback;
+  });
 
-
-  return {data}
+  return { data };
 };
 
 function Base({ data }) {
@@ -59,8 +60,11 @@ function Base({ data }) {
 
   const productData = data;
   useEffect(() => {
-    const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
-    dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
+    const entity = clientContainer.resolve<ProductEntity>("ProductEntity");
+    dispatch(
+      entity.fetchProductInvokable({ payload: { id: router.query.id } })
+    );
+    //dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
     //dispatch(productRequestAction({ payload: { id: router.query.id } }));
   }, []);
 
@@ -103,24 +107,23 @@ export const getServerSideProps = wrapper.getServerSideProps(
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(
       actionTypes.action(actionTypes.UPDATE_VALUE, {
-        
-        payload: { data: {
-          key: "SELECTED_PRODUCT_ID",
-          value: parseInt(context.query.id as string)
-        } },
-      }
-    )
+        payload: {
+          data: {
+            key: "SELECTED_PRODUCT_ID",
+            value: parseInt(context.query.id as string),
+          },
+        },
+      })
       /*actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
         payload: { data: parseInt(context.query.id as string) },
       })*/
-      
     );
     const res = await (
       productController.handler("products/:id") as (
         context: any
       ) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, product)
+    const nData = normalize(res.props.data, product);
     store.dispatch(saveProductAction({ data: nData }));
 
     return res;

@@ -11,6 +11,30 @@ export default class UserEntity extends Entity {
   }
 
   @action()
+  public fetchUserInvokable(data, isSagaCall = false) {
+    function* saga(data) {
+      const id = parseInt(data.id);
+      yield call(this.xRead, `/users/${id}`);
+      yield put(
+        actionTypes.action(actionTypes.UPDATE_VALUE, {
+          payload: {
+            data: {
+              key: "SELECTED_USER",
+              value: id,
+            },
+          },
+        })
+      );
+    }
+    return this.invokableSaga(
+      this.fetchUserInvokable.name,
+      isSagaCall,
+      saga,
+      data
+    );
+  }
+
+  /*@action()
   public *fetchUser(data) {
     const id = parseInt(data.id);
     yield call(this.xRead, `/users/${id}`);
@@ -24,5 +48,5 @@ export default class UserEntity extends Entity {
       }
     )
     );
-  }
+  }*/
 }

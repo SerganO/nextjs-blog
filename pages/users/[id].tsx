@@ -43,7 +43,8 @@ function Base({ data }) {
 
   useEffect(() => {
     const entity = clientContainer.resolve<UserEntity>("UserEntity")
-    dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
+    dispatch(entity.fetchUserInvokable({ payload: { id: router.query.id }}))
+    //dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
     //dispatch(userRequestAction({ payload: { id: router.query.id } }));
   }, []);
 

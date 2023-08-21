@@ -25,8 +25,8 @@ export default class MainPageInfoEntity extends Entity {
 
   }
 
-/*  @action()
-  public fetchMainProductPageInvokable(data, isSagaCall = false) {
+  @action()
+  public fetchMainProductPageInvokable(isSagaCall = false) {
     function* saga(data) {
       console.log("in fetchProductPageInvokable saga call");
       yield call(
@@ -46,18 +46,17 @@ export default class MainPageInfoEntity extends Entity {
       );
     }
     return this.invokableSaga(
-      "fetchProductPageInvokable",
+      this.fetchMainProductPageInvokable.name,
       isSagaCall,
       saga,
-      data
     );
-  }*/
+  }
 
-  @action()
+  /*@action()
   *fetchMainProductPage() {
     yield call(
       this.xRead,
       `/products/feedbacksIncluded/firstSet`
     );
-  } 
+  } */
 }

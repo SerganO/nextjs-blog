@@ -55,7 +55,7 @@ export default class PageEntity extends Entity {
     );
   }
 
-  @action()
+  /*@action()
   *fetchProductPage(data) {
     console.log("in call fetchProductPage");
     yield call(
@@ -71,9 +71,6 @@ export default class PageEntity extends Entity {
           },
         },
       })
-      /*actionTypes.action(actionTypes.SELECT_PAGE, {
-        payload: { data: data.page },
-      })*/
     );
-  }
+  }*/
 }

@@ -76,7 +76,8 @@ export default function FeedbackForm(product_id: number) {
       message: currentFeedbackData.message
   }
   const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
-  dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
+  dispatch(entity.addFeedbackToProductInvokable({payload: {feedbackData}}))
+  //dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
   //dispatch(addFeedbackAction({payload: { feedbackData }}))
   //saveFeedback(feedbackData)
 
