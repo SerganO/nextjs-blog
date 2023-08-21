@@ -29,11 +29,10 @@ export default class PageEntity extends Entity {
 
   @action()
   public fetchProductPageInvokable(data, isSagaCall = false) {
-    const object = this;
     function* saga(data) {
       console.log("in fetchProductPageInvokable saga call");
       yield call(
-        object.xRead,
+        this.xRead,
         `/products/pagination?page=${data.page}${data.userString}`
       );
       console.log("in fetchProductPageInvokable saga put");
@@ -49,7 +48,7 @@ export default class PageEntity extends Entity {
       );
     }
     return this.invokableSaga(
-      "fetchProductPageInvokable",
+      this.fetchProductPageInvokable.name,
       isSagaCall,
       saga,
       data

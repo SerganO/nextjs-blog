@@ -149,7 +149,7 @@ export class Entity extends BaseClientContext {
     });
     return maped;
   }
-
+  
   public invokableSaga(methodName, isSagaCall, saga, data?) {
     if (isSagaCall) {
       const boundedSaga = saga.bind(this)
