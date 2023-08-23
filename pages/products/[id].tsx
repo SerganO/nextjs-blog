@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import container from "server/di/container";
@@ -14,6 +14,8 @@ import { normalize } from "normalizr";
 import { product } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import ProductEntity from "src/entities/ProductEntity";
+import ContainerContext from 'src/ContainerContext';
+import {useActions} from 'src/hooks/useEntity';
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -60,11 +62,11 @@ function Base({ data }) {
 
   const productData = data;
   useEffect(() => {
+    //const di = useContext(ContainerContext);
+    //const entity = di.resolve('ProductEntity');
     const entity = clientContainer.resolve<ProductEntity>("ProductEntity");
-    dispatch(
-      entity.fetchProductInvokable({ payload: { id: router.query.id } })
-    );
-    //dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
+    //dispatch(entity.fetchProductInvokable({ payload: { id: router.query.id } }));
+    dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
     //dispatch(productRequestAction({ payload: { id: router.query.id } }));
   }, []);
 

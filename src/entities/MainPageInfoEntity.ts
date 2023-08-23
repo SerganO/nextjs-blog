@@ -18,45 +18,28 @@ export default class MainPageInfoEntity extends Entity {
       feedbacks: [feedback],
     });
 
-    
     this.initSchema("mainPageInfos", {
-      products: [product]
-    })
-
+      products: [product],
+    });
   }
 
   @action()
+  *fetchMainProductPage() {
+    yield call(this.xRead, `/products/feedbacksIncluded/firstSet`);
+  }
+
+  /*@action()
   public fetchMainProductPageInvokable(isSagaCall = false) {
     function* saga(data) {
-      console.log("in fetchProductPageInvokable saga call");
       yield call(
-        this.xRead,
-        `/products/pagination?page=${data.page}${data.userString}`
-      );
-      console.log("in fetchProductPageInvokable saga put");
-      yield put(
-        actionTypes.action(actionTypes.UPDATE_VALUE, {
-          payload: {
-            data: {
-              key: "SELECTED_PAGE",
-              value: data.page,
-            },
-          },
-        })
-      );
+      this.xRead,
+      `/products/feedbacksIncluded/firstSet`
+    );
     }
     return this.invokableSaga(
       this.fetchMainProductPageInvokable.name,
       isSagaCall,
       saga,
     );
-  }
-
-  /*@action()
-  *fetchMainProductPage() {
-    yield call(
-      this.xRead,
-      `/products/feedbacksIncluded/firstSet`
-    );
-  } */
+  }*/
 }

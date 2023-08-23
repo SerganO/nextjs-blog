@@ -20,7 +20,34 @@ export default class ProductEntity extends Entity {
     });
   }
 
+
   @action()
+  *addFeedbackToProduct(data) {
+    const feedbackData = data.feedbackData;
+    yield call(
+      this.xSave,
+      `/products/${feedbackData.product_id}/addFeedback`,
+      feedbackData
+    );
+  }
+  
+  @action()
+  public *fetchProduct(data) {
+    yield call(this.xRead, `/products/${parseInt(data.id)}/extended`);
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        payload: {
+          data: {
+            key: "SELECTED_PRODUCT_ID",
+            value: data.id,
+          },
+        },
+      })
+    );
+  }
+
+
+  /* @action()
   public addFeedbackToProductInvokable(data, isSagaCall = false) {
     function* saga(data) {
       const feedbackData = data.feedbackData;
@@ -57,34 +84,7 @@ export default class ProductEntity extends Entity {
       this.fetchProductInvokable.name,
       isSagaCall,
       saga,
-      data
-    );
-  }
-
-  /*@action()
-  *addFeedbackToProduct(data) {
-    const feedbackData = data.feedbackData;
-    yield call(
-      this.xSave,
-      `/products/${feedbackData.product_id}/addFeedback`,
-      feedbackData
-    );
-  }
-*/
-
-  /*
-  @action()
-  public *fetchProduct(data) {
-    yield call(this.xRead, `/products/${parseInt(data.id)}/extended`);
-    yield put(
-      actionTypes.action(actionTypes.UPDATE_VALUE, {
-        payload: {
-          data: {
-            key: "SELECTED_PRODUCT_ID",
-            value: data.id,
-          },
-        },
-      })
+    
     );
   }*/
 }

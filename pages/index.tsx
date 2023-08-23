@@ -65,8 +65,8 @@ function Base({ data }) {
 
   useEffect(() => {
     const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
-    dispatch(entity.fetchMainProductPageInvokable())
-    //dispatch(entity.action("fetchMainProductPage"))
+    //dispatch(entity.fetchMainProductPageInvokable())
+    dispatch(entity.action("fetchMainProductPage"))
     //dispatch(mainProductPageRequestAction());
   }, []);
 

@@ -23,7 +23,7 @@ export class Entity extends BaseClientContext {
   constructor(opts: IClientContextContainer) {
     super(opts);
 
-    this.invokableSaga = this.invokableSaga.bind(this);
+    //this.invokableSaga = this.invokableSaga.bind(this);
   }
 
   protected initSchema(key: string | symbol, definition?: Schema, options?) {
@@ -150,18 +150,19 @@ export class Entity extends BaseClientContext {
     return maped;
   }
   
-  public invokableSaga(methodName, isSagaCall, saga, data?) {
-    if (isSagaCall) {
-      const boundedSaga = saga.bind(this)
-      return boundedSaga(data)
-    } else {
-      return this.action(methodName, data)
-    }
-  }
 
   public action(methodName, data?) {
     console.log(this.constructor.name + "_" + methodName);
     const action = Entity._actions[this.constructor.name + "_" + methodName];
     return action(data);
   }
+
+    /*public invokableSaga(methodName, isSagaCall, saga, data?) {
+    if (isSagaCall) {
+      const boundedSaga = saga.bind(this)
+      return boundedSaga(data)
+    } else {
+      return this.action(methodName, data)
+    }
+  }*/
 }

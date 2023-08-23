@@ -28,6 +28,26 @@ export default class PageEntity extends Entity {
   }
 
   @action()
+  *fetchProductPage(data) {
+    console.log("in call fetchProductPage");
+    yield call(
+      this.xRead,
+      `/products/pagination?page=${data.page}${data.userString}`
+    );
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        payload: {
+          data: {
+            key: "SELECTED_PAGE",
+            value: data.page,
+          },
+        },
+      })
+    );
+  }
+
+  /*
+  @action()
   public fetchProductPageInvokable(data, isSagaCall = false) {
     function* saga(data) {
       console.log("in fetchProductPageInvokable saga call");
@@ -52,25 +72,6 @@ export default class PageEntity extends Entity {
       isSagaCall,
       saga,
       data
-    );
-  }
-
-  /*@action()
-  *fetchProductPage(data) {
-    console.log("in call fetchProductPage");
-    yield call(
-      this.xRead,
-      `/products/pagination?page=${data.page}${data.userString}`
-    );
-    yield put(
-      actionTypes.action(actionTypes.UPDATE_VALUE, {
-        payload: {
-          data: {
-            key: "SELECTED_PAGE",
-            value: data.page,
-          },
-        },
-      })
     );
   }*/
 }
