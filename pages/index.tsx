@@ -19,6 +19,7 @@ import { mainPageInfo } from "src/functions/xfetch";
 import UserEntity from "src/entities/UserEntity";
 import clientContainer from "src/di/clientContainer";
 import MainPageInfoEntity from "src/entities/MainPageInfoEntity";
+import { useActions } from "src/hooks/useEntity";
 
 
 const mapDispatchToProps = (dispatch) => {
@@ -61,12 +62,13 @@ function Base({ data }) {
 
   //const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
-  const dispatch: Dispatch<any> = useDispatch();
-
+  //const dispatch: Dispatch<any> = useDispatch();
+const {fetchMainProductPage} = useActions("MainPageInfoEntity");
   useEffect(() => {
-    const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
+    fetchMainProductPage()
+    //const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
     //dispatch(entity.fetchMainProductPageInvokable())
-    dispatch(entity.action("fetchMainProductPage"))
+    //dispatch(entity.action("fetchMainProductPage"))
     //dispatch(mainProductPageRequestAction());
   }, []);
 

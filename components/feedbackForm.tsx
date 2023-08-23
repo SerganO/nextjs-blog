@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux"
 import { showMessageNotification } from "src/functions/showNotification";
 import clientContainer from "src/di/clientContainer";
 import ProductEntity from "src/entities/ProductEntity";
+import { useActions } from "src/hooks/useEntity";
 
 type FeedbackData = {
   user_id: number;
@@ -29,6 +30,7 @@ export default function FeedbackForm(product_id: number) {
   });
 
   const router = useRouter();
+  const {addFeedbackToProduct} = useActions('ProductEntity')
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [feedback, setFeedback] = useState("");
 
@@ -58,7 +60,7 @@ export default function FeedbackForm(product_id: number) {
     setFeedback(event.target.value);
   };
 
-  const dispatch: Dispatch<any> = useDispatch()
+  //const dispatch: Dispatch<any> = useDispatch()
 
   /*const saveFeedback = React.useCallback(
     (feedback: IFeedbackPostData) => dispatch(addFeedbackAction(feedback)),
@@ -75,9 +77,13 @@ export default function FeedbackForm(product_id: number) {
       rating: currentFeedbackData.rating,
       message: currentFeedbackData.message
   }
-  const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
+  
+
+  addFeedbackToProduct({payload: { feedbackData }})
+
+  //const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
   //dispatch(entity.addFeedbackToProductInvokable({payload: {feedbackData}}))
-  dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
+  //dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
   //dispatch(addFeedbackAction({payload: { feedbackData }}))
   //saveFeedback(feedbackData)
 

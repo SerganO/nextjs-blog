@@ -56,17 +56,19 @@ const mapStateToProps = (state) => {
 };
 
 function Base({ data }) {
-  const dispatch: Dispatch<any> = useDispatch();
-
+  //const dispatch: Dispatch<any> = useDispatch();
+  const {fetchProduct} = useActions('ProductEntity')
   const router = useRouter();
 
   const productData = data;
   useEffect(() => {
+    
+    fetchProduct({ payload: { id: router.query.id } })
     //const di = useContext(ContainerContext);
     //const entity = di.resolve('ProductEntity');
-    const entity = clientContainer.resolve<ProductEntity>("ProductEntity");
+    //const entity = clientContainer.resolve<ProductEntity>("ProductEntity");
     //dispatch(entity.fetchProductInvokable({ payload: { id: router.query.id } }));
-    dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
+    //dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
     //dispatch(productRequestAction({ payload: { id: router.query.id } }));
   }, []);
 

@@ -16,6 +16,7 @@ import { normalize } from "normalizr";
 import { user } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import UserEntity from "src/entities/UserEntity";
+import { useActions } from "src/hooks/useEntity";
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -35,16 +36,18 @@ const mapStateToProps = (state) => {
 
 function Base({ data }) {
   const router = useRouter();
-  const dispatch: Dispatch<any> = useDispatch();
+  //const dispatch: Dispatch<any> = useDispatch();
+  const {fetchUser} = useActions('UserEntity')
 
   const userData = data;
 
   //const [userData, setUserData] = useState<IUser>(data);
 
   useEffect(() => {
-    const entity = clientContainer.resolve<UserEntity>("UserEntity")
+    fetchUser( { payload: { id: router.query.id }})
+    //const entity = clientContainer.resolve<UserEntity>("UserEntity")
     //dispatch(entity.fetchUserInvokable({ payload: { id: router.query.id }}))
-    dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
+    //dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
     //dispatch(userRequestAction({ payload: { id: router.query.id } }));
   }, []);
 

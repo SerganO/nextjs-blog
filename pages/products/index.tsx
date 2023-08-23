@@ -16,6 +16,7 @@ import * as actionTypes from "store/actionTypes";
 import { Schema, normalize, schema } from 'normalizr';
 import { mainPageInfo, page } from "src/functions/xfetch";
 import PageEntity from "src/entities/PageEntity";
+import { useActions } from "src/hooks/useEntity";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -56,7 +57,9 @@ const mapStateToProps = (state) => {
 
 function Base({ data }) {
   const router = useRouter();
-  const dispatch: Dispatch<any> = useDispatch();
+  
+  //const dispatch: Dispatch<any> = useDispatch();
+  const {fetchProductPage} = useActions('PageEntity')
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
 
   const productsPageData = data;
@@ -72,10 +75,11 @@ function Base({ data }) {
 
   useEffect(() => {
     
-    const entity = clientContainer.resolve<PageEntity>("PageEntity")
+    fetchProductPage({payload: { page: page, userString: userString} })
+    //const entity = clientContainer.resolve<PageEntity>("PageEntity")
     
     //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
-    dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
+    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
     //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
   }, [page]);
 
@@ -92,9 +96,10 @@ function Base({ data }) {
       { shallow: true }
     );
     setPage(1)
-    const entity = clientContainer.resolve<PageEntity>("PageEntity")
+    fetchProductPage({payload: { page: 1, userString: ""} })
+    //const entity = clientContainer.resolve<PageEntity>("PageEntity")
     //dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
-    dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
+    //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
     //dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
     /*router.replace("/products?page=1").then(() => {
       setPage(1)

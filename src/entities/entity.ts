@@ -19,6 +19,7 @@ export class Entity extends BaseClientContext {
   public static _actions = [];
   private _schema;
   private _entityName;
+  public actions = [];
 
   constructor(opts: IClientContextContainer) {
     super(opts);
@@ -133,12 +134,16 @@ export class Entity extends BaseClientContext {
       const actionName = obj.className + "_" + obj.methodName;
       const classInstance = clientContainer.resolve(obj.className);
       const method = classInstance[obj.methodName].bind(classInstance);
+      classInstance.actions = {
+        ...classInstance.actions,
+        [obj.methodName]: (data) => actionTypes.action(actionName, data),
+      };
       const saga = function* () {
         while (true) {
           console.log("wait new dispatch of ", actionName);
           const { payload } = yield take(actionName);
           console.log("call ", actionName, " with payload: ", payload);
-          yield call(method, payload, true);
+          yield call(method, payload);
         }
       };
       Entity._actions = {
