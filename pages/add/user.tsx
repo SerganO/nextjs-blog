@@ -1,5 +1,5 @@
-import { showMessageNotification } from "functions/showNotification";
-import xfetch from "functions/xfetch";
+import { showMessageNotification } from "src/functions/showNotification";
+import xfetch from "src/functions/xfetch";
 import getConfig from "next/config";
 import { useState } from "react";
 

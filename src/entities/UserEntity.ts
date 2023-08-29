@@ -4,7 +4,7 @@ import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
 
-export default class UserEntity extends Entity {
+export default class UserEntity extends Entity<UserEntity> {
   constructor(opts: any) {
     super(opts);
     this.initSchema("users", {}, {});

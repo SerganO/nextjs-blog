@@ -15,17 +15,24 @@ enum HTTP_METHOD {
   POST,
 }
 
-export class Entity extends BaseClientContext {
+export class Entity<EntityInstance = null> extends BaseClientContext {
   public static _actions = [];
   private _schema;
   private _entityName;
-  public actions = [];
+  //public actions = [];
 
+  
   constructor(opts: IClientContextContainer) {
     super(opts);
 
     //this.invokableSaga = this.invokableSaga.bind(this);
+    this.actions = {} as {[K in Exclude<keyof this, keyof Entity>]?: string};
+
   }
+ 
+  public actions:  {[K in Exclude<keyof this, keyof Entity>]?: string};
+
+  
 
   protected initSchema(key: string | symbol, definition?: Schema, options?) {
     this._entityName = key;
@@ -122,7 +129,11 @@ export class Entity extends BaseClientContext {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
       const nData = normalize(sdata.response, this._schema);
-      yield put({ type: type, payload: { data: nData }, entityReducer: this._entityName });
+      yield put({
+        type: type,
+        payload: { data: nData },
+        entityReducer: this._entityName,
+      });
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });
     }
@@ -134,10 +145,7 @@ export class Entity extends BaseClientContext {
       const actionName = obj.className + "_" + obj.methodName;
       const classInstance = clientContainer.resolve(obj.className);
       const method = classInstance[obj.methodName].bind(classInstance);
-      classInstance.actions = {
-        ...classInstance.actions,
-        [obj.methodName]: (data) => actionTypes.action(actionName, data),
-      };
+      classInstance.actions[obj.methodName] = actionName;
       const saga = function* () {
         while (true) {
           console.log("wait new dispatch of ", actionName);
@@ -146,23 +154,18 @@ export class Entity extends BaseClientContext {
           yield call(method, payload);
         }
       };
-      Entity._actions = {
-        ...Entity._actions,
-        [actionName]: (data) => actionTypes.action(actionName, data),
-      };
       return fork(saga);
     });
     return maped;
   }
-  
 
-  public action(methodName, data?) {
+  /*public action(methodName, data?) {
     console.log(this.constructor.name + "_" + methodName);
     const action = Entity._actions[this.constructor.name + "_" + methodName];
     return action(data);
-  }
+  }*/
 
-    /*public invokableSaga(methodName, isSagaCall, saga, data?) {
+  /*public invokableSaga(methodName, isSagaCall, saga, data?) {
     if (isSagaCall) {
       const boundedSaga = saga.bind(this)
       return boundedSaga(data)

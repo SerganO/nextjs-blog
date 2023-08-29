@@ -21,7 +21,7 @@ export default class ReduxStore extends BaseClientContext {
   private _store: EnhancedStore<any, AnyAction>;
   public _wrapper;
 
-  public get store(): EnhancedStore<any, AnyAction> {
+  public store(): EnhancedStore<any, AnyAction> {
     return this._store;
   }
 

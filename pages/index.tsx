@@ -21,7 +21,6 @@ import clientContainer from "src/di/clientContainer";
 import MainPageInfoEntity from "src/entities/MainPageInfoEntity";
 import { useActions } from "src/hooks/useEntity";
 
-
 const mapDispatchToProps = (dispatch) => {
   return {
     saveMainProductPageAction: (data) =>
@@ -30,31 +29,25 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  
   //const data = structuredClone(state.mainPageInfoReducer.info)
-  if(typeof state.commonReducer.entities.mainPageInfos == `undefined`) return {}
-  const data = structuredClone(state.commonReducer.entities.mainPageInfos[0])
-  if (data == null) return {}
+  if (typeof state.commonReducer.entities.mainPageInfos == `undefined`)
+    return {};
+  const data = structuredClone(state.commonReducer.entities.mainPageInfos[0]);
+  if (data == null) return {};
 
-  data.products = data.products.map(
-    id => {
-      //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
-      const product = structuredClone(state.commonReducer.entities.products[id])
+  data.products = data.products.map((id) => {
+    //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
+    const product = structuredClone(state.commonReducer.entities.products[id]);
 
-      product.feedbacks = product.feedbacks.map(
-        feedId => {
-          //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
-          return structuredClone(state.commonReducer.entities.feedbacks[feedId])
-        }
-      )
+    product.feedbacks = product.feedbacks.map((feedId) => {
+      //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
+      return structuredClone(state.commonReducer.entities.feedbacks[feedId]);
+    });
 
-      return product
-    }
-  )
+    return product;
+  });
 
-  return {data}
-
-
+  return { data };
 };
 
 function Base({ data }) {
@@ -63,9 +56,10 @@ function Base({ data }) {
   //const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
   //const dispatch: Dispatch<any> = useDispatch();
-const {fetchMainProductPage} = useActions("MainPageInfoEntity");
+  const { fetchMainProductPage } =
+    useActions<"MainPageInfoEntity">("MainPageInfoEntity");
   useEffect(() => {
-    fetchMainProductPage()
+    fetchMainProductPage();
     //const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
     //dispatch(entity.fetchMainProductPageInvokable())
     //dispatch(entity.action("fetchMainProductPage"))
@@ -118,14 +112,11 @@ const productController =
 
 export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
-    
     const res = await (
       productController.handler("index") as (context: any) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, mainPageInfo)
-    store.dispatch(
-      saveMainProductPageAction({ data: nData  })
-    );
+    const nData = normalize(res.props.data, mainPageInfo);
+    store.dispatch(saveMainProductPageAction({ data: nData }));
     return res;
   }
 );

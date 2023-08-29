@@ -4,7 +4,7 @@ import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
 
-export default class MainPageInfoEntity extends Entity {
+export default class MainPageInfoEntity extends Entity<MainPageInfoEntity> {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
@@ -24,7 +24,7 @@ export default class MainPageInfoEntity extends Entity {
   }
 
   @action()
-  *fetchMainProductPage() {
+  public *fetchMainProductPage() {
     yield call(this.xRead, `/products/feedbacksIncluded/firstSet`);
   }
 

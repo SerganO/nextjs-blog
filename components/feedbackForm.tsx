@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import getConfig from "next/config";
-import { addFeedbackAction } from "../store/actionCreators"
-import { Dispatch } from "redux"
-import { useDispatch } from "react-redux"
-import { showMessageNotification } from "src/functions/showNotification";
-import clientContainer from "src/di/clientContainer";
-import ProductEntity from "src/entities/ProductEntity";
 import { useActions } from "src/hooks/useEntity";
 
 type FeedbackData = {
@@ -30,9 +24,13 @@ export default function FeedbackForm(product_id: number) {
   });
 
   const router = useRouter();
-  const {addFeedbackToProduct} = useActions('ProductEntity')
+ 
+  //const actions = useActions('ProductEntity')
+
+  const {addFeedbackToProduct} = useActions<'ProductEntity'>('ProductEntity')
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [feedback, setFeedback] = useState("");
+  
 
   const [sendEnabled, setSendEnabled] = useState(false);
 

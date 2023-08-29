@@ -4,7 +4,7 @@ import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
 
-export default class PageEntity extends Entity {
+export default class PageEntity extends Entity<PageEntity> {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
@@ -28,7 +28,7 @@ export default class PageEntity extends Entity {
   }
 
   @action()
-  *fetchProductPage(data) {
+  public *fetchProductPage(data) {
     console.log("in call fetchProductPage");
     yield call(
       this.xRead,

@@ -12,3 +12,4 @@ const {
   });
   
   export default redis;*/
+  export {}

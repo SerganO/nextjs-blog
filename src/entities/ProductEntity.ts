@@ -3,9 +3,8 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
-import { useDispatch } from "react-redux";
 
-export default class ProductEntity extends Entity {
+export default class ProductEntity extends Entity<ProductEntity> {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
@@ -22,7 +21,7 @@ export default class ProductEntity extends Entity {
 
 
   @action()
-  *addFeedbackToProduct(data) {
+  public *addFeedbackToProduct(data) {
     const feedbackData = data.feedbackData;
     yield call(
       this.xSave,

@@ -59,7 +59,7 @@ function Base({ data }) {
   const router = useRouter();
   
   //const dispatch: Dispatch<any> = useDispatch();
-  const {fetchProductPage} = useActions('PageEntity')
+  const {fetchProductPage} = useActions<'PageEntity'>('PageEntity')
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
 
   const productsPageData = data;

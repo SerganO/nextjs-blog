@@ -2,7 +2,7 @@ import { useState } from "react";
 import getConfig from "next/config";
 import SiteHeader from "components/siteHeader";
 import { useRouter } from "next/router";
-import { showMessageNotification } from "functions/showNotification";
+import { showMessageNotification } from "src/functions/showNotification";
 
 const {
   publicRuntimeConfig: { BASE_URL },
