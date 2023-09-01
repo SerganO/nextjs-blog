@@ -14,8 +14,8 @@ import { normalize } from "normalizr";
 import { product } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import ProductEntity from "src/entities/ProductEntity";
-import ContainerContext from 'src/ContainerContext';
-import {useActions} from 'src/hooks/useEntity';
+import ContainerContext from "src/ContainerContext";
+import { useActions } from "src/hooks/useEntity";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -24,52 +24,44 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  /*const data =  structuredClone(state.commonReducer.entities.products.find(
-    //(i) => i.id == state.reducer.selectedProductId
-    (i) => i.id == state.valueReducer.values["SELECTED_PRODUCT_ID"]
-  ))*/
-  if (typeof state.commonReducer.entities.products == `undefined`) return {};
-  const data = structuredClone(
-    state.commonReducer.entities.products[
-      state.valueReducer.values["SELECTED_PRODUCT_ID"]
-    ]
-  );
+  if (typeof state.productsReducer.products != `undefined`) {
+    const selectedProductId = state.valueReducer.values["SELECTED_PRODUCT_ID"];
+    const product = state.productsReducer.products[selectedProductId];
+    if(product) {
+      let vendor = null
+      if(product.vendor) {
+        vendor = state.usersReducer.users[product.vendor];
+      }
+      const feedbacks = product.feedbacks.map((feedbacId) => {
+        return state.feedbacksReducer.feedbacks[feedbacId];
+      });
+  
+      return {
+        data: {
+          product,
+          vendor,
+          feedbacks,
+        },
+      };
+    }
+  }
 
-  if (!data) return {};
-
-  //data.vendor = state.commonReducer.entities.users.find((u) => u.id == data.vendor)
-  data.vendor = state.commonReducer.entities.users[data.vendor];
-
-  data.feedbacks = data.feedbacks.map((feedId) => {
-    //const feedback = structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
-    const feedback = structuredClone(
-      state.commonReducer.entities.feedbacks[feedId]
-    );
-
-    //feedback.author =  state.commonReducer.entities.users.find((u) => u.id ==  feedback.author)
-    feedback.author = state.commonReducer.entities.users[feedback.author];
-
-    return feedback;
-  });
-
-  return { data };
+  return {
+    data: {
+      product: null,
+      vendor: null,
+      feedbacks: [],
+    },
+  };
 };
 
 function Base({ data }) {
-  //const dispatch: Dispatch<any> = useDispatch();
-  const {fetchProduct} = useActions('ProductEntity')
+  const { fetchProduct } = useActions("ProductEntity");
   const router = useRouter();
 
   const productData = data;
   useEffect(() => {
-    
-    fetchProduct({ payload: { id: router.query.id } })
-    //const di = useContext(ContainerContext);
-    //const entity = di.resolve('ProductEntity');
-    //const entity = clientContainer.resolve<ProductEntity>("ProductEntity");
-    //dispatch(entity.fetchProductInvokable({ payload: { id: router.query.id } }));
-    //dispatch(entity.action("fetchProduct", { payload: { id: router.query.id } }))
-    //dispatch(productRequestAction({ payload: { id: router.query.id } }));
+    fetchProduct({ payload: { id: router.query.id } });
   }, []);
 
   const handleGoBack = () => {

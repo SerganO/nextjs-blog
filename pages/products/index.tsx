@@ -25,34 +25,28 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  /*const data = structuredClone(state.commonReducer.entities.pages.find(
-    //(i) => i.page == state.reducer.selectedPage
-    (i) => i.page == state.valueReducer.values["SELECTED_PAGE"]
-  ))*/
+  if(typeof state.pagesReducer.pages == `undefined`) return {}
 
-  if(typeof state.commonReducer.entities.pages == `undefined`) return {}
-  const data = structuredClone(state.commonReducer.entities.pages[state.valueReducer.values["SELECTED_PAGE"]])
-  
+  const selectedPage = state.valueReducer.values["SELECTED_PAGE"]
+  const data = state.pagesReducer.pages[selectedPage]
 
   if (data == null) return {}
+  const productData = data.products.map(productId => {
+    const product = state.productsReducer.products[productId]
+    const feedbacks = product.feedbacks.map((feedbacId) => {
+      return state.feedbacksReducer.feedbacks[feedbacId];
+    });
+    
+    return { product, feedbacks }
+  })
 
-  data.products = data.products.map(
-    id => {
-      //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
-      const product = structuredClone(state.commonReducer.entities.products[id])
+  if(state.usersReducer.users && data.vendor) {
+    productData["vendor"] = state.usersReducer.users[data.vendor]
+  }
 
-      product.feedbacks = product.feedbacks.map(
-        feedId => {
-          //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
-          return structuredClone(state.commonReducer.entities.feedbacks[feedId])
-        }
-      )
+  productData["count"] = data.count
 
-      return product
-    }
-  )
-
-  return {data}
+  return {data: productData}
 };
 
 function Base({ data }) {
@@ -180,7 +174,7 @@ function Base({ data }) {
         />
       </div>
       <div className="flex flex-wrap justify-center gap-4">
-        {productsPageData?.products.map((product) => {
+        {productsPageData?.map((product) => {
           return ProductPlate(product);
         })}
       </div>

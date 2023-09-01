@@ -7,19 +7,13 @@ import ProductPlate from "../components/productPlate";
 
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
-import { Dispatch } from "redux";
-import { connect, useDispatch } from "react-redux";
-import {
-  mainProductPageRequestAction,
-  saveMainProductPageAction,
-} from "store/actionCreators";
+import { connect } from "react-redux";
+import { saveMainProductPageAction } from "store/actionCreators";
 import { wrapper } from "store";
 import { normalize } from "normalizr";
 import { mainPageInfo } from "src/functions/xfetch";
-import UserEntity from "src/entities/UserEntity";
-import clientContainer from "src/di/clientContainer";
-import MainPageInfoEntity from "src/entities/MainPageInfoEntity";
 import { useActions } from "src/hooks/useEntity";
+import { IProduct } from "server/models/Product";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -29,25 +23,20 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  //const data = structuredClone(state.mainPageInfoReducer.info)
-  if (typeof state.commonReducer.entities.mainPageInfos == `undefined`)
-    return {};
-  const data = structuredClone(state.commonReducer.entities.mainPageInfos[0]);
-  if (data == null) return {};
-
-  data.products = data.products.map((id) => {
-    //const product = structuredClone(state.commonReducer.entities.products.find((i) => i.id == id))
-    const product = structuredClone(state.commonReducer.entities.products[id]);
-
-    product.feedbacks = product.feedbacks.map((feedId) => {
-      //return structuredClone(state.commonReducer.entities.feedbacks.find((f) => f.id == feedId))
-      return structuredClone(state.commonReducer.entities.feedbacks[feedId]);
+  const products = (Object.values(state.productsReducer.products) as any[])
+    .sort((a, b) => a.id - b.id)
+    .slice(0, 20);
+  
+  const productData = products.map(product => {
+    const feedbacks = product.feedbacks.map((feedbacId) => {
+      return state.feedbacksReducer.feedbacks[feedbacId];
     });
+    
+    return { product, feedbacks }
+  })
 
-    return product;
-  });
+  return {data: productData}
 
-  return { data };
 };
 
 function Base({ data }) {
@@ -60,10 +49,6 @@ function Base({ data }) {
     useActions<"MainPageInfoEntity">("MainPageInfoEntity");
   useEffect(() => {
     fetchMainProductPage();
-    //const entity = clientContainer.resolve<MainPageInfoEntity>("MainPageInfoEntity")
-    //dispatch(entity.fetchMainProductPageInvokable())
-    //dispatch(entity.action("fetchMainProductPage"))
-    //dispatch(mainProductPageRequestAction());
   }, []);
 
   const goToProductsPage = () => {
@@ -89,7 +74,7 @@ function Base({ data }) {
         </button>
         <div className="mt-6 sm:overflow-x-auto sm:px-4 ">
           <div className="px-4 sm:-ml-2 sm:inline-flex sm:px-0 sm:pb-8">
-            {productsData?.products?.map((product, index) =>
+            {productsData?.map((product, index) =>
               ProductPlate(product)
             )}
             ;

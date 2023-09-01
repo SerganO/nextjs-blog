@@ -1,17 +1,13 @@
 import { useState } from "react";
 
-import { IProduct } from "../server/models/Product";
 import Star from "./star";
 import FeedbackView from "./feedback";
 import FeedbackForm from "./feedbackForm";
 import Link from "next/link";
 
-export default function ProductPage(product: IProduct) {
+export default function ProductPage({product, vendor, feedbacks}) {
   var [feedbackShown, setFeedbackShown] = useState(false);
 
-
-  const vendor = product?.vendor
-  const feedbacks = product?.feedbacks
   const productId = product?.id
   const title = product?.title
   const description = product?.description

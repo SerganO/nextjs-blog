@@ -28,8 +28,8 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 const mapStateToProps = (state) => {
-    if(typeof state.commonReducer.entities.users == `undefined`) return {}
-    return {data: state.commonReducer.entities.users[state.valueReducer.values["SELECTED_USER"]]}
+    if(typeof state.usersReducer.users == `undefined`) return {}
+    return {data: state.usersReducer.users[state.valueReducer.values["SELECTED_USER"]]}
 }
 
 

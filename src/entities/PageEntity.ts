@@ -22,6 +22,7 @@ export default class PageEntity extends Entity<PageEntity> {
       "pages",
       {
         products: [product],
+        vendor: user,
       },
       { idAttribute: "page" }
     );

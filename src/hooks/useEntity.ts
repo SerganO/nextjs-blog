@@ -19,12 +19,12 @@ type FirstParam<Type> = Type extends (...args: infer P) => any
 export function useActions<T extends keyof IEntityContainer>(entityName: T) {
   const dispatch = useDispatch();
   const entity = useEntity(entityName);
+  //const actions = entity.actions as IEntityContainer[T]["actions"]
   const actions = entity.actions as Omit<IEntityContainer[T], keyof Entity<IEntityContainer[T]>>
 
   const dispatches: {
     [key in keyof typeof actions]: (
       data?: FirstParam<IEntityContainer[T][key]>
-      //data?: any,
     ) => any;
   } = {} as any;
 

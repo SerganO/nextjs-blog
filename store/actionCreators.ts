@@ -1,9 +1,9 @@
 import * as actionTypes from "./actionTypes";
 
 export const saveProductAction = (data) =>
-  actionTypes.action(actionTypes.PRODUCT_FETCH_SUCCEEDED, { payload: data });
+  actionTypes.action(actionTypes.ADD, { payload: data });
 export const productRequestAction = (data) =>
-  actionTypes.action(actionTypes.PRODUCT_REQUESTED, data);
+  actionTypes.action(actionTypes.GET, data);
 
 export const saveUserAction = (data) =>
   actionTypes.action(actionTypes.ADD, { payload: data });

@@ -25,7 +25,7 @@ export default function FeedbackForm(product_id: number) {
 
   const router = useRouter();
  
-  //const actions = useActions('ProductEntity')
+  const actions = useActions("ProductEntity")
 
   const {addFeedbackToProduct} = useActions<'ProductEntity'>('ProductEntity')
   const [rating, setRating] = useState<number | undefined>(undefined);

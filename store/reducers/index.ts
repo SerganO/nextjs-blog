@@ -1,20 +1,21 @@
 import { combineReducers } from "redux";
-import feedbackReducer from "./feedbackReducer";
-import userReducer from "./userReducer";
-import productReducer from "./productReducer";
 import valueReducer from "./valueReducer";
-import pageReducer from "./pageReducer";
-import mainPageInfoReducer from "./mainPageInfoReducer";
 import { HYDRATE } from "next-redux-wrapper";
 import commonReducer from "./commonReducer";
+import baseReducer from "./baseReducer";
+
+const productsReducer = baseReducer("products")
+const usersReducer = baseReducer("users")
+const feedbacksReducer = baseReducer("feedbacks")
+const pagesReducer = baseReducer("pages")
 
 const rootReducer = combineReducers({
   valueReducer,
-  commonReducer,
-  // userReducer,
-  // productReducer,
-  // feedbackReducer,
-  //pageReducer,
+  //commonReducer,
+  usersReducer,
+  productsReducer,
+  feedbacksReducer,
+  pagesReducer,
   //mainPageInfoReducer,
 });
 

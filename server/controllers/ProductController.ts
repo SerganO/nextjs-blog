@@ -165,11 +165,18 @@ public addFeedback(body: any) {
     console.log("findProductsPaginated dI: ", this.di);
     return ProductService.findProductsPaginated(userId, offset, limit).then(res => {
       const result: any = res
+      let filters = {}
+      if(result.vendor) {
+        filters["vendor"] = result.vendor
+      }
       return {
+        page: page,
         count: result.count,
+        objectTypes: "products",
+        objects: result.products,
         products: result.products,
         vendor: result.vendor,
-        page: page
+        filters,
        }
 
     });
