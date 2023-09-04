@@ -1,6 +1,6 @@
 import { take, call, put } from "redux-saga/effects";
 
-import { _xfetch, feedback, mainPageInfo, page, product } from "src/functions/xfetch";
+import { _xfetch, page, product } from "src/functions/xfetch";
 import * as actionTypes from "../actionTypes";
 
 function* fetchProduct(action) {
@@ -56,7 +56,7 @@ function* fetchMainProductPage() {
   try {
     const data = yield call(
       _xfetch,
-      `/api/products/feedbacksIncluded/firstSet`, mainPageInfo
+      `/api/products/feedbacksIncluded/firstSet`, product
     );
     yield put({
       type: actionTypes.MAIN_PRODUCT_PAGE_FETCH_SUCCEEDED,
@@ -71,7 +71,7 @@ function* fetchMainProductPageNew() {
   try {
     const data = yield call(
       _xfetch,
-      `/api/products/feedbacksIncluded/firstSet`, mainPageInfo
+      `/api/products/feedbacksIncluded/firstSet`, product
     );
     /*yield put({
       type: actionTypes.MAIN_PRODUCT_PAGE_FETCH_SUCCEEDED,

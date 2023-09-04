@@ -199,8 +199,8 @@ public addFeedback(body: any) {
     return new Promise(async (resolve, reject) => {
       try {
         const products = await ProductService.findProductsFeedbackIndludedFirstSet();
-        let response = { id: 0, products};
-        resolve(response);
+        //let response = { products};
+        resolve(products);
       } catch (error) {
         reject(error);
       }

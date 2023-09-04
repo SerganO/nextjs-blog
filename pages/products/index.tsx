@@ -1,21 +1,18 @@
-import Pagination from "@material-ui/lab/Pagination";
+import { Pagination } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import ProductPlate from "../../components/productPlate";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import container from "server/di/container";
-import clientContainer from "src/di/clientContainer";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
-import { Dispatch } from "redux";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { wrapper } from "store";
-import { saveProductPageAction, productPageRequestAction } from "store/actionCreators";
+import { saveProductPageAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
-import { Schema, normalize, schema } from 'normalizr';
-import { mainPageInfo, page } from "src/functions/xfetch";
-import PageEntity from "src/entities/PageEntity";
+import { normalize } from 'normalizr';
+import { page } from "src/functions/xfetch";
 import { useActions } from "src/hooks/useEntity";
 
 const mapDispatchToProps = (dispatch) => {
@@ -25,23 +22,23 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  if(typeof state.pagesReducer.pages == `undefined`) return {}
+  if(typeof state.pages == `undefined`) return {}
 
   const selectedPage = state.valueReducer.values["SELECTED_PAGE"]
-  const data = state.pagesReducer.pages[selectedPage]
+  const data = state.pages[selectedPage]
 
   if (data == null) return {}
   const productData = data.products.map(productId => {
-    const product = state.productsReducer.products[productId]
+    const product = state.products[productId]
     const feedbacks = product.feedbacks.map((feedbacId) => {
-      return state.feedbacksReducer.feedbacks[feedbacId];
+      return state.feedbacks[feedbacId];
     });
     
     return { product, feedbacks }
   })
 
-  if(state.usersReducer.users && data.vendor) {
-    productData["vendor"] = state.usersReducer.users[data.vendor]
+  if(state.users && data.vendor) {
+    productData["vendor"] = state.users[data.vendor]
   }
 
   productData["count"] = data.count

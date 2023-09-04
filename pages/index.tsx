@@ -11,9 +11,8 @@ import { connect } from "react-redux";
 import { saveMainProductPageAction } from "store/actionCreators";
 import { wrapper } from "store";
 import { normalize } from "normalizr";
-import { mainPageInfo } from "src/functions/xfetch";
 import { useActions } from "src/hooks/useEntity";
-import { IProduct } from "server/models/Product";
+import { product } from "src/functions/xfetch";
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -23,17 +22,16 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  const products = (Object.values(state.productsReducer.products) as any[])
-    .sort((a, b) => a.id - b.id)
-    .slice(0, 20);
-  
-  const productData = products.map(product => {
-    const feedbacks = product.feedbacks.map((feedbacId) => {
-      return state.feedbacksReducer.feedbacks[feedbacId];
-    });
-    
-    return { product, feedbacks }
-  })
+  const productData = 
+    (Object.values(state.products) as any[])
+      .sort((a, b) => a.id - b.id)
+      .slice(0, 20)
+      .map(product => {
+        const feedbacks = product.feedbacks.map((feedbacId) => {
+          return state.feedbacks[feedbacId];
+        });
+        return { product, feedbacks }
+      })
 
   return {data: productData}
 
@@ -42,11 +40,9 @@ const mapStateToProps = (state) => {
 function Base({ data }) {
   const productsData = data;
 
-  //const [productsData, setProductsData] = useState<[IProduct]>(data);
   const router = useRouter();
-  //const dispatch: Dispatch<any> = useDispatch();
   const { fetchMainProductPage } =
-    useActions<"MainPageInfoEntity">("MainPageInfoEntity");
+    useActions("ProductEntity");
   useEffect(() => {
     fetchMainProductPage();
   }, []);
@@ -100,7 +96,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     const res = await (
       productController.handler("index") as (context: any) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, mainPageInfo);
+    const nData = normalize(res.props.data, [product]);
     store.dispatch(saveMainProductPageAction({ data: nData }));
     return res;
   }

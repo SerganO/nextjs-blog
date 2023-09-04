@@ -3,7 +3,9 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
+import reducer from "./reducer";
 
+@reducer("pages")
 export default class PageEntity extends Entity<PageEntity> {
   constructor(opts: any) {
     super(opts);

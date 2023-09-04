@@ -1,23 +1,19 @@
-import { combineReducers } from "redux";
+import { AnyAction, CombinedState, Reducer, combineReducers } from "redux";
 import valueReducer from "./valueReducer";
 import { HYDRATE } from "next-redux-wrapper";
-import commonReducer from "./commonReducer";
 import baseReducer from "./baseReducer";
+import { Entity } from "src/entities/entity";
 
-const productsReducer = baseReducer("products")
-const usersReducer = baseReducer("users")
-const feedbacksReducer = baseReducer("feedbacks")
-const pagesReducer = baseReducer("pages")
+let combinedReducers = Reflect.getMetadata("reducers", Entity).reduce((reducers, obj) => {
+  const key = `${obj.reducerName}`;
+  const reducer = baseReducer(obj.reducerName)
+  return {
+    ...reducers,
+    [key]: reducer,
+  };
+}, {valueReducer});
 
-const rootReducer = combineReducers({
-  valueReducer,
-  //commonReducer,
-  usersReducer,
-  productsReducer,
-  feedbacksReducer,
-  pagesReducer,
-  //mainPageInfoReducer,
-});
+const rootReducer = combineReducers(combinedReducers) as  Reducer<CombinedState<any>, AnyAction>
 
 export default (state, action) => {
   if (action.type === HYDRATE) {

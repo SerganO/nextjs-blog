@@ -6,9 +6,6 @@ export default function USE(
     
     return (target: any, propertyKey?: string | undefined): void => 
     {
-        //console.log("USE")
-        //console.log("target: ", target)
-        //console.log("propertyKey: ", propertyKey)
       let key: string = propertyKey
         ? target.constructor.name + '_' + propertyKey
         : target.name;
@@ -20,7 +17,6 @@ export default function USE(
       } else {
         funcs = [...middleware, ...funcs]; //!!! the order is important. 1) middleware 2) func
       }
-      //console.log("define data:", key,"::", funcs,"::", store)
       Reflect.defineMetadata(key, funcs, store);
     };
   }

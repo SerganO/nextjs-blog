@@ -3,7 +3,9 @@ import { Entity } from "./entity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
 import action from "./action";
+import reducer from "./reducer";
 
+@reducer('products')
 export default class ProductEntity extends Entity<ProductEntity> {
   constructor(opts: any) {
     super(opts);
@@ -18,7 +20,6 @@ export default class ProductEntity extends Entity<ProductEntity> {
       feedbacks: [feedback],
     });
   }
-
 
   @action()
   public *addFeedbackToProduct(data) {
@@ -43,6 +44,11 @@ export default class ProductEntity extends Entity<ProductEntity> {
         },
       })
     );
+  }
+
+  @action()
+  public *fetchMainProductPage() {
+    yield call(this.xRead, `/products/feedbacksIncluded/firstSet`);
   }
 
 

@@ -128,7 +128,10 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
-      const nData = normalize(sdata.response, this._schema);
+      let nData = normalize(sdata.response, this._schema);
+      if(nData.result == undefined) {
+        nData = normalize(sdata.response, [this._schema]);
+      }
       yield put({
         type: type,
         payload: { data: nData },

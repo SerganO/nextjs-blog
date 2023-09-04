@@ -24,16 +24,16 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  if (typeof state.productsReducer.products != `undefined`) {
+  if (typeof state.products != `undefined`) {
     const selectedProductId = state.valueReducer.values["SELECTED_PRODUCT_ID"];
-    const product = state.productsReducer.products[selectedProductId];
+    const product = state.products[selectedProductId];
     if(product) {
       let vendor = null
       if(product.vendor) {
-        vendor = state.usersReducer.users[product.vendor];
+        vendor = state.users[product.vendor];
       }
       const feedbacks = product.feedbacks.map((feedbacId) => {
-        return state.feedbacksReducer.feedbacks[feedbacId];
+        return state.feedbacks[feedbacId];
       });
   
       return {

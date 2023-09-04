@@ -1,19 +1,12 @@
 import * as actionTypes from "../actionTypes";
 
-type StoreState = {
+type StoreState = {};
 
-}
-
-const initialState: StoreState = {
- 
-};
+const initialState: StoreState = {};
 
 const baseReducer =
   (entityReducer: string) =>
-  (
-    state: StoreState = initialState,
-    action: StoreAction
-  ): StoreState => {
+  (state: StoreState = initialState, action: StoreAction): StoreState => {
     switch (action.type) {
       case actionTypes.GET:
       case actionTypes.ADD:
@@ -23,17 +16,15 @@ const baseReducer =
           let newValues: any = {};
           if (entitiesArr && entityReducer in entitiesArr) {
             const newData = entitiesArr[entityReducer];
-            const newEntityValues = [
-              state[entityReducer] ?? {},
-              newData ?? {},
-            ].reduce(function (r, o) {
-              Object.keys(o).forEach(function (k) {
-                r[k] = o[k];
-              });
-              return r;
-            }, {});
-
-            newValues[entityReducer] = newEntityValues;
+            newValues = [state[entityReducer] ?? {}, newData ?? {}].reduce(
+              function (r, o) {
+                Object.keys(o).forEach(function (k) {
+                  r[k] = o[k];
+                });
+                return r;
+              },
+              {}
+            );
           }
 
           return {
@@ -57,7 +48,7 @@ const baseReducer =
 
             return {
               ...state,
-              [entityReducer]: newValues,
+              ...newValues,
             };
           }
         }
