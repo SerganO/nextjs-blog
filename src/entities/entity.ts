@@ -1,10 +1,11 @@
 import getConfig from "next/config";
 import { Schema, normalize, schema } from "normalizr";
-import { put, call, take, fork } from "redux-saga/effects";
+import { put, call, take, fork, select } from "redux-saga/effects";
 import BaseClientContext from "src/di/baseClientContext";
 import * as actionTypes from "store/actionTypes";
 import IClientContextContainer from "src/di/interfaces/container";
 import clientContainer from "src/di/clientContainer";
+import { IPagerParams } from "src/pagination/IPagerParams ";
 
 const {
   publicRuntimeConfig: { BASE_URL, API_STRING },
@@ -27,6 +28,8 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
 
     //this.invokableSaga = this.invokableSaga.bind(this);
     this.actions = {} as {[K in Exclude<keyof this, keyof Entity>]?: string};
+
+    this.pageEntity = this.pageEntity.bind(this)
 
   }
  
@@ -72,6 +75,8 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
       signal: controller.signal,
     };
 
+    console.log("pre json str: ", data)
+    console.log(" json str: ", JSON.stringify(data))
     if (method !== HTTP_METHOD.GET) {
       params.headers["content-type"] = "application/json";
       params.body = JSON.stringify(data);
@@ -128,10 +133,19 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
-      let nData = normalize(sdata.response, this._schema);
-      if(nData.result == undefined) {
-        nData = normalize(sdata.response, [this._schema]);
+
+      let schema = Array.isArray(sdata.response)? [this._schema] :this._schema
+
+      if(sdata.response.pager) {
+          schema = {
+            pager: {
+              items: [this._schema]
+            }
+          }
       }
+
+
+      let nData = normalize(sdata.response, schema);
       yield put({
         type: type,
         payload: { data: nData },
@@ -161,6 +175,55 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     });
     return maped;
   }
+  
+
+  public *pageEntity(uri: string, params: IPagerParams) {
+    const pageName = params.pageName;
+    const pagination = yield select((state: any) => state['pagination']);
+
+    if (!('page' in params)) {
+        console.log('No page');
+        params['page'] = pagination[pageName]["currentPage"]// pagination.getIn([pageName, 'currentPage']);
+    }
+
+    // send event about starting page fetching
+    yield put(actionTypes.pageFetching(pageName, params.page, true, params.force));
+    // check if this page already fetched
+    if (
+      !pagination[pageName] ||
+      !pagination[pageName]["pages"][params.page] ||
+        //!pagination.hasIn([pageName, 'pages', params.page]) ||
+        params.force
+    ) {
+        let count = 0;
+        if (!params.force && 
+          pagination[pageName] && pagination[pageName]["count"]
+          /*pagination.hasIn([pageName, 'count'])*/) {
+            count = pagination[pageName]["count"]// pagination.get(pageName).get('count');
+        }
+        // set filter to paginator, in case fetch from getInitProps()
+        const pFilter = params.filter ? params.filter : {};
+        const pSort = params.sort ? params.sort : {};
+        yield put(actionTypes.pageSetFilter(pageName, pFilter, pSort));
+        console.log('Fetching page...');
+        
+        yield call(
+            this.xRead,
+            uri,
+            {
+                ...params,
+                pageName,
+                count,
+               entityName: this._entityName,
+            },
+            HTTP_METHOD.POST
+        );
+
+        console.log('Fetched page...');
+    }
+    // send event about ending page fetching
+    yield put(actionTypes.pageFetching(pageName, params.page, false));
+}
 
   /*public action(methodName, data?) {
     console.log(this.constructor.name + "_" + methodName);

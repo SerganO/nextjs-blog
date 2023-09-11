@@ -22,13 +22,14 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  if(typeof state.pages == `undefined`) return {}
 
-  const selectedPage = state.valueReducer.values["SELECTED_PAGE"]
-  const data = state.pages[selectedPage]
-
+  const pageName = "products"
+  const pagination = state.pagination[pageName]
+  if(typeof pagination == `undefined` || !pagination.pages) return {}
+  const selectedPage = pagination.currentPage
+  const data = pagination.pages[selectedPage]
   if (data == null) return {}
-  const productData = data.products.map(productId => {
+  const productData = data.ids.map(productId => {
     const product = state.products[productId]
     const feedbacks = product.feedbacks.map((feedbacId) => {
       return state.feedbacks[feedbacId];
@@ -37,11 +38,29 @@ const mapStateToProps = (state) => {
     return { product, feedbacks }
   })
 
-  if(state.users && data.vendor) {
+  //const selectedPage = state.valueReducer.values["SELECTED_PAGE"]
+  //const data = state.pages[selectedPage]
+
+ /* 
+  const productData = data.products.map(productId => {
+    const product = state.products[productId]
+    const feedbacks = product.feedbacks.map((feedbacId) => {
+      return state.feedbacks[feedbacId];
+    });
+    
+    return { product, feedbacks }
+  })*/
+
+  /*if(state.users && data.vendor) {
     productData["vendor"] = state.users[data.vendor]
+  }*/
+
+  if(state.users && pagination.filter && pagination.filter.user_id) {
+    productData["vendor"] = state.users[pagination.filter.user_id]
   }
 
-  productData["count"] = data.count
+  //productData["count"] = data.count
+  productData["count"] = pagination.count
 
   return {data: productData}
 };
@@ -50,7 +69,7 @@ function Base({ data }) {
   const router = useRouter();
   
   //const dispatch: Dispatch<any> = useDispatch();
-  const {fetchProductPage} = useActions<'PageEntity'>('PageEntity')
+  const {fetchProductsPage} = useActions("ProductEntity")
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
 
   const productsPageData = data;
@@ -64,9 +83,15 @@ function Base({ data }) {
     userString = `&user=${userId}`;
   }
 
+  const filter = {}
+  if (userId) {
+    filter["user_id"] = userId
+  }
+
+
   useEffect(() => {
     
-    fetchProductPage({payload: { page: page, userString: userString} })
+    fetchProductsPage({payload: { page: page, pageName: "products", perPage: 20, filter} })
     //const entity = clientContainer.resolve<PageEntity>("PageEntity")
     
     //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
@@ -87,7 +112,7 @@ function Base({ data }) {
       { shallow: true }
     );
     setPage(1)
-    fetchProductPage({payload: { page: 1, userString: ""} })
+    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { user_id: ""}} })
     //const entity = clientContainer.resolve<PageEntity>("PageEntity")
     //dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
@@ -225,7 +250,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     )(context);
 
     const nData = normalize(res.props.data, page)
-    console.log("nData: ", nData)
+    //console.log("nData: ", nData)
     store.dispatch(saveProductPageAction({ data: nData }));
 
     return res;

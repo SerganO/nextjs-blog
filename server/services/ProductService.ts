@@ -22,19 +22,17 @@ export default class ProductService extends BaseContext {
     rating: number,
     message: string
   ) {
-
-    const { FeedbackService } = this.di
+    const { FeedbackService } = this.di;
 
     return new Promise(async (resolve, reject) => {
       try {
-        await FeedbackService.addFeedback(userId, productId, rating, message)
-        const response = await this.findProductExtendedInfo(`${productId}`)
+        await FeedbackService.addFeedback(userId, productId, rating, message);
+        const response = await this.findProductExtendedInfo(`${productId}`);
         resolve(response);
       } catch (error) {
         reject(error);
       }
-    })
-
+    });
   }
 
   /**
@@ -104,6 +102,54 @@ export default class ProductService extends BaseContext {
     queryOptions.include = { model: Feedback, as: "feedbacks" };
 
     return Product.findAll(queryOptions);
+  }
+
+  /**
+   * page
+   */
+  public page(page, perPage, filter, sort) {
+    const limit = perPage;
+    const offset = (page - 1) * perPage;
+
+    const queryOptions: FindOptions = {};
+    const countQueryOptions: FindOptions = {};
+
+    if (filter) {
+      Object.keys(filter).forEach((key) => {
+        queryOptions.where = {
+          ...queryOptions.where,
+          [key]: { [Op.eq]: filter[key] },
+        };
+
+        countQueryOptions.where = {
+          ...queryOptions.where,
+          [key]: { [Op.eq]: filter[key] },
+        };
+      });
+    }
+    if (offset) {
+      queryOptions.offset = offset;
+    }
+
+    if (limit) {
+      queryOptions.limit = limit;
+    }
+
+    const { Product, Feedback, User } = this.di;
+
+    queryOptions.include = { model: Feedback, as: "feedbacks" };
+
+    return new Promise(async (resolve, reject) => {
+      try {
+        const count = await Product.count(countQueryOptions);
+        const products = await Product.findAll(queryOptions);
+
+        let response = { items: products, count };
+        resolve(response);
+      } catch (error) {
+        reject(error);
+      }
+    }) as Promise<any>;
   }
 
   /**

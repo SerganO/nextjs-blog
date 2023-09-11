@@ -4,6 +4,18 @@ export function action(type: string, payload = {}): Action {
   return { type, ...payload };
 }
 
+export function pageFetching(pageName, page, isFetching, force = false) {
+  return action(PAGE_FETCHING, {pageName, page, isFetching, force})
+}
+
+export function pageSetFilter(pageName, filter, sort) {
+  return action(PAGE_SET_FILTER, {pageName, filter, sort})
+}
+
+
+export const PAGE_FETCHING = "PAGE_FETCHING"
+export const PAGE_SET_FILTER = "PAGE_SET_FILTER"
+
 
 export const SELECT_PRODUCT_ID = "SELECT_PRODUCT_ID";
 

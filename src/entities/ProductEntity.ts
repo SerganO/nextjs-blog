@@ -5,7 +5,7 @@ import * as actionTypes from "store/actionTypes";
 import action from "./action";
 import reducer from "./reducer";
 
-@reducer('products')
+@reducer("products")
 export default class ProductEntity extends Entity<ProductEntity> {
   constructor(opts: any) {
     super(opts);
@@ -30,7 +30,7 @@ export default class ProductEntity extends Entity<ProductEntity> {
       feedbackData
     );
   }
-  
+
   @action()
   public *fetchProduct(data) {
     yield call(this.xRead, `/products/${parseInt(data.id)}/extended`);
@@ -51,6 +51,33 @@ export default class ProductEntity extends Entity<ProductEntity> {
     yield call(this.xRead, `/products/feedbacksIncluded/firstSet`);
   }
 
+  @action()
+  public *fetchProductsPage(data) {
+    yield call(
+      this.pageEntity,
+      `/products/pagination`,
+      data
+    );
+  }
+
+  /*@action()
+  public *fetchProductPage(data) {
+    console.log("in call fetchProductPage");
+    yield call(
+      this.xRead,
+      `/products/pagination?page=${data.page}${data.userString}`
+    );
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        payload: {
+          data: {
+            key: "SELECTED_PAGE",
+            value: data.page,
+          },
+        },
+      })
+    );
+  }*/
 
   /* @action()
   public addFeedbackToProductInvokable(data, isSagaCall = false) {

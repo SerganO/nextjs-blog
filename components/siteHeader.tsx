@@ -68,12 +68,14 @@ export default function SiteHeader() {
         </div>
         <div className=" px-5 py-3 sm:py-0">
           <div className="flex items-center">
-            <img
-              className="h-10 w-10 rounded-full border-2  border-gray-600 object-cover sm:h-8 sm:w-8"
-              src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
-              alt="profile"
-            />
-            <span className="ml-4 text-gray-200 sm:hidden">Isla Schogar</span>
+            <Link href={"/login"}>
+              <img
+                className="h-10 w-10 rounded-full border-2  border-gray-600 object-cover sm:h-8 sm:w-8"
+                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=764&q=80"
+                alt="profile"
+              />
+              <span className="ml-4 text-gray-200 sm:hidden">Isla Schogar</span>
+            </Link>
           </div>
           <div className="pt-3 sm:hidden">
             <Link

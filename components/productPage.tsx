@@ -21,7 +21,7 @@ export default function ProductPage({product, vendor, feedbacks}) {
   var roundedRaiting = 0;
   if (feedbacks?.length > 0) {
     rating = feedbacks?.reduce(
-      (sum, current) => sum + current.rating,
+      (sum, current) => sum + current.data.rating,
       0
     );
     rating = rating / feedbacks?.length;

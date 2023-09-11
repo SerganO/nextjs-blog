@@ -23,7 +23,7 @@ export default class PageEntity extends Entity<PageEntity> {
     this.initSchema(
       "pages",
       {
-        products: [product],
+        objects: [product],
         vendor: user,
       },
       { idAttribute: "page" }

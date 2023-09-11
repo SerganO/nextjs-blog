@@ -103,6 +103,7 @@ export default class BaseController extends BaseContext {
               })
               .catch((error) => {
                 console.log("catch");
+                console.log("error:", error);
                 res.status(404).send({ error: error });
               });
           });
