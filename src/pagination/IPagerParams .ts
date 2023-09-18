@@ -6,4 +6,5 @@ export interface IPagerParams {
     perPage: number;    // count items on one page
     force?: boolean;    // reload data in the redux and pager
     count?: number;     // count by filter, if 0 need to recalculate, if > 0 count doesn't need to calculate
+    entityName?: string;
 }

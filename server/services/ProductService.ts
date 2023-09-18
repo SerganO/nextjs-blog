@@ -4,6 +4,7 @@
 import { Op, FindOptions } from "sequelize";
 import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
+import { IPagerParams } from "src/pagination/IPagerParams ";
 
 export default class ProductService extends BaseContext {
   constructor(opts: IContextContainer) {
@@ -107,23 +108,24 @@ export default class ProductService extends BaseContext {
   /**
    * page
    */
-  public page(page, perPage, filter, sort) {
-    const limit = perPage;
-    const offset = (page - 1) * perPage;
+  public page(params: IPagerParams) {
+    console.log("params: ", params);
+    const limit = params.perPage;
+    const offset = (params.page - 1) * params.perPage;
 
     const queryOptions: FindOptions = {};
     const countQueryOptions: FindOptions = {};
 
-    if (filter) {
-      Object.keys(filter).forEach((key) => {
+    if (params.filter) {
+      Object.keys(params.filter).forEach((key) => {
         queryOptions.where = {
           ...queryOptions.where,
-          [key]: { [Op.eq]: filter[key] },
+          [key]: { [Op.eq]: params.filter[key] },
         };
 
         countQueryOptions.where = {
           ...queryOptions.where,
-          [key]: { [Op.eq]: filter[key] },
+          [key]: { [Op.eq]: params.filter[key] },
         };
       });
     }
@@ -141,10 +143,20 @@ export default class ProductService extends BaseContext {
 
     return new Promise(async (resolve, reject) => {
       try {
-        const count = await Product.count(countQueryOptions);
+        let count = params.count ?? 0;
+        if (count == 0) {
+          count = await Product.count(countQueryOptions);
+        }
         const products = await Product.findAll(queryOptions);
-
-        let response = { items: products, count };
+        let response = {
+          items: products,
+          count,
+          //PAGINATION PARAMS
+          //page: params.page,
+          //pageName: params.pageName,
+          //perPage: params.perPage,
+          //entityName: params.entityName,
+        };
         resolve(response);
       } catch (error) {
         reject(error);

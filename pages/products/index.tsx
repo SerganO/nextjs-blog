@@ -92,8 +92,7 @@ function Base({ data }) {
   useEffect(() => {
     
     fetchProductsPage({payload: { page: page, pageName: "products", perPage: 20, filter} })
-    //const entity = clientContainer.resolve<PageEntity>("PageEntity")
-    
+
     //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
     //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
@@ -112,8 +111,8 @@ function Base({ data }) {
       { shallow: true }
     );
     setPage(1)
-    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { user_id: ""}} })
-    //const entity = clientContainer.resolve<PageEntity>("PageEntity")
+    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { }} })
+    
     //dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
     //dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
@@ -224,7 +223,7 @@ export default connect(
   (state) => state
 )(Base);
 
-const productController =
+/*const productController =
   container.resolve<ProductController>("ProductController");
 
 export const getServerSideProps = wrapper.getServerSideProps(
@@ -239,9 +238,9 @@ export const getServerSideProps = wrapper.getServerSideProps(
           } },
         }
       )
-      /*actionTypes.action(actionTypes.SELECT_PAGE, {
-        payload: { data: (parseInt(context.query.page as string) || 1) },
-      })*/
+      //actionTypes.action(actionTypes.SELECT_PAGE, {
+      //  payload: { data: (parseInt(context.query.page as string) || 1) },
+      //})
     );
     const res = await (
       productController.handler("products/index") as (
@@ -255,5 +254,5 @@ export const getServerSideProps = wrapper.getServerSideProps(
 
     return res;
   }
-);
+);*/
 

@@ -20,6 +20,7 @@ module.exports = {
     REDIS_HOST: process.env.REDIS_HOST,
     REDIS_PORT:process.env.REDIS_PORT,
     API_STRING: process.env.API_STRING,
+    PAGE_SIZE_10: process.env.PAGE_SIZE_10
 
   },
 };

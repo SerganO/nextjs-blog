@@ -5,6 +5,7 @@ import BaseController from "./BaseController";
 import { GET, POST, SSR, USE } from "server/decorators";
 import validate, { validateProps } from "server/middleware/validate";
 import session from "server/middleware/session";
+import pager from "server/decorators/pager";
 const PAGE_SIZE_10 = 10;
 @USE(async (req, res, next) => {
   console.log("class use 1");
@@ -166,49 +167,12 @@ export default class ProductController extends BaseController {
     }
   }
 
+  @pager()
   @POST("api/products/pagination")
-  async getProductsPaginated(body) {
+  async getProductsPaginated(body, user, session, pager) {
     const { ProductService } = this.di;
-    console.log(body);
-    console.log(typeof body);
-    let jsonString = "";
-    if (typeof body == "string") {
-      jsonString = body;
-    } else {
-      jsonString = JSON.stringify(body);
-    }
-
-    let bodyData = JSON.parse(jsonString);
-    const page = parseInt(bodyData.page || 1);
-    const pageName = bodyData["pageName"];
-    const perPage = parseInt(bodyData.perPage || PAGE_SIZE_10);
-    const filter = bodyData.filter ? bodyData.filter : null;
-    const sort = bodyData.sort ? bodyData.sort : null;
-    const entityName = bodyData.entityName ? bodyData.entityName : null
-    console.log(page, pageName, perPage, filter, sort);
-    console.log("filter ---", filter);
-    return ProductService.page(page, perPage, filter, sort)
-      .then(({ items, count }) => {
-        return {
-          pager: {
-            count,
-            items,
-            page,
-            pageName,
-            perPage,
-            entityName
-          },
-        };
-      })
-      .catch((error) => {
-        console.error("EventsController.eventList()", error);
-        throw Error("not full data");
-        /*return {
-          null,
-          "Can not fetch companies for pager",
-          "NOT_FOUND"
-        */
-      });
+    console.log("pager: ", pager)
+    return ProductService.page(pager)
   }
 
   /**

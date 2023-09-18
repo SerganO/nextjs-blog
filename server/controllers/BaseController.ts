@@ -1,10 +1,16 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
+import getConfig from "next/config";
 import next from "next/types";
 
 import BaseContext from "server/di/BaseContext";
 import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
+import { IPagerParams } from "src/pagination/IPagerParams ";
+
+const {
+  publicRuntimeConfig: { PAGE_SIZE_10 },
+} = getConfig();
 
 export default class BaseController extends BaseContext {
   constructor(opts: IContextContainer) {
@@ -31,6 +37,7 @@ export default class BaseController extends BaseContext {
     console.log("routeName: ", routeName);
 
     const members: any = Reflect.getMetadata(routeName, this);
+
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
     console.log("members: ", members);
@@ -78,7 +85,7 @@ export default class BaseController extends BaseContext {
         return router.run(context.req, context.res);*/
       };
     }
-
+    const pagers: any[] = Reflect.getMetadata("pagers", this);
     Object.keys(members).map((method) => {
       for (let i = 0; i < members[method].length; i++) {
         const methodName: string = method.toLowerCase(); //GET, POST, PUT, etc
@@ -89,15 +96,60 @@ export default class BaseController extends BaseContext {
 
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             console.log("handler callback");
-            console.log("req.user: ", req.user)
-            console.log("req.session: ", req.session)
-            let user = null
-            if(req.user != undefined) {
-              user = this.json(req.user?.dataValues)
+            console.log("req.user: ", req.user);
+            console.log("req.session: ", req.session);
+            let user = null;
+            if (req.user != undefined) {
+              user = this.json(req.user?.dataValues);
             }
-            callback(methodName === "get" ? req.query : req.body, user, req.session)
+            let pager: IPagerParams = null;
+            const isPager = pagers.find((x) => x.methodName == action) != null;
+
+            if (isPager) {
+              console.log("pager function: ", action);
+              const page = parseInt(req.body.page || 1);
+              const pageName = req.body["pageName"];
+              const perPage = parseInt(req.body.perPage || PAGE_SIZE_10);
+              const filter = req.body.filter ? req.body.filter : null;
+              const sort = req.body.sort ? req.body.sort : null;
+              const entityName = req.body.entityName
+                ? req.body.entityName
+                : null;
+
+              pager = {
+                page: page,
+                pageName: pageName,
+                perPage: perPage,
+                filter: filter,
+                sort: sort,
+                entityName: entityName,
+              };
+            }
+            console.log(pager);
+            callback(
+              methodName === "get" ? req.query : req.body,
+              user,
+              req.session,
+              pager
+            )
               .then((data) => {
-                //console.log("data: ", data);
+                if (isPager) {
+                  data = {
+                    pager: {
+                      items: data.items,
+                      count: data.count,
+                      page: pager.page,
+                      pageName: pager.pageName,
+                      perPage: pager.perPage,
+                      entityName: pager.entityName,
+                      
+                      
+                    },
+                  };
+                }
+                return data;
+              })
+              .then((data) => {
                 console.log("return res data");
                 res.status(200).json(data);
               })
