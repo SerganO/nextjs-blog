@@ -14,6 +14,7 @@ import { useActions } from "src/hooks/useEntity";
 import { product } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
+import ProductEntity from "src/entities/ProductEntity";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
@@ -92,6 +93,7 @@ export default connect(
 
 const productController =
   container.resolve<ProductController>("ProductController");
+  const productEntity = clientContainer.resolve<ProductEntity>("ProductEntity")
 //export const getServerSideProps = productController.handler("index");
 
 export const getServerSideProps = reduxStore.getServerSideProps(
@@ -99,7 +101,7 @@ export const getServerSideProps = reduxStore.getServerSideProps(
     const res = await (
       productController.handler("index") as (context: any) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, [product]);
+    const nData = normalize(res.props.data.data, {items: [product] });
     store.dispatch(saveMainProductPageAction({ data: nData }));
     return res;
   }

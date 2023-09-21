@@ -151,7 +151,7 @@ export const getServerSideProps = reduxStore.getServerSideProps(
         context: any
       ) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, user)
+    const nData = normalize(res.props.data.data, {items:user})
     store.dispatch(saveUserAction({ data: nData }));
 
     return res;

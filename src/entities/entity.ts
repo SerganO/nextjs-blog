@@ -134,16 +134,22 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
 
-      let schema = Array.isArray(sdata.response)? [this._schema] :this._schema
+      let schema = Array.isArray(sdata.response.data.items)? [this._schema] :this._schema
 
-      if(sdata.response.pager) {
+     /* if(sdata.response.pager) {
           schema = {
             pager: {
               items: [this._schema]
             }
           }
+      }*/
+      
+      schema = {
+        data: {
+          items: schema
+        }
       }
-
+     
 
       let nData = normalize(sdata.response, schema);
       yield put({

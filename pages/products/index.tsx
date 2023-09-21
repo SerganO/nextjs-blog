@@ -30,6 +30,7 @@ const mapStateToProps = (state) => {
   const pagination = state.pagination[pageName]
   if(typeof pagination == `undefined` || !pagination.pages) return {}
   const selectedPage = pagination.currentPage
+  const currentFilter = pagination.filter
   const data = pagination.pages[selectedPage]
   if (data == null) return {}
   const productData = data.ids.map(productId => {
@@ -64,7 +65,7 @@ const mapStateToProps = (state) => {
 
   //productData["count"] = data.count
   productData["count"] = pagination.count
-
+  productData["currentFilter"] = currentFilter
   return {data: productData}
 };
 
@@ -90,11 +91,12 @@ function Base({ data }) {
   if (userId) {
     filter["user_id"] = userId
   }
-
+  console.log("current filter: ", productsPageData?.currentFilter)
+  const force = (productsPageData?.currentFilter ?? {}) != filter
 
   useEffect(() => {
     
-    fetchProductsPage({payload: { page: page, pageName: "products", perPage: 20, filter} })
+    fetchProductsPage({payload: { page: page, pageName: "products", perPage: 20, filter, force} })
 
     //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
@@ -114,7 +116,7 @@ function Base({ data }) {
       { shallow: true }
     );
     setPage(1)
-    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { }} })
+    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { }, force: true} })
     
     //dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))

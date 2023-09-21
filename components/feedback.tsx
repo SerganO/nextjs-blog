@@ -3,6 +3,7 @@ import { IFeedback } from "../server/models/Feedback";
 import Star from "./star";
 
 export default function FeedbackView({data, author}) {
+  console.log("FeedbackView: ", data, author)
   const fullname = `${author.firstName} ${author.lastName}`;
 
   return (

@@ -123,7 +123,7 @@ export const getServerSideProps = reduxStore.getServerSideProps(
         context: any
       ) => Promise<any>
     )(context);
-    const nData = normalize(res.props.data, product);
+    const nData = normalize(res.props.data.data, {items:product});
     store.dispatch(saveProductAction({ data: nData }));
 
     return res;

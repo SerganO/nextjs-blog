@@ -17,7 +17,22 @@ export default class UserController extends BaseController {
   @GET("api/users")
   public getAllUsers(query: any) {
     const { UserService } = this.di;
-    return UserService.getAllUsersInfo();
+    return UserService.getAllUsersInfo().then(
+      res => {
+        return this.answer(res, "users info fetched success")
+        // return {
+        //   data: res,
+        //   message: "users info fetched success"
+        // }
+      }
+    ).catch(error => {
+      console.error('UserController.getAllUsers()', error);
+      return this.error("Can not fetch users info")
+      // return {
+      //   data: null,
+      //   message: "Can not fetch users info"
+      // }
+    });;
   }
 
   /**
@@ -36,7 +51,20 @@ export default class UserController extends BaseController {
   public findUserInfo(query: any) {
     const id = query["id"] as string;
     const { UserService } = this.di;
-    return UserService.findUserInfo(id);
+    return UserService.findUserInfo(id).then(res => {
+      return this.answer(res, "user info fetched success")
+      // return {
+      //   data: res,
+      //   message: "user info fetched success"
+      // }
+    }).catch(error => {
+      console.error('UserController.findUserInfo()', error);
+      this.error( "Can not fetch user info")
+      // return {
+      //   data: null,
+      //   message: "Can not fetch user info"
+      // }
+    });;
   }
 
   /**
@@ -46,7 +74,20 @@ export default class UserController extends BaseController {
   public getUserInfoFeedbacksIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
-    return UserService.getUserInfoFeedbacksIncluded(id);
+    return UserService.getUserInfoFeedbacksIncluded(id).then(res => {
+      return this.answer(res, "user extended info fetched success")
+      // return {
+      //   data: res,
+      //   message: "user extended info fetched success"
+      // }
+    }).catch(error => {
+      console.error('UserController.getUserInfoFeedbacksIncluded()', error);
+      return this.error("Can not fetch user info")
+      // return {
+      //   data: null,
+      //   message: "Can not fetch user info"
+      // }
+    });;
   }
 
   /**
@@ -56,7 +97,20 @@ export default class UserController extends BaseController {
   public getUserInfoProductsIncluded(query: any) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
-    return UserService.getUserInfoProductsIncluded(id);
+    return UserService.getUserInfoProductsIncluded(id).then(res => {
+      return this.answer(res, "user extended info fetched success")
+      // return {
+      //   data: res,
+      //   message: "user extended info fetched success"
+      // }
+    }).catch(error => {
+      console.error('UserController.getUserInfoProductsIncluded()', error);
+      return this.error("Can not fetch user info")
+      // return {
+      //   data: null,
+      //   message: "Can not fetch user info"
+      // }
+    });
   }
 
   /**
@@ -95,6 +149,7 @@ export default class UserController extends BaseController {
     const password = bodyData["password"] as string;
     const role = bodyData["role"] as string;
 
+
     if (firstName && lastName && userEmail && password && role) {
       const { UserService } = this.di;
       return UserService.addUser(
@@ -103,9 +158,22 @@ export default class UserController extends BaseController {
         userEmail,
         password,
         role
-      );
+      ).then(res => {
+        return this.answer(res, "user added success")
+        // return {
+        //   data: res,
+        //   message: "user added success"
+        // }
+      }).catch(error => {
+        console.error('UserController.addUser()', error);
+        return this.error("Can not add user")
+        // return {
+        //   data: null,
+        //   message: "Can not add user"
+        // }
+      });
     } else {
-      throw Error("not full data");
+      throw Error("Can not add user: not full data");
     }
   }
 }

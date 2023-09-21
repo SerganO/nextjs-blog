@@ -12,9 +12,21 @@ const {
   publicRuntimeConfig: { PAGE_SIZE_10 },
 } = getConfig();
 
+type Response = {
+  data: any;
+  message: string;
+  isSuccess: boolean;
+  code: string;
+  statusCode: number;
+  psger?;
+};
+
 export default class BaseController extends BaseContext {
   constructor(opts: IContextContainer) {
     super(opts);
+
+    this.answer = this.answer.bind(this);
+    this.error = this.error.bind(this);
   }
 
   private useClassdMiddleware() {
@@ -31,6 +43,44 @@ export default class BaseController extends BaseContext {
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
+  }
+
+
+  protected extendedAnswer(
+    data: any,
+    message: string,
+    isSuccess: boolean = true,
+    code = "OK",
+    statusCode: number = 200
+  ) {
+    return {
+      data,
+      message,
+      isSuccess: isSuccess,
+      code,
+      statusCode: statusCode,
+    } as Response;
+  }
+
+
+  protected answer(
+    data: any,
+    message: string,
+    isSuccess: boolean = true,
+    code = "OK",
+    statusCode: number = 200
+  ) {
+    return {
+      data: { items: data},
+      message,
+      isSuccess: isSuccess,
+      code,
+      statusCode: statusCode,
+    } as Response;
+  }
+
+  protected error(message: string, code = "FAIL", statusCode: number = 500) {
+    return this.answer(null, message, false, code, statusCode);
   }
 
   public handler(routeName: string) {
@@ -79,7 +129,7 @@ export default class BaseController extends BaseContext {
             if (req.user != undefined) {
               user = this.json(req.user?.dataValues);
             }
-            let pager: IPagerParams = null;
+            let pagerParams: IPagerParams = null;
             const isPager = pagers.find((x) => x.methodName == action) != null;
 
             if (isPager) {
@@ -93,7 +143,7 @@ export default class BaseController extends BaseContext {
                 ? req.body.entityName
                 : null;
 
-              pager = {
+              pagerParams = {
                 page: page,
                 pageName: pageName,
                 perPage: perPage,
@@ -102,16 +152,23 @@ export default class BaseController extends BaseContext {
                 entityName: entityName,
               };
             }
-            console.log(pager);
+            console.log(pagerParams);
             callback(
               methodName === "get" ? req.query : req.body,
               user,
               req.session,
-              pager
+              pagerParams
             )
               .then((data) => {
                 if (isPager) {
-                  data = {
+                  data["pager"] = {
+                    count: data.data.count,
+                    page: pagerParams.page,
+                    pageName: pagerParams.pageName,
+                    perPage: pagerParams.perPage,
+                    entityName: pagerParams.entityName,
+                  };
+                  /*data = {
                     pager: {
                       items: data.items,
                       count: data.count,
@@ -120,13 +177,14 @@ export default class BaseController extends BaseContext {
                       perPage: pager.perPage,
                       entityName: pager.entityName,
                     },
-                    message: data.message
-                  };
+                    message: data.message,
+                  };*/
                 }
                 return data;
               })
               .then((data) => {
                 console.log("return res data");
+                const response = data as Response;
                 /*
                   1- {
                     filed_name: value1
@@ -139,7 +197,7 @@ export default class BaseController extends BaseContext {
 
 
                   {
-                      items: {} or [{},{},{}]
+                      data: {} or [{},{},{}]
                       pager: {
                          pageName: pageName,
                           perPage: perPage,
@@ -148,16 +206,20 @@ export default class BaseController extends BaseContext {
                           entityName: entityName,
                       }
                       message: "User was updated succesefully",
-                      code: "reset", "logout", "restart", "toast", "dialog"
+                      code: "reset", "logout", "restart", "toast", "dialog",
+                      statusCode: 200
                   }
                    
                 */
-                res.status(200).json(data);
+                 
+                //res.status(200).json(data);
+                res.status(response.statusCode).json(response);
               })
               .catch((error) => {
-                console.log("catch");
-                console.log("error:", error);
-                res.status(404).send({ error: error });
+                console.error("error:", error);
+                const errorResponse = this.error(error)
+                //res.status(500).send({ error: error });
+                res.status(500).json(errorResponse)
               });
           });
         }

@@ -19,7 +19,7 @@ const redisOptions = {
 // if (config.redis.password) {
 //   redisOptions['password'] = config.redis.password;
 // }
-const redisClient = createClient();
+const redisClient = createClient(redisOptions);
 
 redisClient.connect().catch((e) => {
   console.error('Session Redis Error', e);
