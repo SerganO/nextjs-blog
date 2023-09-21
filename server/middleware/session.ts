@@ -19,7 +19,8 @@ const redisOptions = {
 // if (config.redis.password) {
 //   redisOptions['password'] = config.redis.password;
 // }
-const redisClient = createClient(redisOptions);
+const redisClient = createClient();
+
 redisClient.connect().catch((e) => {
   console.error('Session Redis Error', e);
 });
@@ -27,7 +28,7 @@ redisClient.connect().catch((e) => {
 const getSession = nextSession({
   store: promisifyStore(
     new RedisStore({
-      client: redisClient as any,
+      client: redisClient// as any,
     })
   ),
   cookie: {

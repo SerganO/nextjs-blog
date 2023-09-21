@@ -60,29 +60,6 @@ export default class BaseController extends BaseContext {
         });
 
         return router.run(context.req, context.res);
-
-        /*let data = await callback(context.query);
-        data = JSON.parse(JSON.stringify(data));
-        console.log("old ssr data: ", data)
-
-        return {
-          props: {
-            data,
-          },
-        };*/
-
-        /*router.get(async (req, res) => {
-          console.log("SSR FUNC CALL")
-          let data = await callback(context.query);
-          data = JSON.parse(JSON.stringify(data));
-          return {
-            props: {
-              data,
-            },
-          };
-        });
-
-        return router.run(context.req, context.res);*/
       };
     }
     const pagers: any[] = Reflect.getMetadata("pagers", this);
@@ -142,15 +119,39 @@ export default class BaseController extends BaseContext {
                       pageName: pager.pageName,
                       perPage: pager.perPage,
                       entityName: pager.entityName,
-                      
-                      
                     },
+                    message: data.message
                   };
                 }
                 return data;
               })
               .then((data) => {
                 console.log("return res data");
+                /*
+                  1- {
+                    filed_name: value1
+                    pager: 34
+                  }
+                  2 -[{},{},{}]
+                  3 {
+                    pager: {}
+                  }
+
+
+                  {
+                      items: {} or [{},{},{}]
+                      pager: {
+                         pageName: pageName,
+                          perPage: perPage,
+                          filter: filter,
+                          sort: sort,
+                          entityName: entityName,
+                      }
+                      message: "User was updated succesefully",
+                      code: "reset", "logout", "restart", "toast", "dialog"
+                  }
+                   
+                */
                 res.status(200).json(data);
               })
               .catch((error) => {

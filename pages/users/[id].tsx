@@ -9,7 +9,6 @@ import UserController from "server/controllers/UserController";
 import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import { showErrorNotification } from "src/functions/showNotification";
-import { wrapper } from "store";
 import { saveUserAction, userRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { normalize } from "normalizr";
@@ -17,6 +16,9 @@ import { user } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import UserEntity from "src/entities/UserEntity";
 import { useActions } from "src/hooks/useEntity";
+import ReduxStore from "store/store";
+
+const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const {
   publicRuntimeConfig: { BASE_URL },
@@ -128,7 +130,7 @@ const userController = container.resolve<UserController>("UserController");
   }
 );*/
 
-export const getServerSideProps = wrapper.getServerSideProps(
+export const getServerSideProps = reduxStore.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(

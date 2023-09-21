@@ -62,9 +62,9 @@ const makeStore = () => {
   return store;
 };
 
-export const wrapper = createWrapper<EnhancedStore<any, AnyAction>>(makeStore, {
+/*export const wrapper = createWrapper<EnhancedStore<any, AnyAction>>(makeStore, {
   debug: true,
-});
+});*/
 //return this._wrapper;
 
 //export const wrapper = createWrapper(makeStore, {debug: true});

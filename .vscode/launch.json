@@ -35,5 +35,6 @@
     "skipFiles": [
         "inspector_async_hook.js",
         "async_hooks.js"
-      ]
+      ],
+      "trace": true
 }

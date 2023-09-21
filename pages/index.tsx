@@ -9,10 +9,13 @@ import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
 import { connect } from "react-redux";
 import { saveMainProductPageAction } from "store/actionCreators";
-import { wrapper } from "store";
 import { normalize } from "normalizr";
 import { useActions } from "src/hooks/useEntity";
 import { product } from "src/functions/xfetch";
+import clientContainer from "src/di/clientContainer";
+import ReduxStore from "store/store";
+
+const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -91,7 +94,7 @@ const productController =
   container.resolve<ProductController>("ProductController");
 //export const getServerSideProps = productController.handler("index");
 
-export const getServerSideProps = wrapper.getServerSideProps(
+export const getServerSideProps = reduxStore.getServerSideProps(
   (store) => async (context) => {
     const res = await (
       productController.handler("index") as (context: any) => Promise<any>

@@ -8,12 +8,15 @@ import container from "server/di/container";
 import Link from "next/link";
 import ProductController from "server/controllers/ProductController";
 import { connect } from "react-redux";
-import { wrapper } from "store";
 import { saveProductPageAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { normalize } from 'normalizr';
 import { page } from "src/functions/xfetch";
 import { useActions } from "src/hooks/useEntity";
+import clientContainer from "src/di/clientContainer";
+import ReduxStore from "store/store";
+
+const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -223,13 +226,13 @@ export default connect(
   (state) => state
 )(Base);
 
-/*const productController =
+const productController =
   container.resolve<ProductController>("ProductController");
 
-export const getServerSideProps = wrapper.getServerSideProps(
+export const getServerSideProps = reduxStore.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-    store.dispatch(
+    /*store.dispatch(
       actionTypes.action(actionTypes.UPDATE_VALUE, {
         
           payload: { data: {
@@ -252,7 +255,7 @@ export const getServerSideProps = wrapper.getServerSideProps(
     //console.log("nData: ", nData)
     store.dispatch(saveProductPageAction({ data: nData }));
 
-    return res;
+    return res;*/
   }
-);*/
+);
 

@@ -24,12 +24,34 @@ const rootReducer = combineReducers(combinedReducers) as Reducer<
 
 export default (state, action) => {
   if (action.type === HYDRATE) {
-    const nextState = {
-      ...state, // use previous state
-      ...action.payload, // apply delta from hydration
+    let nextState = {
+      ...state,
     };
-    if (state.count) nextState.count = state.count; // preserve count value on client side navigation
-    return nextState;
+
+    const hydratedState = action.payload;
+
+    Object.keys(state).forEach((reducer) => {
+      if (hydratedState[reducer]) {
+        let newValues: any = {};
+        const newData = hydratedState[reducer];
+        newValues = [state[reducer] ?? {}, newData ?? {}].reduce(function (
+          r,
+          o
+        ) {
+          Object.keys(o).forEach(function (k) {
+            r[k] = o[k];
+          });
+          return r;
+        },
+        {});
+
+        nextState[reducer] = {
+          ...nextState[reducer],
+          ...newValues,
+        };
+      }
+    });
+    return { ...state, ...nextState };
   } else {
     return rootReducer(state, action);
   }

@@ -2,6 +2,7 @@ import * as actionTypes from "./actionTypes";
 
 export const saveProductAction = (data) =>
   actionTypes.action(actionTypes.ADD, { payload: data });
+  
 export const productRequestAction = (data) =>
   actionTypes.action(actionTypes.GET, data);
 

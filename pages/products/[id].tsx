@@ -7,7 +7,6 @@ import { Dispatch } from "redux";
 import { connect, useDispatch } from "react-redux";
 import container from "server/di/container";
 import ProductController from "server/controllers/ProductController";
-import { wrapper } from "store";
 import { saveProductAction, productRequestAction } from "store/actionCreators";
 import * as actionTypes from "store/actionTypes";
 import { normalize } from "normalizr";
@@ -16,6 +15,9 @@ import clientContainer from "src/di/clientContainer";
 import ProductEntity from "src/entities/ProductEntity";
 import ContainerContext from "src/ContainerContext";
 import { useActions } from "src/hooks/useEntity";
+import ReduxStore from "store/store";
+
+const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -100,7 +102,7 @@ export default connect(
 const productController =
   container.resolve<ProductController>("ProductController");
 
-export const getServerSideProps = wrapper.getServerSideProps(
+export const getServerSideProps = reduxStore.getServerSideProps(
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
     store.dispatch(
