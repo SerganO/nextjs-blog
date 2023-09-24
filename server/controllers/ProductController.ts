@@ -26,6 +26,11 @@ import pager from "server/decorators/pager";
   },
 ])*/
 export default class ProductController extends BaseController {
+  constructor(opts: IContextContainer) {
+    super(opts);
+    this.entity = "ProductEntity";
+  }
+
   /**
    * getAllProducts
    */
@@ -51,20 +56,22 @@ export default class ProductController extends BaseController {
   public getAllProducts(query: any) {
     const { ProductService } = this.di;
     const userId = parseInt(query["user"]);
-    return ProductService.getAllProductsInfo(userId).then(res => {
-      return this.answer(res, "products info fetched success")
-      // return {
-      //   data: res,
-      //   message: "products info fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.getAllProducts()', error);
-      return this.error("Can not fetch products info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch products info"
-      // }
-    });
+    return ProductService.getAllProductsInfo(userId)
+      .then((res) => {
+        return this.answer(res, "products info fetched success");
+        // return {
+        //   data: res,
+        //   message: "products info fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error("ProductController.getAllProducts()", error);
+        return this.error("Can not fetch products info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch products info"
+        // }
+      });
   }
 
   /**
@@ -85,20 +92,22 @@ export default class ProductController extends BaseController {
     const id = parseInt(query.id as string);
 
     const { ProductService } = this.di;
-    return ProductService.getProductBaseInfo(id).then(res => {
-      return this.answer(res, "product info fetched success")
-      // return {
-      //   data: res,
-      //   message: "product info fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.getProductBaseInfo()', error);
-      return this.error("Can not fetch product info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch product info"
-      // }
-    });
+    return ProductService.getProductBaseInfo(id)
+      .then((res) => {
+        return this.answer(res, "product info fetched success");
+        // return {
+        //   data: res,
+        //   message: "product info fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error("ProductController.getProductBaseInfo()", error);
+        return this.error("Can not fetch product info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch product info"
+        // }
+      });
   }
 
   /**
@@ -125,20 +134,22 @@ export default class ProductController extends BaseController {
     console.log("query[id]: ", query["id"]);
     const id = query["id"] as string;
     const { ProductService } = this.di;
-    return ProductService.findProductExtendedInfo(id).then(res => {
-      return this.answer(res, "product extended info fetched success")
-      // return {
-      //   data: res,
-      //   message: "product extended info fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.findProductExtendedInfo()', error);
-      return this.error("Can not fetch product extended info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch product extended info"
-      // }
-    });
+    return ProductService.findProductExtendedInfo(id)
+      .then((res) => {
+        return this.answer(res, "product extended info fetched success");
+        // return {
+        //   data: res,
+        //   message: "product extended info fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error("ProductController.findProductExtendedInfo()", error);
+        return this.error("Can not fetch product extended info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch product extended info"
+        // }
+      });
   }
 
   /**
@@ -151,20 +162,25 @@ export default class ProductController extends BaseController {
     const limit = parseInt(query["l"] as string);
     const offset = parseInt(query["o"] as string);
     const { ProductService } = this.di;
-    return ProductService.findProductsFeedbackIndluded(userId, offset, limit).then(res => {
-      return this.answer(res, "product info fetched success")
-      // return {
-      //   data: res,
-      //   message: "products info fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.findProductsFeedbackIncluded()', error);
-      return this.error("Can not fetch product info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch products info"
-      // }
-    });
+    return ProductService.findProductsFeedbackIndluded(userId, offset, limit)
+      .then((res) => {
+        return this.answer(res, "product info fetched success");
+        // return {
+        //   data: res,
+        //   message: "products info fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error(
+          "ProductController.findProductsFeedbackIncluded()",
+          error
+        );
+        return this.error("Can not fetch product info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch products info"
+        // }
+      });
   }
 
   /**
@@ -210,20 +226,22 @@ export default class ProductController extends BaseController {
         productId,
         rating,
         message
-      ).then(res => {
-        return this.answer(res, "product added success")
-        // return {
-        //   data: res,
-        //   message: "product added success"
-        // }
-      }).catch(error => {
-        console.error('ProductController.addFeedback()', error);
-        return this.error("Can not add product info")
-        // return {
-        //   data: null,
-        //   message: "Can not add product"
-        // }
-      });
+      )
+        .then((res) => {
+          return this.answer(res, "product added success");
+          // return {
+          //   data: res,
+          //   message: "product added success"
+          // }
+        })
+        .catch((error) => {
+          console.error("ProductController.addFeedback()", error);
+          return this.error("Can not add product info");
+          // return {
+          //   data: null,
+          //   message: "Can not add product"
+          // }
+        });
     } else {
       //const { FeedbackService } = this.di;
       //return FeedbackService.addFeedback(userId, productId, rating, message);
@@ -233,25 +251,52 @@ export default class ProductController extends BaseController {
   }
 
   @pager()
+  //@SSR("products/index")
+  async getProductsPaginatedSSR(query, pager) {
+    const { ProductService } = this.di;
+    console.log("SSR query: ", query);
+    console.log("SSR pager: ", pager);
+    const filter = {};
+    if (query.user) {
+      filter["user_id"] = query.user;
+    }
+    pager.filter = filter;
+    pager.perPage = 20;
+    pager.entityName = "products";
+    pager.pageName = "products";
+    pager.sort = {};
+    return ProductService.page(pager)
+      .then((res) => {
+        return this.extendedAnswer(res, "product page fetched success");
+      })
+      .catch((error) => {
+        console.error("ProductController.getProductsPaginated()", error);
+        return this.error("Can not fetch product page info");
+      });
+  }
+
+  @pager()
   @POST("api/products/pagination")
   @SSR("products/index")
-  async getProductsPaginated(body, user, session, pager) {
+  async getProductsPaginated(pager) {
     const { ProductService } = this.di;
-    console.log("pager: ", pager)
-    return ProductService.page(pager).then(res => {
-      return this.extendedAnswer(res, "product page fetched success")
-      // return {
-      //   data: res,
-      //   message: "page fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.getProductsPaginated()', error);
-      return this.error("Can not fetch product page info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch product page info"
-      // }
-    })
+    console.log("pager: ", pager);
+    return ProductService.page(pager)
+      .then((res) => {
+        return this.extendedAnswer(res, "product page fetched success");
+        // return {
+        //   data: res,
+        //   message: "page fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error("ProductController.getProductsPaginated()", error);
+        return this.error("Can not fetch product page info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch product page info"
+        // }
+      });
   }
 
   /**
@@ -262,7 +307,7 @@ export default class ProductController extends BaseController {
     return next();
   })*/
   //@SSR("products/index")
-  /*public findProductsPaginated = (query: any) => {
+  public findProductsPaginated = (query: any) => {
     // public findProductsPaginated(req: NextApiRequest, res: NextApiResponse) {
 
     const userId = query["user"] as string;
@@ -281,7 +326,13 @@ export default class ProductController extends BaseController {
         if (result.vendor) {
           filters["vendor"] = result.vendor;
         }
-        return {
+        return this.extendedAnswer(
+          {
+            items: result.products,
+            count: result.count,
+          },
+          ""
+        ); /*{
           page: page,
           count: result.count,
           objectTypes: "products",
@@ -289,10 +340,10 @@ export default class ProductController extends BaseController {
           products: result.products,
           vendor: result.vendor,
           filters,
-        };
+        };*/
       }
     );
-  };*/
+  };
 
   /**
    * getProductFeedbacksIncludedFirstSet
@@ -307,20 +358,25 @@ export default class ProductController extends BaseController {
     console.log("getProductFeedbacksIncludedFirstSet in");
     const { ProductService } = this.di;
 
-    return ProductService.findProductsFeedbackIndludedFirstSet().then(res => {
-      return this.answer(res, "products info fetched success")
-      // return {
-      //   data: res,
-      //   message: "products info fetched success"
-      // }
-    }).catch(error => {
-      console.error('ProductController.getProductFeedbacksIncludedFirstSet()', error);
-      return this.error("Can not fetch products info")
-      // return {
-      //   data: null,
-      //   message: "Can not fetch products info"
-      // }
-    });
+    return ProductService.findProductsFeedbackIndludedFirstSet()
+      .then((res) => {
+        return this.answer(res, "products info fetched success");
+        // return {
+        //   data: res,
+        //   message: "products info fetched success"
+        // }
+      })
+      .catch((error) => {
+        console.error(
+          "ProductController.getProductFeedbacksIncludedFirstSet()",
+          error
+        );
+        return this.error("Can not fetch products info");
+        // return {
+        //   data: null,
+        //   message: "Can not fetch products info"
+        // }
+      });
 
     /*return new Promise(async (resolve, reject) => {
       try {
@@ -353,12 +409,17 @@ export default class ProductController extends BaseController {
 
     const { ProductService } = this.di;
 
-    return ProductService.getProductFeedbacksIncluded(id).then(res => {
-      return this.answer(res, "product extended info fetched success")
-    }).catch(error => {
-      console.error("ProductsController.getProductFeedbacksIncluded: ", error)
-      this.error("Can not fetch product extended info")
-    });
+    return ProductService.getProductFeedbacksIncluded(id)
+      .then((res) => {
+        return this.answer(res, "product extended info fetched success");
+      })
+      .catch((error) => {
+        console.error(
+          "ProductsController.getProductFeedbacksIncluded: ",
+          error
+        );
+        this.error("Can not fetch product extended info");
+      });
   }
 
   /**
@@ -380,12 +441,19 @@ export default class ProductController extends BaseController {
 
     const { ProductService } = this.di;
 
-    return ProductService.getProductVendorIncluded(id).then(res => {
-      return this.answer(res, "product extended info fetched success")
-    }).catch(error => {
-      console.error("ProductsController.getProductVendorIncluded: ", error)
-      this.error("Can not fetch product extended info")
-    });
+    this.message("product extended info fetched success").error(
+      "Can not fetch product extended info"
+    );
+    return ProductService.getProductVendorIncluded(id);
+
+    return ProductService.getProductVendorIncluded(id)
+      .then((res) => {
+        return this.answer(res, "product extended info fetched success");
+      })
+      .catch((error) => {
+        console.error("ProductsController.getProductVendorIncluded: ", error);
+        this.error("Can not fetch product extended info");
+      });
   }
 
   /**
@@ -427,12 +495,14 @@ export default class ProductController extends BaseController {
         category,
         SKU,
         price
-      ).then(res => {
-        return this.answer(res, "product added success")
-      }).catch(error => {
-        console.error("ProductsController.addProduct: ", error)
-        this.error("Can not add product")
-      });
+      )
+        .then((res) => {
+          return this.answer(res, "product added success");
+        })
+        .catch((error) => {
+          console.error("ProductsController.addProduct: ", error);
+          this.error("Can not add product");
+        });
     } else {
       throw Error("Can not add product: not full data");
     }

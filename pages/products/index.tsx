@@ -6,12 +6,8 @@ import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import container from "server/di/container";
 import Link from "next/link";
-import ProductController from "server/controllers/ProductController";
 import { connect } from "react-redux";
 import { saveProductPageAction } from "store/actionCreators";
-import * as actionTypes from "store/actionTypes";
-import { normalize } from 'normalizr';
-import { page } from "src/functions/xfetch";
 import { useActions } from "src/hooks/useEntity";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
@@ -25,27 +21,26 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-
-  const pageName = "products"
-  const pagination = state.pagination[pageName]
-  if(typeof pagination == `undefined` || !pagination.pages) return {}
-  const selectedPage = pagination.currentPage
-  const currentFilter = pagination.filter
-  const data = pagination.pages[selectedPage]
-  if (data == null) return {}
-  const productData = data.ids.map(productId => {
-    const product = state.products[productId]
+  const pageName = "products";
+  const pagination = state.pagination[pageName];
+  if (typeof pagination == `undefined` || !pagination.pages) return {};
+  const selectedPage = pagination.currentPage;
+  const currentFilter = pagination.filter;
+  const data = pagination.pages[selectedPage];
+  if (data == null) return {};
+  const productData = data.ids.map((productId) => {
+    const product = state.products[productId];
     const feedbacks = product.feedbacks.map((feedbacId) => {
       return state.feedbacks[feedbacId];
     });
-    
-    return { product, feedbacks }
-  })
+
+    return { product, feedbacks };
+  });
 
   //const selectedPage = state.valueReducer.values["SELECTED_PAGE"]
   //const data = state.pages[selectedPage]
 
- /* 
+  /* 
   const productData = data.products.map(productId => {
     const product = state.products[productId]
     const feedbacks = product.feedbacks.map((feedbacId) => {
@@ -59,21 +54,21 @@ const mapStateToProps = (state) => {
     productData["vendor"] = state.users[data.vendor]
   }*/
 
-  if(state.users && pagination.filter && pagination.filter.user_id) {
-    productData["vendor"] = state.users[pagination.filter.user_id]
+  if (state.users && pagination.filter && pagination.filter.user_id) {
+    productData["vendor"] = state.users[pagination.filter.user_id];
   }
 
   //productData["count"] = data.count
-  productData["count"] = pagination.count
-  productData["currentFilter"] = currentFilter
-  return {data: productData}
+  productData["count"] = pagination.count;
+  productData["currentFilter"] = currentFilter;
+  return { data: productData };
 };
 
 function Base({ data }) {
   const router = useRouter();
-  
+
   //const dispatch: Dispatch<any> = useDispatch();
-  const {fetchProductsPage} = useActions("ProductEntity")
+  const { fetchProductsPage } = useActions("ProductEntity");
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
 
   const productsPageData = data;
@@ -87,16 +82,17 @@ function Base({ data }) {
     userString = `&user=${userId}`;
   }
 
-  const filter = {}
+  const filter = {};
   if (userId) {
-    filter["user_id"] = userId
+    filter["user_id"] = userId;
   }
-  console.log("current filter: ", productsPageData?.currentFilter)
-  const force = (productsPageData?.currentFilter ?? {}) != filter
+  console.log("current filter: ", productsPageData?.currentFilter);
+  const force = (productsPageData?.currentFilter ?? {}) != filter;
 
   useEffect(() => {
-    
-    fetchProductsPage({payload: { page: page, pageName: "products", perPage: 20, filter, force} })
+    fetchProductsPage({
+      payload: { page: page, pageName: "products", perPage: 20, filter, force },
+    });
 
     //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
@@ -109,15 +105,17 @@ function Base({ data }) {
     router.push(
       {
         query: {
-          page: 1
+          page: 1,
         },
       },
       undefined,
       { shallow: true }
     );
-    setPage(1)
-    fetchProductsPage({payload: { page: 1, pageName: "products", filter: { }, force: true} })
-    
+    setPage(1);
+    fetchProductsPage({
+      payload: { page: 1, pageName: "products", filter: {}, force: true },
+    });
+
     //dispatch( entity.fetchProductPageInvokable({ payload: { page: 1, userString: ""}}))
     //dispatch(entity.action("fetchProductPage", { payload: { page: 1, userString: ""} }))
     //dispatch(productPageRequestAction({ payload: { page: 1, userString: ""} }))
@@ -228,36 +226,49 @@ export default connect(
   (state) => state
 )(Base);
 
-const productController =
-  container.resolve<ProductController>("ProductController");
+export const getServerSideProps = reduxStore.getServerSideProps(container, "products/index", "ProductController")
 
-export const getServerSideProps = reduxStore.getServerSideProps(
-  (store) => async (context) => {
-    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-    /*store.dispatch(
-      actionTypes.action(actionTypes.UPDATE_VALUE, {
+// export const getServerSideProps = reduxStore._wrapper.getServerSideProps(
+//   (store) => async (context) => {
+//     const filter = {};
+//   if (context.query.user) {
+//     filter["user_id"] = context.query.user;
+//   }
+//    context.query.filter = filter
+//    context.query.perPage = 20
+//    context.query.entityName = "products"
+//    context.query.pageName = "products"
+//    context.query.sort = {}
+//     const res = await (
+//       productController.handler("products/index") as (
+//         context: any
+//       ) => Promise<any>
+//     )(context);
+//     store.dispatch(productEntity.normalizedAction(res.props.data));
+//     return res
+//     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+//     /*store.dispatch(
+//       actionTypes.action(actionTypes.UPDATE_VALUE, {
         
-          payload: { data: {
-            key: "SELECTED_PAGE",
-            value: (parseInt(context.query.page as string) || 1)
-          } },
-        }
-      )
-      //actionTypes.action(actionTypes.SELECT_PAGE, {
-      //  payload: { data: (parseInt(context.query.page as string) || 1) },
-      //})
-    );
-    const res = await (
-      productController.handler("products/index") as (
-        context: any
-      ) => Promise<any>
-    )(context);
+//           payload: { data: {
+//             key: "SELECTED_PAGE",
+//             value: (parseInt(context.query.page as string) || 1)
+//           } },
+//         }
+//       )
+//       //actionTypes.action(actionTypes.SELECT_PAGE, {
+//       //  payload: { data: (parseInt(context.query.page as string) || 1) },
+//       //})
+//     );
+//     const res = await (
+//       productController.handler("products/index") as (
+//         context: any
+//       ) => Promise<any>
+//     )(context);
 
-    const nData = normalize(res.props.data, page)
-    //console.log("nData: ", nData)
-    store.dispatch(saveProductPageAction({ data: nData }));
-
-    return res;*/
-  }
-);
-
+//     const nData = normalize(res.props.data, page)
+//     //console.log("nData: ", nData)
+//     store.dispatch(saveProductPageAction({ data: nData }));
+//     return res;*/
+//   }
+// );

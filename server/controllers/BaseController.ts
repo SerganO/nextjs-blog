@@ -6,6 +6,8 @@ import next from "next/types";
 import BaseContext from "server/di/BaseContext";
 import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
+import clientContainer from "src/di/clientContainer";
+import { Entity } from "src/entities/entity";
 import { IPagerParams } from "src/pagination/IPagerParams ";
 
 const {
@@ -14,21 +16,50 @@ const {
 
 type Response = {
   data: any;
-  message: string;
+  message?: string;
   isSuccess: boolean;
-  code: string;
+  code?: string;
   statusCode: number;
   psger?;
 };
 
 export default class BaseController extends BaseContext {
+  private _entity: Entity;
+  private _response: any;
+  private _errorResponse: any;
   constructor(opts: IContextContainer) {
     super(opts);
 
+    this._response = {
+      data: {},
+      message: '',
+      isSuccess: true,
+      statusCode: 200,
+    }
     this.answer = this.answer.bind(this);
     this.error = this.error.bind(this);
   }
 
+  protected set entity(entityName) {
+    this._entity = clientContainer.resolve(entityName)
+  }
+
+  public normalizedAction(data) {
+    return this._entity.normalizedAction(data)
+  }
+
+  protected error(message, code = 'TOAST', statusCode: number = 500) {
+    this._errorResponse.message = message;
+    this._errorResponse.code = code;
+    this._errorResponse.statusCode = statusCode
+    return this;
+  }
+
+  protected message(message, code = 'TOAST') {
+      this._response.message = message;
+      this._response.code = code;
+      return this;
+  }
   private useClassdMiddleware() {
     const key = this.constructor.name;
     console.log("key: ", key);
@@ -44,7 +75,6 @@ export default class BaseController extends BaseContext {
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
   }
-
 
   protected extendedAnswer(
     data: any,
@@ -62,7 +92,6 @@ export default class BaseController extends BaseContext {
     } as Response;
   }
 
-
   protected answer(
     data: any,
     message: string,
@@ -71,7 +100,7 @@ export default class BaseController extends BaseContext {
     statusCode: number = 200
   ) {
     return {
-      data: { items: data},
+      data,
       message,
       isSuccess: isSuccess,
       code,
@@ -79,7 +108,7 @@ export default class BaseController extends BaseContext {
     } as Response;
   }
 
-  protected error(message: string, code = "FAIL", statusCode: number = 500) {
+  protected errorsss(message: string, code = "FAIL", statusCode: number = 500) {
     return this.answer(null, message, false, code, statusCode);
   }
 
@@ -87,20 +116,67 @@ export default class BaseController extends BaseContext {
     console.log("routeName: ", routeName);
 
     const members: any = Reflect.getMetadata(routeName, this);
+    const pagers: any[] = Reflect.getMetadata("pagers", this);
 
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
     console.log("members: ", members);
     console.log("cargs: ", cargs);
+
     if ("SSR" in members) {
       return async (context) => {
         const action = members["SSR"][0];
         const callback = this[action].bind(this);
         let margs = this.useMethodMiddleware(action);
+        let pagerParams: IPagerParams = null;
+        const isPager = pagers?.find((x) => x.methodName == action) != null;
+        if (isPager) {
+          console.log("pager function: ", action);
+          const page = parseInt(context.query.page || 1);
+          const pageName = context.query["pageName"];
+          const perPage = parseInt(context.query.perPage || PAGE_SIZE_10);
+          const filter =context.query.filter ? context.query.filter : null;
+          const sort = context.query.sort ? context.query.sort : null;
+          const entityName = context.query.entityName
+            ? context.query.entityName
+            : null;
 
+          pagerParams = {
+            page: page,
+            pageName: pageName,
+            perPage: perPage,
+            filter: filter,
+            sort: sort,
+            entityName: entityName,
+          };
+        }
         console.log("IN FUNCTION");
         router.use(routeName, ...cargs, ...margs).get(async () => {
-          let data = await callback(context.query);
+          let data = await callback(context.query, pagerParams).then((response) => {
+            if (isPager) {
+              response["pager"] = {
+                count: response.data.count,
+                page: pagerParams.page,
+                pageName: pagerParams.pageName,
+                perPage: pagerParams.perPage,
+                entityName: pagerParams.entityName,
+              };
+              response["data"] = response.data.items;
+              /*data = {
+                pager: {
+                  items: data.items,
+                  count: data.count,
+                  page: pager.page,
+                  pageName: pager.pageName,
+                  perPage: pager.perPage,
+                  entityName: pager.entityName,
+                },
+                message: data.message,
+              };*/
+            }
+            //data['message']
+            return response;
+          });
           data = JSON.parse(JSON.stringify(data));
           return {
             props: {
@@ -112,7 +188,7 @@ export default class BaseController extends BaseContext {
         return router.run(context.req, context.res);
       };
     }
-    const pagers: any[] = Reflect.getMetadata("pagers", this);
+
     Object.keys(members).map((method) => {
       for (let i = 0; i < members[method].length; i++) {
         const methodName: string = method.toLowerCase(); //GET, POST, PUT, etc
@@ -159,15 +235,16 @@ export default class BaseController extends BaseContext {
               req.session,
               pagerParams
             )
-              .then((data) => {
+              .then((response) => {
                 if (isPager) {
-                  data["pager"] = {
-                    count: data.data.count,
+                  response["pager"] = {
+                    count: response.data.count,
                     page: pagerParams.page,
                     pageName: pagerParams.pageName,
                     perPage: pagerParams.perPage,
                     entityName: pagerParams.entityName,
                   };
+                  response["data"] = response.data.items;
                   /*data = {
                     pager: {
                       items: data.items,
@@ -180,7 +257,7 @@ export default class BaseController extends BaseContext {
                     message: data.message,
                   };*/
                 }
-                return data;
+                return response;
               })
               .then((data) => {
                 console.log("return res data");
@@ -197,13 +274,16 @@ export default class BaseController extends BaseContext {
 
 
                   {
-                      data: {} or [{},{},{}]
+                      data: {
+
+                      }
                       pager: {
                          pageName: pageName,
                           perPage: perPage,
                           filter: filter,
                           sort: sort,
                           entityName: entityName,
+                          count: 1250
                       }
                       message: "User was updated succesefully",
                       code: "reset", "logout", "restart", "toast", "dialog",
@@ -211,15 +291,15 @@ export default class BaseController extends BaseContext {
                   }
                    
                 */
-                 
+
                 //res.status(200).json(data);
                 res.status(response.statusCode).json(response);
               })
               .catch((error) => {
                 console.error("error:", error);
-                const errorResponse = this.error(error)
+                const errorResponse = this.error(error);
                 //res.status(500).send({ error: error });
-                res.status(500).json(errorResponse)
+                res.status(500).json(errorResponse);
               });
           });
         }

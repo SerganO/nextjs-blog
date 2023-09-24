@@ -2,18 +2,11 @@ import { useRouter } from "next/router";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import React, { useContext, useEffect, useState } from "react";
-import { Dispatch } from "redux";
-import { connect, useDispatch } from "react-redux";
+import React, {  useEffect } from "react";
+import { connect } from "react-redux";
 import container from "server/di/container";
-import ProductController from "server/controllers/ProductController";
-import { saveProductAction, productRequestAction } from "store/actionCreators";
-import * as actionTypes from "store/actionTypes";
-import { normalize } from "normalizr";
-import { product } from "src/functions/xfetch";
+import { saveProductAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
-import ProductEntity from "src/entities/ProductEntity";
-import ContainerContext from "src/ContainerContext";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
 
@@ -29,17 +22,17 @@ const mapStateToProps = (state) => {
   if (typeof state.products != `undefined`) {
     const selectedProductId = state.valueReducer.values["SELECTED_PRODUCT_ID"];
     const product = state.products[selectedProductId];
-    if(product) {
-      let vendor = null
-      if(product.vendor) {
+    if (product) {
+      let vendor = null;
+      if (product.vendor) {
         vendor = state.users[product.vendor];
       }
       const feedbacks = product.feedbacks.map((feedbacId) => {
-        const feedback = state.feedbacks[feedbacId]
-        const author = state.users[feedback.author]
-        return {data: feedback, author};
+        const feedback = state.feedbacks[feedbacId];
+        const author = state.users[feedback.author];
+        return { data: feedback, author };
       });
-  
+
       return {
         data: {
           product,
@@ -60,12 +53,13 @@ const mapStateToProps = (state) => {
 };
 
 function Base({ data }) {
-  const { fetchProduct } = useActions("ProductEntity");
+  const { setCurrentProduct } = useActions("ProductEntity");
   const router = useRouter();
 
   const productData = data;
   useEffect(() => {
-    fetchProduct({ payload: { id: router.query.id } });
+    setCurrentProduct({ payload: { id: router.query.id } });
+    //fetchProduct({ payload: { id: router.query.id } });
   }, []);
 
   const handleGoBack = () => {
@@ -99,12 +93,20 @@ export default connect(
   (state) => state
 )(Base);
 
-const productController =
-  container.resolve<ProductController>("ProductController");
+export const getServerSideProps = reduxStore.getServerSideProps(container, "products/:id", "ProductController")
 
-export const getServerSideProps = reduxStore.getServerSideProps(
-  (store) => async (context) => {
+
+  /*(store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+
+    const res = await (
+      productController.handler("products/:id") as (
+        context: any
+      ) => Promise<any>
+    )(context);
+    //const nData = normalize(res.props.data.data, {items:product});
+    //store.dispatch(saveProductAction({ data: nData }));
+    store.dispatch(productEntity.normalize(res.props.data))
     store.dispatch(
       actionTypes.action(actionTypes.UPDATE_VALUE, {
         payload: {
@@ -114,18 +116,7 @@ export const getServerSideProps = reduxStore.getServerSideProps(
           },
         },
       })
-      /*actionTypes.action(actionTypes.SELECT_PRODUCT_ID, {
-        payload: { data: parseInt(context.query.id as string) },
-      })*/
     );
-    const res = await (
-      productController.handler("products/:id") as (
-        context: any
-      ) => Promise<any>
-    )(context);
-    const nData = normalize(res.props.data.data, {items:product});
-    store.dispatch(saveProductAction({ data: nData }));
-
     return res;
   }
-);
+);*/

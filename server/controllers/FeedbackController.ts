@@ -11,6 +11,7 @@ export default class FeedbackController extends BaseController {
     super(opts);
     console.log("FeedbackController init: ", this);
     console.log("di: ", this.di);
+    this.entity = "FeedbackEntity"
   }
 
   /**

@@ -7,8 +7,7 @@ import validate,  { validateProps} from "server/middleware/validate";
 export default class UserController extends BaseController {
   constructor(opts: IContextContainer) {
     super(opts);
-    console.log("UserController init: ", this);
-    console.log("di: ", this.di);
+    this.entity = "UserEntity"
   }
 
   /**

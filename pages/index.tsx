@@ -1,20 +1,14 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-
 import SiteHeader from "../components/siteHeader";
 import SearchFilters from "../components/searchFilters";
 import ProductPlate from "../components/productPlate";
 
 import container from "server/di/container";
-import ProductController from "server/controllers/ProductController";
 import { connect } from "react-redux";
 import { saveMainProductPageAction } from "store/actionCreators";
-import { normalize } from "normalizr";
 import { useActions } from "src/hooks/useEntity";
-import { product } from "src/functions/xfetch";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
-import ProductEntity from "src/entities/ProductEntity";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
@@ -47,9 +41,9 @@ function Base({ data }) {
   const router = useRouter();
   const { fetchMainProductPage } =
     useActions("ProductEntity");
-  useEffect(() => {
+  /*useEffect(() => {
     fetchMainProductPage();
-  }, []);
+  }, []);*/
 
   const goToProductsPage = () => {
     router.push("/products");
@@ -91,18 +85,4 @@ export default connect(
   (state) => state
 )(Base);
 
-const productController =
-  container.resolve<ProductController>("ProductController");
-  const productEntity = clientContainer.resolve<ProductEntity>("ProductEntity")
-//export const getServerSideProps = productController.handler("index");
-
-export const getServerSideProps = reduxStore.getServerSideProps(
-  (store) => async (context) => {
-    const res = await (
-      productController.handler("index") as (context: any) => Promise<any>
-    )(context);
-    const nData = normalize(res.props.data.data, {items: [product] });
-    store.dispatch(saveMainProductPageAction({ data: nData }));
-    return res;
-  }
-);
+export const getServerSideProps = reduxStore.getServerSideProps(container, "index", 'ProductController')

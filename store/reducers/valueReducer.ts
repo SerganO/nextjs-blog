@@ -15,9 +15,10 @@ const valueReducer = (
       return {
         ...state,
         values: {
-          ...state.values, [key]: value
-        }
-      }
+          ...state.values,
+          [key]: value,
+        },
+      };
     }
   }
 

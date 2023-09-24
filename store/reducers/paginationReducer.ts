@@ -8,10 +8,10 @@ type IPaginationPage = {};
 export function pagination(state = initialPagerState, action: any) {
   // get result for the paginator, disable fetching
   console.log("pagination resucer: ", action);
-  if (action?.payload?.data?.result && action.payload.data.result.pager) {
+  if (action?.payload?.data?.result && action.payload.pager) {
     console.log("in pager func");
-    const pager = action.payload.data.result.pager;
-    const result = action.payload.data.result.data.items;
+    const pager = action.payload.pager;
+    const result = action.payload.data.result;
     if (/*'glob' in action && */ pager.pageName) {
       const pageName = pager.pageName;
 

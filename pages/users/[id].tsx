@@ -1,22 +1,17 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
-import container from "server/di/container";
+
 import getConfig from "next/config";
 import Link from "next/link";
-import UserController from "server/controllers/UserController";
-import { Dispatch } from "redux";
-import { connect, useDispatch } from "react-redux";
+import { connect } from "react-redux";
 import { showErrorNotification } from "src/functions/showNotification";
-import { saveUserAction, userRequestAction } from "store/actionCreators";
-import * as actionTypes from "store/actionTypes";
-import { normalize } from "normalizr";
-import { user } from "src/functions/xfetch";
+import { saveUserAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
-import UserEntity from "src/entities/UserEntity";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
+import container from "server/di/container";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
@@ -38,15 +33,15 @@ const mapStateToProps = (state) => {
 
 function Base({ data }) {
   const router = useRouter();
-  //const dispatch: Dispatch<any> = useDispatch();
-  const {fetchUser} = useActions('UserEntity')
+  const {setCurrentUser} = useActions('UserEntity')
 
   const userData = data;
 
   //const [userData, setUserData] = useState<IUser>(data);
 
-  useEffect(() => {
-    fetchUser( { payload: { id: router.query.id }})
+ useEffect(() => {
+    setCurrentUser( { payload: { id: router.query.id }})
+    //fetchUser( { payload: { id: router.query.id }})
     //const entity = clientContainer.resolve<UserEntity>("UserEntity")
     //dispatch(entity.fetchUserInvokable({ payload: { id: router.query.id }}))
     //dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
@@ -114,8 +109,6 @@ export default connect(
   (state) => state
 )(Base);
 
-const userController = container.resolve<UserController>("UserController");
-//export const getServerSideProps = userController.handler("users/:id");
 
 /*export const getServerSideProps = wrapper.getServerSideProps(
   (store) => async (context) => {
@@ -130,9 +123,18 @@ const userController = container.resolve<UserController>("UserController");
   }
 );*/
 
-export const getServerSideProps = reduxStore.getServerSideProps(
+export const getServerSideProps = reduxStore.getServerSideProps(container, "users/:id", "UserController")
+/*
   (store) => async (context) => {
     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
+    const res = await (
+      userController.handler("users/:id") as (
+        context: any
+      ) => Promise<any>
+    )(context);
+    //const nData = normalize(res.props.data.data, {items:user})
+    //store.dispatch(saveUserAction({ data: nData }));
+    store.dispatch(userEntity.normalize(res.props.data))
     store.dispatch(
       actionTypes.action(actionTypes.UPDATE_VALUE, {
         
@@ -142,18 +144,9 @@ export const getServerSideProps = reduxStore.getServerSideProps(
         } },
       }
     )
-      /*actionTypes.action(actionTypes.SELECT_USER, {
-        payload: { data: parseInt(context.query.id as string) },
-      })*/
+    
     );
-    const res = await (
-      userController.handler("users/:id") as (
-        context: any
-      ) => Promise<any>
-    )(context);
-    const nData = normalize(res.props.data.data, {items:user})
-    store.dispatch(saveUserAction({ data: nData }));
 
     return res;
   }
-);
+);*/
