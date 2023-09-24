@@ -1,4 +1,4 @@
-import { PAGE_SET_FILTER, PAGE_FETCHING } from "store/actionTypes";
+import { PAGE_SET_FILTER, PAGE_FETCHING, PAGE_CLEAR } from "store/actionTypes";
 const initialPagerState: any = {};
 
 type IPagination = {};
@@ -149,9 +149,18 @@ export function pagination(state = initialPagerState, action: any) {
       }
       break;
 
-    case "PAGE_CLEAR":
+    case PAGE_CLEAR:
       {
         const { pageName } = action;
+        const newState = {
+          ...state,
+          [pageName]: {
+            ...state[pageName],
+            pages: {}
+
+          },
+        };
+        return newState;
         // const pagination = state.has(pageName) ? state.get(pageName) : Map<string, IPagination>();
 
         // state = state.set(pageName, pagination);

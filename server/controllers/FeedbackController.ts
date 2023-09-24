@@ -22,12 +22,14 @@ export default class FeedbackController extends BaseController {
     const userId = parseInt(query["user"]);
     const productId = parseInt(query["product"]);
     const { FeedbackService } = this.di;
-    return FeedbackService.getAllFeedbacksInfo(userId, productId).then(res => {
+    this.clear().message("feedbacks info fetched success").error("Can not fetch feedbacks")
+    return FeedbackService.getAllFeedbacksInfo(userId, productId)
+    /*return FeedbackService.getAllFeedbacksInfo(userId, productId).then(res => {
       return this.answer(res, "feedbacks info fetched success")
     }).catch(error => {
       console.error("FeedbackController.getAllFeedbacks: ", error)
       return this.error("Can not fetch feedbacks")
-    });
+    });*/
   }
 
   /**
@@ -37,12 +39,14 @@ export default class FeedbackController extends BaseController {
   public getFeedbackInfo(query: any) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;
-    return FeedbackService.getFeedbackInfo(id).then(res => {
+    this.clear().message("feedbacks info fetched success").error("Can not fetch feedbacks")
+    return FeedbackService.getFeedbackInfo(id)
+    /*return FeedbackService.getFeedbackInfo(id).then(res => {
       return this.answer(res, "feedback info fetched success")
     }).catch(error => {
       console.error("FeedbackController.getAllFeedbacks: ", error)
       return this.error("Can not fetch feedback")
-    });
+    });*/
   }
 
   /**
@@ -52,12 +56,15 @@ export default class FeedbackController extends BaseController {
   public getFeedbackExtendedInfo(query: any) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;
-    return FeedbackService.getFeedbackExtendedInfo(id).then(res => {
-      return this.answer(res, "feedback extended info fetched success")
-    }).catch(error => {
-      console.error("FeedbackController.getAllFeedbacks: ", error)
-      return this.error("Can not fetch feedback extended info")
-    });
+    this.clear().message("feedback extended info fetched success").error("Can not fetch feedback extended info")
+    return FeedbackService.getFeedbackExtendedInfo(id)
+    
+    // .then(res => {
+    //   return this.answer(res, "feedback extended info fetched success")
+    // }).catch(error => {
+    //   console.error("FeedbackController.getAllFeedbacks: ", error)
+    //   return this.error("Can not fetch feedback extended info")
+    // });
   }
 
   /**
@@ -98,12 +105,15 @@ export default class FeedbackController extends BaseController {
 
     if (userId && productId && rating && message) {
       const { FeedbackService } = this.di;
-      return FeedbackService.addFeedback(userId, productId, rating, message).then(res => {
-        return this.answer(res, "feedback added success")
-      }).catch(error => {
-        console.error("FeedbackController.addFeedback: ", error)
-        return this.error("Can not add feedback")
-      });
+      this.clear().message("feedback added success").error("Can not add feedback")
+      return FeedbackService.addFeedback(userId, productId, rating, message)
+      
+      // .then(res => {
+      //   return this.answer(res, "feedback added success")
+      // }).catch(error => {
+      //   console.error("FeedbackController.addFeedback: ", error)
+      //   return this.error("Can not add feedback")
+      // });
     } else {
       //const { FeedbackService } = this.di;
       //return FeedbackService.addFeedback(userId, productId, rating, message);

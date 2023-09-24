@@ -215,7 +215,9 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
       const pSort = params.sort ? params.sort : {};
       yield put(actionTypes.pageSetFilter(pageName, pFilter, pSort));
       console.log("Fetching page...");
-
+      if(params.force) {
+        yield put(actionTypes.pageClear(pageName));
+      }
       yield call(
         this.xRead,
         uri,

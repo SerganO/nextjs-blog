@@ -25,7 +25,8 @@ export default class AuthController extends BaseController {
   //public async login({identity}) {
     console.log('api/login');
     console.log("data: ",user)
-    return this.answer(user, "User logined success");
+    this.clear().message( "User logined success").error("Login failed")
+    return user
   }
 
  

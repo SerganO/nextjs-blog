@@ -12,9 +12,14 @@ export function pageSetFilter(pageName, filter, sort) {
   return action(PAGE_SET_FILTER, {pageName, filter, sort})
 }
 
+export function pageClear(pageName) {
+  return action(PAGE_CLEAR, {pageName})
+}
+
 
 export const PAGE_FETCHING = "PAGE_FETCHING"
 export const PAGE_SET_FILTER = "PAGE_SET_FILTER"
+export const PAGE_CLEAR = "PAGE_CLEAR"
 
 
 export const SELECT_PRODUCT_ID = "SELECT_PRODUCT_ID";

@@ -86,9 +86,27 @@ function Base({ data }) {
   if (userId) {
     filter["user_id"] = userId;
   }
-  console.log("current filter: ", productsPageData?.currentFilter);
-  const force = (productsPageData?.currentFilter ?? {}) != filter;
+ 
+  console.log("filter: ", filter)
+  
+  const currentFilter = productsPageData?.currentFilter ?? {}
+  console.log("current filter: ", currentFilter);
 
+  const cKeys = Object.keys(currentFilter)
+  const fKeys = Object.keys(filter)
+  let force = false
+  if(cKeys.length != fKeys.length) {
+    force = true
+  } else {
+    cKeys.forEach(key => {
+      if(currentFilter[key] != filter[key]) {
+        force = true
+      }
+    })
+  }
+
+  //const force = (productsPageData?.currentFilter ?? {}) != filter;
+  console.log("force: ", force)
   useEffect(() => {
     fetchProductsPage({
       payload: { page: page, pageName: "products", perPage: 20, filter, force },

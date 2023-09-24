@@ -17,23 +17,23 @@ const {
 type Response = {
   data: any;
   message?: string;
-  isSuccess: boolean;
+  //isSuccess: boolean;
   code?: string;
   statusCode: number;
-  psger?;
+  pager?;
 };
 
 export default class BaseController extends BaseContext {
   private _entity: Entity;
-  private _response: any;
-  private _errorResponse: any;
+  private _response: Response;
+  private _errorResponse: Response;
   constructor(opts: IContextContainer) {
     super(opts);
 
     this._response = {
       data: {},
       message: '',
-      isSuccess: true,
+      //isSuccess: true,
       statusCode: 200,
     }
     this.answer = this.answer.bind(this);
@@ -48,6 +48,18 @@ export default class BaseController extends BaseContext {
     return this._entity.normalizedAction(data)
   }
 
+  protected clear() {
+    this._response = {
+      data: {},
+      statusCode: 200
+    }
+    this._errorResponse = {
+      data: null,
+      statusCode: 500
+    }
+    return this
+  }
+
   protected error(message, code = 'TOAST', statusCode: number = 500) {
     this._errorResponse.message = message;
     this._errorResponse.code = code;
@@ -55,9 +67,10 @@ export default class BaseController extends BaseContext {
     return this;
   }
 
-  protected message(message, code = 'TOAST') {
+  protected message(message, code = 'TOAST', statusCode: number = 200) {
       this._response.message = message;
       this._response.code = code;
+      this._response.statusCode = statusCode
       return this;
   }
   private useClassdMiddleware() {
@@ -153,15 +166,18 @@ export default class BaseController extends BaseContext {
         console.log("IN FUNCTION");
         router.use(routeName, ...cargs, ...margs).get(async () => {
           let data = await callback(context.query, pagerParams).then((response) => {
+            console.log("this._response: ", this._response)
+            this._response.data = response
+            console.log("this._response: ", this._response)
             if (isPager) {
-              response["pager"] = {
-                count: response.data.count,
+              this._response.pager = {
+                count: this._response.data.count,
                 page: pagerParams.page,
                 pageName: pagerParams.pageName,
                 perPage: pagerParams.perPage,
                 entityName: pagerParams.entityName,
               };
-              response["data"] = response.data.items;
+              this._response.data = this._response.data.items;
               /*data = {
                 pager: {
                   items: data.items,
@@ -175,7 +191,12 @@ export default class BaseController extends BaseContext {
               };*/
             }
             //data['message']
-            return response;
+            console.log("this._response: ", this._response)
+            return this._response;
+          }).catch((error)=> {
+            
+            console.log("error: ", error)
+            return this._errorResponse
           });
           data = JSON.parse(JSON.stringify(data));
           return {
@@ -236,15 +257,18 @@ export default class BaseController extends BaseContext {
               pagerParams
             )
               .then((response) => {
+                console.log("this._response: ", this._response)
+                this._response.data = response
+                console.log("this._response: ", this._response)
                 if (isPager) {
-                  response["pager"] = {
-                    count: response.data.count,
+                  this._response.pager = {
+                    count: this._response.data.count,
                     page: pagerParams.page,
                     pageName: pagerParams.pageName,
                     perPage: pagerParams.perPage,
                     entityName: pagerParams.entityName,
                   };
-                  response["data"] = response.data.items;
+                  this._response.data =  this._response.data.items;
                   /*data = {
                     pager: {
                       items: data.items,
@@ -257,7 +281,8 @@ export default class BaseController extends BaseContext {
                     message: data.message,
                   };*/
                 }
-                return response;
+                console.log("this._response: ", this._response)
+                return this._response;
               })
               .then((data) => {
                 console.log("return res data");
@@ -297,9 +322,9 @@ export default class BaseController extends BaseContext {
               })
               .catch((error) => {
                 console.error("error:", error);
-                const errorResponse = this.error(error);
+                
                 //res.status(500).send({ error: error });
-                res.status(500).json(errorResponse);
+                res.status(this._errorResponse.statusCode).json(this._errorResponse);
               });
           });
         }
