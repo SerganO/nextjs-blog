@@ -7,6 +7,7 @@ import validate, { validateProps } from "server/middleware/validate";
 import session from "server/middleware/session";
 import pager from "server/decorators/pager";
 import entity from "server/decorators/entity";
+import { IPagerParams } from "src/pagination/IPagerParams ";
 
 /*@USE(async (req, res, next) => {
   console.log("class use 1");
@@ -151,7 +152,7 @@ export default class ProductController extends BaseController {
     console.log("controller add feedback ");
     console.log("c addf user: ", user);
     console.log("c addf session: ", session);
-    console.log("c addf session user: ", session["passport"]["user"]);
+    //console.log("c addf session user: ", session["passport"]["user"]);
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
 
@@ -166,8 +167,8 @@ export default class ProductController extends BaseController {
 
     if (userId && productId && rating && message) {
       const { ProductService } = this.di;
-      fnMessage("product added success");
-      fnError("Can not add product");
+      fnMessage("feedback added success");
+      fnError("Can not add feedback");
       return ProductService.addFeedbackToProduct(
         userId,
         productId,
@@ -180,8 +181,23 @@ export default class ProductController extends BaseController {
   }
 
   @pager()
-  @POST("api/products/pagination")
   @SSR("products/index")
+  async getProductsPaginatedSSR({ fnMessage, fnError }) {
+    const { ProductService } = this.di;
+    const pager: IPagerParams = {
+      perPage: 20,
+      pageName: "products",
+      entityName: "products",
+      page: 1,
+    };
+    console.log("pager: ", pager);
+    fnMessage("product page fetched success");
+    fnError("Can not fetch product page info");
+    return ProductService.page(pager);
+  }
+
+  @pager()
+  @POST("api/products/pagination")
   async getProductsPaginated({ pager, fnMessage, fnError }) {
     const { ProductService } = this.di;
     console.log("pager: ", pager);

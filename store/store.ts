@@ -89,12 +89,14 @@ export default class ReduxStore extends BaseClientContext {
     container,
     route: string,
     controllerName: string | string[],
+    setupFunc = (context) => {}
   ) {
     return this._wrapper.getServerSideProps(
       (store) => async (context) => {
+        setupFunc(context)
         const items = Array.isArray(controllerName)?controllerName:[controllerName];
         let response = {}
-
+        let actions: any[] = []
         for (let i = 0; i < items.length; i++) {
           const controller = container.resolve(items[i]) as BaseController;
           const res = await (
@@ -105,9 +107,12 @@ export default class ReduxStore extends BaseClientContext {
             ...res.props.data
           }
           console.log("ssr res.props: ", res.props)
-          store.dispatch(controller.normalizedAction(res.props.data));
+          
+          actions.push(controller.normalizedAction(res.props.data))
         }
-                 
+        actions.forEach(action => {
+          store.dispatch(action);
+        })    
         return {props: { data: response}}
       });
   }

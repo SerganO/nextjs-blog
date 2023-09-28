@@ -86,36 +86,36 @@ function Base({ data }) {
   if (userId) {
     filter["user_id"] = userId;
   }
- 
-  console.log("filter: ", filter)
-  
-  const currentFilter = productsPageData?.currentFilter ?? {}
+
+  console.log("filter: ", filter);
+
+  const currentFilter = productsPageData?.currentFilter ?? {};
   console.log("current filter: ", currentFilter);
 
-  const cKeys = Object.keys(currentFilter)
-  const fKeys = Object.keys(filter)
-  let force = false
-  if(cKeys.length != fKeys.length) {
-    force = true
+  const cKeys = Object.keys(currentFilter);
+  const fKeys = Object.keys(filter);
+  let force = false;
+  if (cKeys.length != fKeys.length) {
+    force = true;
   } else {
-    cKeys.forEach(key => {
-      if(currentFilter[key] != filter[key]) {
-        force = true
+    cKeys.forEach((key) => {
+      if (currentFilter[key] != filter[key]) {
+        force = true;
       }
-    })
+    });
   }
 
   //const force = (productsPageData?.currentFilter ?? {}) != filter;
-  console.log("force: ", force)
-  // useEffect(() => {
-  //   fetchProductsPage({
-  //     payload: { page: page, pageName: "products", perPage: 20, filter, force },
-  //   });
+  console.log("force: ", force);
+  useEffect(() => {
+    fetchProductsPage({
+      payload: { page: page, pageName: "products", perPage: 20, filter, force },
+    });
 
-  //   //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
-  //   //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
-  //   //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
-  // }, [page]);
+    //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
+    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
+    //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
+  }, [page]);
 
   const goToProductsPage = () => {
     userId = "";
@@ -244,7 +244,22 @@ export default connect(
   (state) => state
 )(Base);
 
-export const getServerSideProps = reduxStore.getServerSideProps(container, "products/index", "ProductController")
+export const getServerSideProps = reduxStore.getServerSideProps(
+  container,
+  "products/index",
+  "ProductController",
+  (context) => {
+    const filter = {};
+    if (context.query.user) {
+      filter["user_id"] = context.query.user;
+    }
+    context.query.filter = filter;
+    context.query.perPage = 20;
+    context.query.entityName = "products";
+    context.query.pageName = "products";
+    context.query.sort = {};
+  }
+);
 
 // export const getServerSideProps = reduxStore._wrapper.getServerSideProps(
 //   (store) => async (context) => {
@@ -267,7 +282,7 @@ export const getServerSideProps = reduxStore.getServerSideProps(container, "prod
 //     //console.log('2. Page.getServerSideProps uses the store to dispatch things');
 //     /*store.dispatch(
 //       actionTypes.action(actionTypes.UPDATE_VALUE, {
-        
+
 //           payload: { data: {
 //             key: "SELECTED_PAGE",
 //             value: (parseInt(context.query.page as string) || 1)

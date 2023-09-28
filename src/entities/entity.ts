@@ -132,7 +132,7 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
-      console.log("actionRequest response: ", sdata)
+      //console.log("actionRequest response: ", sdata)
       yield put(this.normalizedAction(sdata.response));
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });
@@ -172,7 +172,7 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
         while (true) {
           console.log("wait new dispatch of ", actionName);
           const { payload } = yield take(actionName);
-          console.log("call ", actionName, " with payload: ", payload);
+          console.log("call ", actionName);
           yield call(method, payload);
         }
       };
@@ -236,18 +236,4 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     yield put(actionTypes.pageFetching(pageName, params.page, false));
   }
 
-  /*public action(methodName, data?) {
-    console.log(this.constructor.name + "_" + methodName);
-    const action = Entity._actions[this.constructor.name + "_" + methodName];
-    return action(data);
-  }*/
-
-  /*public invokableSaga(methodName, isSagaCall, saga, data?) {
-    if (isSagaCall) {
-      const boundedSaga = saga.bind(this)
-      return boundedSaga(data)
-    } else {
-      return this.action(methodName, data)
-    }
-  }*/
 }
