@@ -4,7 +4,6 @@ import getConfig from "next/config";
 import next from "next/types";
 
 import BaseContext from "server/di/BaseContext";
-import container from "server/di/container";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import clientContainer from "src/di/clientContainer";
 import { Entity } from "src/entities/entity";
@@ -17,14 +16,14 @@ const {
 type Response = {
   data: any;
   message?: string;
-  //isSuccess: boolean;
+  isSuccess: boolean;
   code?: string;
   statusCode: number;
   pager?;
 };
 
 export default class BaseController extends BaseContext {
-  private _entity: Entity;
+  private _entity: Entity = null;
   private _response: Response;
   private _errorResponse: Response;
   constructor(opts: IContextContainer) {
@@ -33,10 +32,10 @@ export default class BaseController extends BaseContext {
     this._response = {
       data: {},
       message: '',
-      //isSuccess: true,
+      isSuccess: true,
       statusCode: 200,
     }
-    this.answer = this.answer.bind(this);
+    //this.answer = this.answer.bind(this);
     this.error = this.error.bind(this);
   }
 
@@ -45,17 +44,23 @@ export default class BaseController extends BaseContext {
   }
 
   public normalizedAction(data) {
+    if(this._entity == null) {
+      const entityName = Reflect.getMetadata("entity", this.constructor)
+      this._entity = clientContainer.resolve(entityName)
+    }
     return this._entity.normalizedAction(data)
   }
 
   protected clear() {
     this._response = {
       data: {},
-      statusCode: 200
+      statusCode: 200,
+      isSuccess: true
     }
     this._errorResponse = {
       data: null,
-      statusCode: 500
+      statusCode: 500,
+      isSuccess: false
     }
     return this
   }
@@ -87,42 +92,6 @@ export default class BaseController extends BaseContext {
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
-  }
-
-  protected extendedAnswer(
-    data: any,
-    message: string,
-    isSuccess: boolean = true,
-    code = "OK",
-    statusCode: number = 200
-  ) {
-    return {
-      data,
-      message,
-      isSuccess: isSuccess,
-      code,
-      statusCode: statusCode,
-    } as Response;
-  }
-
-  protected answer(
-    data: any,
-    message: string,
-    isSuccess: boolean = true,
-    code = "OK",
-    statusCode: number = 200
-  ) {
-    return {
-      data,
-      message,
-      isSuccess: isSuccess,
-      code,
-      statusCode: statusCode,
-    } as Response;
-  }
-
-  protected errorsss(message: string, code = "FAIL", statusCode: number = 500) {
-    return this.answer(null, message, false, code, statusCode);
   }
 
   public handler(routeName: string) {
@@ -164,6 +133,7 @@ export default class BaseController extends BaseContext {
           };
         }
         console.log("IN FUNCTION");
+        this.clear()
         router.use(routeName, ...cargs, ...margs).get(async () => {
           let data = await callback(context.query, pagerParams).then((response) => {
             console.log("this._response: ", this._response)
@@ -250,11 +220,16 @@ export default class BaseController extends BaseContext {
               };
             }
             console.log(pagerParams);
+            const fnError = (message) => {
+              req.message = message
+            }
             callback(
               methodName === "get" ? req.query : req.body,
               user,
               req.session,
-              pagerParams
+              pagerParams,
+              fnError,
+              
             )
               .then((response) => {
                 console.log("this._response: ", this._response)

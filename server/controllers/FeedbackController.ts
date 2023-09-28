@@ -5,14 +5,16 @@ import {GET, POST, SSR, USE} from "server/decorators";
 import validate from "server/middleware/validate";
 import session from "server/middleware/session";
 import { actions } from "server/middleware/pasport";
+import entity from "server/decorators/entity";
 
+@entity("FeedbackEntity")
 export default class FeedbackController extends BaseController {
-  constructor(opts: IContextContainer) {
+  /*constructor(opts: IContextContainer) {
     super(opts);
     console.log("FeedbackController init: ", this);
     console.log("di: ", this.di);
     this.entity = "FeedbackEntity"
-  }
+  }*/
 
   /**
    * getAllFeedbacks

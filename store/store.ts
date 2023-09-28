@@ -88,15 +88,26 @@ export default class ReduxStore extends BaseClientContext {
   public getServerSideProps(
     container,
     route: string,
-    controllerName: string,
+    controllerName: string | string[],
   ) {
-    return this._wrapper.getServerSideProps((store) => async (context) => {
-      const controller = container.resolve(controllerName) as BaseController;
-      const res = await (
-        controller.handler(route) as (context: any) => Promise<any>
-      )(context);
-      store.dispatch(controller.normalizedAction(res.props.data));
-      return res
-    });
+    return this._wrapper.getServerSideProps(
+      (store) => async (context) => {
+        const items = Array.isArray(controllerName)?controllerName:[controllerName];
+        let response = {}
+
+        for (let i = 0; i < items.length; i++) {
+          const controller = container.resolve(items[i]) as BaseController;
+          const res = await (
+            controller.handler(route) as (context: any) => Promise<any>
+          )(context);
+          response = {
+            ...response,
+            ...res.props.data
+          }
+          store.dispatch(controller.normalizedAction(res.props.data));
+        }
+                 
+        return {props: { data: response}}
+      });
   }
 }

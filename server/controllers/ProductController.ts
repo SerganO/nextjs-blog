@@ -6,6 +6,7 @@ import { GET, POST, SSR, USE } from "server/decorators";
 import validate, { validateProps } from "server/middleware/validate";
 import session from "server/middleware/session";
 import pager from "server/decorators/pager";
+import entity from "server/decorators/entity";
 
 /*@USE(async (req, res, next) => {
   console.log("class use 1");
@@ -25,11 +26,9 @@ import pager from "server/decorators/pager";
     return await next();
   },
 ])*/
+
+@entity('ProductEntity')
 export default class ProductController extends BaseController {
-  constructor(opts: IContextContainer) {
-    super(opts);
-    this.entity = "ProductEntity";
-  }
 
   /**
    * getAllProducts
@@ -53,10 +52,12 @@ export default class ProductController extends BaseController {
     },
   ])*/
   @GET("api/products")
-  public getAllProducts(query: any) {
+  public getAllProducts(query: any, error, message) {
     const { ProductService } = this.di;
     const userId = parseInt(query["user"]);
-    this.clear().message("products info fetched success").error("Can not fetch products info")
+    message("products info fetched success")
+    error("Can not fetch products info")
+
     return ProductService.getAllProductsInfo(userId)
       // .then((res) => {
       //   return this.answer(res, "products info fetched success");
@@ -449,7 +450,7 @@ export default class ProductController extends BaseController {
 
     const { ProductService } = this.di;
 
-    this.message("product extended info fetched success").error(
+    this.clear().message("product extended info fetched success").error(
       "Can not fetch product extended info"
     );
     return ProductService.getProductVendorIncluded(id);
