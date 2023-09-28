@@ -9,64 +9,42 @@ import entity from "server/decorators/entity";
 
 @entity("FeedbackEntity")
 export default class FeedbackController extends BaseController {
-  /*constructor(opts: IContextContainer) {
-    super(opts);
-    console.log("FeedbackController init: ", this);
-    console.log("di: ", this.di);
-    this.entity = "FeedbackEntity"
-  }*/
 
   /**
    * getAllFeedbacks
    */
   @GET("api/feedbacks")
-  public getAllFeedbacks(query: any) {
+  public getAllFeedbacks({query, fnMessage, fnError}) {
     const userId = parseInt(query["user"]);
     const productId = parseInt(query["product"]);
     const { FeedbackService } = this.di;
-    this.clear().message("feedbacks info fetched success").error("Can not fetch feedbacks")
+    fnMessage("feedbacks info fetched success")
+    fnError("Can not fetch feedbacks")
     return FeedbackService.getAllFeedbacksInfo(userId, productId)
-    /*return FeedbackService.getAllFeedbacksInfo(userId, productId).then(res => {
-      return this.answer(res, "feedbacks info fetched success")
-    }).catch(error => {
-      console.error("FeedbackController.getAllFeedbacks: ", error)
-      return this.error("Can not fetch feedbacks")
-    });*/
   }
 
   /**
    * getFeedbackInfo
    */
   @GET("api/feedbacks/:id")
-  public getFeedbackInfo(query: any) {
+  public getFeedbackInfo({query, fnMessage, fnError}) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;
-    this.clear().message("feedbacks info fetched success").error("Can not fetch feedbacks")
+    fnMessage("feedbacks info fetched success")
+    fnError("Can not fetch feedbacks")
     return FeedbackService.getFeedbackInfo(id)
-    /*return FeedbackService.getFeedbackInfo(id).then(res => {
-      return this.answer(res, "feedback info fetched success")
-    }).catch(error => {
-      console.error("FeedbackController.getAllFeedbacks: ", error)
-      return this.error("Can not fetch feedback")
-    });*/
   }
 
   /**
    * getFeedbackExtendedInfo
    */
   @GET("api/feedbacks/:id/extended")
-  public getFeedbackExtendedInfo(query: any) {
+  public getFeedbackExtendedInfo({query, fnMessage, fnError}) {
     const id = query["id"] as string;
     const { FeedbackService } = this.di;
-    this.clear().message("feedback extended info fetched success").error("Can not fetch feedback extended info")
+    fnMessage("feedback extended info fetched success")
+    fnError("Can not fetch feedback extended info")
     return FeedbackService.getFeedbackExtendedInfo(id)
-    
-    // .then(res => {
-    //   return this.answer(res, "feedback extended info fetched success")
-    // }).catch(error => {
-    //   console.error("FeedbackController.getAllFeedbacks: ", error)
-    //   return this.error("Can not fetch feedback extended info")
-    // });
   }
 
   /**
@@ -87,7 +65,8 @@ export default class FeedbackController extends BaseController {
     })
   )
   @POST("api/feedbacks/add")
-  public addFeedback(body: any, user, session) {
+  public addFeedback({query, user, session, fnMessage, fnError}) {
+    const body = query
     console.log("controller add feedback ");
     console.log("session: ", session)
     console.log("session.passport: ", session.passport)
@@ -97,29 +76,16 @@ export default class FeedbackController extends BaseController {
 
     const userId: number = parseInt(bodyData["user_id"] as string);
 
-    /*if(!userId) {
-      userId = user?.id
-    }*/
-
     const productId: number = parseInt(bodyData["product_id"] as string);
     const rating: number = parseInt(bodyData["rating"] as string);
     const message: string = bodyData["message"] as string;
 
     if (userId && productId && rating && message) {
       const { FeedbackService } = this.di;
-      this.clear().message("feedback added success").error("Can not add feedback")
+      fnMessage("feedback added success")
+      fnError("Can not add feedback")
       return FeedbackService.addFeedback(userId, productId, rating, message)
-      
-      // .then(res => {
-      //   return this.answer(res, "feedback added success")
-      // }).catch(error => {
-      //   console.error("FeedbackController.addFeedback: ", error)
-      //   return this.error("Can not add feedback")
-      // });
     } else {
-      //const { FeedbackService } = this.di;
-      //return FeedbackService.addFeedback(userId, productId, rating, message);
-   
       throw Error("Can not add feedback: not full data");
     }
   }

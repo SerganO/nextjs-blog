@@ -107,15 +107,15 @@ function Base({ data }) {
 
   //const force = (productsPageData?.currentFilter ?? {}) != filter;
   console.log("force: ", force)
-  useEffect(() => {
-    fetchProductsPage({
-      payload: { page: page, pageName: "products", perPage: 20, filter, force },
-    });
+  // useEffect(() => {
+  //   fetchProductsPage({
+  //     payload: { page: page, pageName: "products", perPage: 20, filter, force },
+  //   });
 
-    //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
-    //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
-    //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
-  }, [page]);
+  //   //dispatch(entity.fetchProductPageInvokable({ payload: { page: page, userString: userString}}))
+  //   //dispatch(entity.action("fetchProductPage", { payload: { page: page, userString: userString} }))
+  //   //dispatch(productPageRequestAction({ payload: { page: page, userString: userString} }))
+  // }, [page]);
 
   const goToProductsPage = () => {
     userId = "";

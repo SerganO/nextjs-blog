@@ -1,130 +1,69 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
-import {GET, POST, SSR, USE} from "server/decorators";
-import validate,  { validateProps} from "server/middleware/validate";
+import { GET, POST, SSR, USE } from "server/decorators";
+import validate, { validateProps } from "server/middleware/validate";
 import entity from "server/decorators/entity";
 
 @entity("UserEntity")
 export default class UserController extends BaseController {
-  /*constructor(opts: IContextContainer) {
-    super(opts);
-    this.entity = "UserEntity"
-  }*/
 
   /**
    * getAllUsers
    */
   @GET("api/users")
-  public getAllUsers(query: any) {
+  public getAllUsers({query, fnMessage, fnError}) {
     const { UserService } = this.di;
-    this.clear().message("users info fetched success").error("Can not fetch users info")
-    return UserService.getAllUsersInfo()
-    
-    
-    // .then(
-    //   res => {
-    //     return this.answer(res, "users info fetched success")
-    //     // return {
-    //     //   data: res,
-    //     //   message: "users info fetched success"
-    //     // }
-    //   }
-    // ).catch(error => {
-    //   console.error('UserController.getAllUsers()', error);
-    //   return this.error("Can not fetch users info")
-    //   // return {
-    //   //   data: null,
-    //   //   message: "Can not fetch users info"
-    //   // }
-    // });;
+    fnMessage("users info fetched success");
+    fnError("Can not fetch users info");
+    return UserService.getAllUsersInfo();
   }
 
   /**
    * findUserInfo
    */
-  @USE(validate({
-    type: 'object',
-    properties: {
-      id: validateProps.queryId,
-    },
-    required: ['id'],
-    additionalProperties: false,
-  }))
+  @USE(
+    validate({
+      type: "object",
+      properties: {
+        id: validateProps.queryId,
+      },
+      required: ["id"],
+      additionalProperties: false,
+    })
+  )
   @GET("api/users/:id")
   @SSR("users/:id")
-  public findUserInfo(query: any) {
+  public findUserInfo({query, fnMessage, fnError}) {
     const id = query["id"] as string;
     const { UserService } = this.di;
-    this.clear().message("user info fetched success").error("Can not fetch user info")
-    return UserService.findUserInfo(id)
-    
-    // .then(res => {
-    //   return this.answer(res, "user info fetched success")
-    //   // return {
-    //   //   data: res,
-    //   //   message: "user info fetched success"
-    //   // }
-    // }).catch(error => {
-    //   console.error('UserController.findUserInfo()', error);
-    //   this.error( "Can not fetch user info")
-    //   // return {
-    //   //   data: null,
-    //   //   message: "Can not fetch user info"
-    //   // }
-    // });;
+    fnMessage("user info fetched success");
+    fnError("Can not fetch user info");
+    return UserService.findUserInfo(id);
   }
 
   /**
    * getUserInfoFeedbacksIncluded
    */
   @GET("api/users/:id/feedbacks")
-  public getUserInfoFeedbacksIncluded(query: any) {
+  public getUserInfoFeedbacksIncluded({query, fnMessage, fnError}) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
-    this.clear().message("user extended info fetched success").error("Can not fetch user info")
-    return UserService.getUserInfoFeedbacksIncluded(id)
-    
-    // .then(res => {
-    //   return this.answer(res, "user extended info fetched success")
-    //   // return {
-    //   //   data: res,
-    //   //   message: "user extended info fetched success"
-    //   // }
-    // }).catch(error => {
-    //   console.error('UserController.getUserInfoFeedbacksIncluded()', error);
-    //   return this.error("Can not fetch user info")
-    //   // return {
-    //   //   data: null,
-    //   //   message: "Can not fetch user info"
-    //   // }
-    // });;
+    fnMessage("user extended info fetched success");
+    fnError("Can not fetch user info");
+    return UserService.getUserInfoFeedbacksIncluded(id);
   }
 
   /**
    * getUserInfoProductsIncluded
    */
   @GET("api/users/:id/products")
-  public getUserInfoProductsIncluded(query: any) {
+  public getUserInfoProductsIncluded({query, fnMessage, fnError}) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
-    this.clear().message("user extended info fetched success").error("Can not fetch user info")
-    return UserService.getUserInfoProductsIncluded(id)
-    
-    // .then(res => {
-    //   return this.answer(res, "user extended info fetched success")
-    //   // return {
-    //   //   data: res,
-    //   //   message: "user extended info fetched success"
-    //   // }
-    // }).catch(error => {
-    //   console.error('UserController.getUserInfoProductsIncluded()', error);
-    //   return this.error("Can not fetch user info")
-    //   // return {
-    //   //   data: null,
-    //   //   message: "Can not fetch user info"
-    //   // }
-    // });
+    fnMessage("user extended info fetched success");
+    fnError("Can not fetch user info");
+    return UserService.getUserInfoProductsIncluded(id);
   }
 
   /**
@@ -132,28 +71,29 @@ export default class UserController extends BaseController {
    */
   @USE(
     validate({
-      type: 'object',
+      type: "object",
       properties: {
-        firstName: {type: "string", minLength: 2},
-        lastName: {type: "string", minLength: 2},
+        firstName: { type: "string", minLength: 2 },
+        lastName: { type: "string", minLength: 2 },
         userEmail: validateProps.email,
         password: validateProps.password,
-        role: {type: "string"},
+        role: { type: "string" },
       },
       validateProperty: {
         role: true,
       },
-      required: ['firstName', 'lastName','userEmail','password','role'],
+      required: ["firstName", "lastName", "userEmail", "password", "role"],
       additionalProperties: false,
       errorMessage: {
         properties: {
-          userEmail: "data.userEmail must contain email adress"
+          userEmail: "data.userEmail must contain email adress",
         },
       },
     })
   )
   @POST("api/users/add")
-  public addUser(body: any) {
+  public addUser({query, fnMessage, fnError}) {
+    const body = query
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
 
@@ -163,32 +103,17 @@ export default class UserController extends BaseController {
     const password = bodyData["password"] as string;
     const role = bodyData["role"] as string;
 
-
     if (firstName && lastName && userEmail && password && role) {
       const { UserService } = this.di;
-      this.message("user added success").error("Can not add user")
+      fnMessage("user added success");
+      fnError("Can not add user");
       return UserService.addUser(
         firstName,
         lastName,
         userEmail,
         password,
         role
-      )
-      
-      // .then(res => {
-      //   return this.answer(res, "user added success")
-      //   // return {
-      //   //   data: res,
-      //   //   message: "user added success"
-      //   // }
-      // }).catch(error => {
-      //   console.error('UserController.addUser()', error);
-      //   return this.error("Can not add user")
-      //   // return {
-      //   //   data: null,
-      //   //   message: "Can not add user"
-      //   // }
-      // });
+      );
     } else {
       throw Error("Can not add user: not full data");
     }

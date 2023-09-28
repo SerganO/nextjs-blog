@@ -24,60 +24,22 @@ type Response = {
 
 export default class BaseController extends BaseContext {
   private _entity: Entity = null;
-  private _response: Response;
-  private _errorResponse: Response;
   constructor(opts: IContextContainer) {
     super(opts);
-
-    this._response = {
-      data: {},
-      message: '',
-      isSuccess: true,
-      statusCode: 200,
-    }
-    //this.answer = this.answer.bind(this);
-    this.error = this.error.bind(this);
   }
 
   protected set entity(entityName) {
-    this._entity = clientContainer.resolve(entityName)
+    this._entity = clientContainer.resolve(entityName);
   }
 
   public normalizedAction(data) {
-    if(this._entity == null) {
-      const entityName = Reflect.getMetadata("entity", this.constructor)
-      this._entity = clientContainer.resolve(entityName)
+    if (this._entity == null) {
+      const entityName = Reflect.getMetadata("entity", this.constructor);
+      this._entity = clientContainer.resolve(entityName);
     }
-    return this._entity.normalizedAction(data)
+    return this._entity.normalizedAction(data);
   }
 
-  protected clear() {
-    this._response = {
-      data: {},
-      statusCode: 200,
-      isSuccess: true
-    }
-    this._errorResponse = {
-      data: null,
-      statusCode: 500,
-      isSuccess: false
-    }
-    return this
-  }
-
-  protected error(message, code = 'TOAST', statusCode: number = 500) {
-    this._errorResponse.message = message;
-    this._errorResponse.code = code;
-    this._errorResponse.statusCode = statusCode
-    return this;
-  }
-
-  protected message(message, code = 'TOAST', statusCode: number = 200) {
-      this._response.message = message;
-      this._response.code = code;
-      this._response.statusCode = statusCode
-      return this;
-  }
   private useClassdMiddleware() {
     const key = this.constructor.name;
     console.log("key: ", key);
@@ -102,8 +64,6 @@ export default class BaseController extends BaseContext {
 
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
-    console.log("members: ", members);
-    console.log("cargs: ", cargs);
 
     if ("SSR" in members) {
       return async (context) => {
@@ -113,11 +73,10 @@ export default class BaseController extends BaseContext {
         let pagerParams: IPagerParams = null;
         const isPager = pagers?.find((x) => x.methodName == action) != null;
         if (isPager) {
-          console.log("pager function: ", action);
           const page = parseInt(context.query.page || 1);
           const pageName = context.query["pageName"];
           const perPage = parseInt(context.query.perPage || PAGE_SIZE_10);
-          const filter =context.query.filter ? context.query.filter : null;
+          const filter = context.query.filter ? context.query.filter : null;
           const sort = context.query.sort ? context.query.sort : null;
           const entityName = context.query.entityName
             ? context.query.entityName
@@ -132,42 +91,56 @@ export default class BaseController extends BaseContext {
             entityName: entityName,
           };
         }
-        console.log("IN FUNCTION");
-        this.clear()
+        const fnError = (message, code = "TOAST", statusCode: number = 500) => {
+          context.query.errorResponse = {};
+          context.query.errorResponse.isSuccess = false
+          context.query.errorResponse.message = message;
+          context.query.errorResponse.code = code;
+          context.query.errorResponse.statusCode = statusCode;
+        };
+
+        const fnMessage = (
+          message,
+          code = "TOAST",
+          statusCode: number = 200
+        ) => {
+          context.query.response = {};
+          context.query.response.isSuccess = true
+          context.query.response.message = message;
+          context.query.response.code = code;
+          context.query.response.statusCode = statusCode;
+        };
         router.use(routeName, ...cargs, ...margs).get(async () => {
-          let data = await callback(context.query, pagerParams).then((response) => {
-            console.log("this._response: ", this._response)
-            this._response.data = response
-            console.log("this._response: ", this._response)
-            if (isPager) {
-              this._response.pager = {
-                count: this._response.data.count,
-                page: pagerParams.page,
-                pageName: pagerParams.pageName,
-                perPage: pagerParams.perPage,
-                entityName: pagerParams.entityName,
-              };
-              this._response.data = this._response.data.items;
-              /*data = {
-                pager: {
-                  items: data.items,
-                  count: data.count,
-                  page: pager.page,
-                  pageName: pager.pageName,
-                  perPage: pager.perPage,
-                  entityName: pager.entityName,
-                },
-                message: data.message,
-              };*/
-            }
-            //data['message']
-            console.log("this._response: ", this._response)
-            return this._response;
-          }).catch((error)=> {
-            
-            console.log("error: ", error)
-            return this._errorResponse
-          });
+          let data = await callback({
+            query: context.query,
+            pager: pagerParams,
+            fnMessage,
+            fnError,
+          })
+            .then((response) => {
+              if (isPager) {
+                const pager = {
+                  count: response.count,
+                  page: pagerParams.page,
+                  pageName: pagerParams.pageName,
+                  perPage: pagerParams.perPage,
+                  entityName: pagerParams.entityName,
+                };
+                response = {
+                  data: response.items,
+                  pager
+                }
+              } else {
+                response = {
+                  data: response
+                }
+              }
+              return response;
+            })
+            .catch((error) => {
+              console.log("error: ", error);
+              return error;
+            });
           data = JSON.parse(JSON.stringify(data));
           return {
             props: {
@@ -189,9 +162,6 @@ export default class BaseController extends BaseContext {
           let margs = this.useMethodMiddleware(action);
 
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
-            console.log("handler callback");
-            console.log("req.user: ", req.user);
-            console.log("req.session: ", req.session);
             let user = null;
             if (req.user != undefined) {
               user = this.json(req.user?.dataValues);
@@ -200,7 +170,6 @@ export default class BaseController extends BaseContext {
             const isPager = pagers.find((x) => x.methodName == action) != null;
 
             if (isPager) {
-              console.log("pager function: ", action);
               const page = parseInt(req.body.page || 1);
               const pageName = req.body["pageName"];
               const perPage = parseInt(req.body.perPage || PAGE_SIZE_10);
@@ -219,87 +188,66 @@ export default class BaseController extends BaseContext {
                 entityName: entityName,
               };
             }
-            console.log(pagerParams);
-            const fnError = (message) => {
-              req.message = message
-            }
-            callback(
-              methodName === "get" ? req.query : req.body,
+
+            const fnError = (
+              message,
+              code = "TOAST",
+              statusCode: number = 500
+            ) => {
+              req.errorResponse = {};
+              req.errorResponse.isSuccess = false
+              req.errorResponse.message = message;
+              req.errorResponse.code = code;
+              req.errorResponse.statusCode = statusCode;
+            };
+
+            const fnMessage = (
+              message,
+              code = "TOAST",
+              statusCode: number = 200
+            ) => {
+              req.response = {};
+              req.response.isSuccess = true
+              req.response.message = message;
+              req.response.code = code;
+              req.response.statusCode = statusCode;
+            };
+            callback({
+              query: methodName === "get" ? req.query : req.body,
               user,
-              req.session,
-              pagerParams,
+              session: req.session,
+              pager: pagerParams,
+              fnMessage,
               fnError,
-              
-            )
+            })
               .then((response) => {
-                console.log("this._response: ", this._response)
-                this._response.data = response
-                console.log("this._response: ", this._response)
                 if (isPager) {
-                  this._response.pager = {
-                    count: this._response.data.count,
+                  response.pager = {
+                    count: response.count,
                     page: pagerParams.page,
                     pageName: pagerParams.pageName,
                     perPage: pagerParams.perPage,
                     entityName: pagerParams.entityName,
                   };
-                  this._response.data =  this._response.data.items;
-                  /*data = {
-                    pager: {
-                      items: data.items,
-                      count: data.count,
-                      page: pager.page,
-                      pageName: pager.pageName,
-                      perPage: pager.perPage,
-                      entityName: pager.entityName,
-                    },
-                    message: data.message,
-                  };*/
+                  response.data = response.items;
+                } else {
+                  response.data = response
                 }
-                console.log("this._response: ", this._response)
-                return this._response;
+                return response;
               })
-              .then((data) => {
-                console.log("return res data");
-                const response = data as Response;
-                /*
-                  1- {
-                    filed_name: value1
-                    pager: 34
-                  }
-                  2 -[{},{},{}]
-                  3 {
-                    pager: {}
-                  }
-
-
-                  {
-                      data: {
-
-                      }
-                      pager: {
-                         pageName: pageName,
-                          perPage: perPage,
-                          filter: filter,
-                          sort: sort,
-                          entityName: entityName,
-                          count: 1250
-                      }
-                      message: "User was updated succesefully",
-                      code: "reset", "logout", "restart", "toast", "dialog",
-                      statusCode: 200
-                  }
-                   
-                */
-
-                //res.status(200).json(data);
+              .then((result) => {
+                const response = req["response"];
+                response["data"] = result.data;
+                if(result.pager) {
+                  response["pager"] = result.pager;
+                }
                 res.status(response.statusCode).json(response);
               })
               .catch((error) => {
                 console.error("error:", error);
-                
-                //res.status(500).send({ error: error });
-                res.status(this._errorResponse.statusCode).json(this._errorResponse);
+                const errorResponse = req["errorResponse"];
+
+                res.status(errorResponse.statusCode).json(errorResponse);
               });
           });
         }
