@@ -5,16 +5,17 @@ import ProductPage from "../../components/productPage";
 import React, {  useEffect } from "react";
 import { connect } from "react-redux";
 import container from "server/di/container";
-import { saveProductAction } from "store/actionCreators";
+//import { saveProductAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
+import { action, ADD } from "store/actionTypes";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveProductAction: (data) => dispatch(saveProductAction(data)),
+    saveProductAction: (data) => dispatch(action(ADD,  { payload: data })),
   };
 };
 

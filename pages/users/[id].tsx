@@ -7,11 +7,12 @@ import getConfig from "next/config";
 import Link from "next/link";
 import { connect } from "react-redux";
 import { showErrorNotification } from "src/functions/showNotification";
-import { saveUserAction } from "store/actionCreators";
+//import { saveUserAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
 import container from "server/di/container";
+import { action, ADD } from "store/actionTypes";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
@@ -21,7 +22,7 @@ const {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveUserAction: (data) => dispatch(saveUserAction(data)),
+    saveUserAction: (data) => dispatch(action(ADD, {payload: data})),
   };
 };
 const mapStateToProps = (state) => {

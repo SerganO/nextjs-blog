@@ -82,5 +82,5 @@ type ValuesState = {
 type DispatchType = (args: StoreAction) => StoreAction
 
 
-PAGE_SIZE_10 = 10
+PAGE_SIZE_20 = 20
 

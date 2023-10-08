@@ -10,7 +10,7 @@ import { Entity } from "src/entities/entity";
 import { IPagerParams } from "src/pagination/IPagerParams ";
 
 const {
-  publicRuntimeConfig: { PAGE_SIZE_10 },
+  publicRuntimeConfig: { PAGE_SIZE_20 },
 } = getConfig();
 
 type Response = {
@@ -75,7 +75,7 @@ export default class BaseController extends BaseContext {
         if (isPager) {
           const page = parseInt(context.query.page || 1);
           const pageName = context.query["pageName"];
-          const perPage = parseInt(context.query.perPage || PAGE_SIZE_10);
+          const perPage = parseInt(context.query.perPage || PAGE_SIZE_20);
           const filter = context.query.filter ? context.query.filter : null;
           const sort = context.query.sort ? context.query.sort : null;
           const entityName = context.query.entityName
@@ -165,7 +165,7 @@ export default class BaseController extends BaseContext {
             if (isPager) {
               const page = parseInt(req.body.page || 1);
               const pageName = req.body["pageName"];
-              const perPage = parseInt(req.body.perPage || PAGE_SIZE_10);
+              const perPage = parseInt(req.body.perPage || PAGE_SIZE_20);
               const filter = req.body.filter ? req.body.filter : null;
               const sort = req.body.sort ? req.body.sort : null;
               const entityName = req.body.entityName

@@ -61,12 +61,6 @@ export const DELETE = "DELETE"
 
 export const UPDATE_VALUE = "UPDATE_VALUE"
 
-
-
-
-
-
-
 export const ADD_FEEDBACK = "ADD_FEEDBACK";
 export const REMOVE_FEEDBACK = "REMOVE_FEEDBACK";
 

@@ -7,16 +7,17 @@ import SearchFilters from "../../components/searchFilters";
 import container from "server/di/container";
 import Link from "next/link";
 import { connect } from "react-redux";
-import { saveProductPageAction } from "store/actionCreators";
+//import { saveProductPageAction } from "store/actionCreators";
 import { useActions } from "src/hooks/useEntity";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
+import { action, ADD } from "store/actionTypes";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveProductPageAction: (data) => dispatch(saveProductPageAction(data)),
+    saveProductPageAction: (data) => dispatch(action(ADD, { payload: data })),
   };
 };
 
