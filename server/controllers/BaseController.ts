@@ -91,25 +91,18 @@ export default class BaseController extends BaseContext {
             entityName: entityName,
           };
         }
-        const fnError = (message, code = "TOAST", statusCode: number = 500) => {
-          context.query.errorResponse = {};
-          context.query.errorResponse.isSuccess = false
-          context.query.errorResponse.message = message;
-          context.query.errorResponse.code = code;
-          context.query.errorResponse.statusCode = statusCode;
-        };
 
-        const fnMessage = (
-          message,
-          code = "TOAST",
-          statusCode: number = 200
-        ) => {
-          context.query.response = {};
-          context.query.response.isSuccess = true
-          context.query.response.message = message;
-          context.query.response.code = code;
-          context.query.response.statusCode = statusCode;
-        };
+        const fnRes = (fieldName, isSuccess, defaultCode, defaultStatusCode) => (message, code = defaultCode, statusCode: number = defaultStatusCode) => {
+          context.query[fieldName] = {};
+          context.query[fieldName].isSuccess = isSuccess
+          context.query[fieldName].message = message;
+          context.query[fieldName].code = code;
+          context.query[fieldName].statusCode = statusCode;
+        }
+
+        const fnError = fnRes("errorResponse", false, "ERROR", 500)
+        const fnMessage = fnRes("response", true, "OK", 200)
+
         router.use(routeName, ...cargs, ...margs).get(async () => {
           let data = await callback({
             query: context.query,
@@ -189,36 +182,23 @@ export default class BaseController extends BaseContext {
               };
             }
 
-            const fnError = (
-              message,
-              code = "TOAST",
-              statusCode: number = 500
-            ) => {
-              req.errorResponse = {};
-              req.errorResponse.isSuccess = false
-              req.errorResponse.message = message;
-              req.errorResponse.code = code;
-              req.errorResponse.statusCode = statusCode;
-            };
-
-            const fnMessage = (
-              message,
-              code = "TOAST",
-              statusCode: number = 200
-            ) => {
-              req.response = {};
-              req.response.isSuccess = true
-              req.response.message = message;
-              req.response.code = code;
-              req.response.statusCode = statusCode;
-            };
+            const fnRes = (fieldName, isSuccess, defaultCode, defaultStatusCode) => (message, code = defaultCode, statusCode: number = defaultStatusCode) => {
+              req[fieldName] = {};
+              req[fieldName].isSuccess = isSuccess
+              req[fieldName].message = message;
+              req[fieldName].code = code;
+              req[fieldName].statusCode = statusCode;
+            }
+    
+            const fnError = fnRes("errorResponse", false, "ERROR", 500)
+            const fnMessage = fnRes("response", true, "OK", 200)
             callback({
               query: methodName === "get" ? req.query : req.body,
               user,
               session: req.session,
               pager: pagerParams,
               fnMessage,
-              fnError,
+              fnError
             })
               .then((response) => {
                 if (isPager) {

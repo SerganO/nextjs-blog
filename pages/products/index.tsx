@@ -247,18 +247,7 @@ export default connect(
 export const getServerSideProps = reduxStore.getServerSideProps(
   container,
   "products/index",
-  "ProductController",
-  (context) => {
-    const filter = {};
-    if (context.query.user) {
-      filter["user_id"] = context.query.user;
-    }
-    context.query.filter = filter;
-    context.query.perPage = 20;
-    context.query.entityName = "products";
-    context.query.pageName = "products";
-    context.query.sort = {};
-  }
+  "ProductController"
 );
 
 // export const getServerSideProps = reduxStore._wrapper.getServerSideProps(

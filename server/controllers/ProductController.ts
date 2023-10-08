@@ -182,20 +182,23 @@ export default class ProductController extends BaseController {
 
   @pager()
   @SSR("products/index")
-  async getProductsPaginatedSSR({ fnMessage, fnError }) {
+  async getProductsPaginatedSSR({query, pager, fnMessage, fnError }) {
     const { ProductService } = this.di;
-    const pager: IPagerParams = {
-      perPage: 20,
-      pageName: "products",
-      entityName: "products",
-      page: 1,
-    };
+    const filter = {};
+    if (query.user) {
+      filter["user_id"] = query.user;
+    }
+    pager.filter = filter;
+    pager.perPage = 20;
+    pager.entityName = "products";
+    pager.pageName = "products";
+    pager.sort = {};
     console.log("pager: ", pager);
     fnMessage("product page fetched success");
     fnError("Can not fetch product page info");
     return ProductService.page(pager);
   }
-
+  
   @pager()
   @POST("api/products/pagination")
   async getProductsPaginated({ pager, fnMessage, fnError }) {

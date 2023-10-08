@@ -88,12 +88,10 @@ export default class ReduxStore extends BaseClientContext {
   public getServerSideProps(
     container,
     route: string,
-    controllerName: string | string[],
-    setupFunc = (context) => {}
+    controllerName: string | string[]
   ) {
     return this._wrapper.getServerSideProps(
       (store) => async (context) => {
-        setupFunc(context)
         const items = Array.isArray(controllerName)?controllerName:[controllerName];
         let response = {}
         let actions: any[] = []
