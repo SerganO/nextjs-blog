@@ -167,8 +167,8 @@ export default class ProductController extends BaseController {
 
     if (userId && productId && rating && message) {
       const { ProductService } = this.di;
-      fnMessage("feedback added success");
-      fnError("Can not add feedback");
+      fnMessage("feedback added success", "TOAST");
+      fnError("Can not add feedback", "TOAST");
       return ProductService.addFeedbackToProduct(
         userId,
         productId,
@@ -176,7 +176,8 @@ export default class ProductController extends BaseController {
         message
       );
     } else {
-      throw Error("Can not add product: not full data");
+      fnError("Can not add feedback: not full data", "TOAST");
+      throw Error("Can not add feedback: not full data");
     }
   }
 

@@ -132,7 +132,17 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
-      //console.log("actionRequest response: ", sdata)
+      console.log("response code: ", sdata)
+      if(sdata.response.code == "TOAST") {
+        const {ToastEmitter} = this.di
+        if(sdata.response.isSuccess) {
+          ToastEmitter.message(sdata.response.message)
+        } else {
+          ToastEmitter.errorMessage(sdata.response.message)
+        }
+      }
+
+
       yield put(this.normalizedAction(sdata.response));
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });

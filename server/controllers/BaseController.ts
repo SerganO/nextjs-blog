@@ -224,7 +224,7 @@ export default class BaseController extends BaseContext {
                 res.status(response.statusCode).json(response);
               })
               .catch((error) => {
-                console.error("error:", error);
+                console.log("error:", error);
                 const errorResponse = req["errorResponse"];
 
                 res.status(errorResponse.statusCode).json(errorResponse);
@@ -238,7 +238,7 @@ export default class BaseController extends BaseContext {
     return router.handler({
       onError: (err, req, res) => {
         const error = err as Error;
-        console.error(error.stack);
+        //console.error(error.stack);
         console.log("error: ", error);
         res.status(500).end(error.message);
       },

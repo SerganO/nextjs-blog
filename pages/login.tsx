@@ -45,7 +45,7 @@ const Login = () => {
         showMessageNotification("error:" + responseBody);
       }
     } catch (error) {
-      console.error(error);
+      //console.error(error);
       showMessageNotification("error:" + error);
     }
   };

@@ -96,7 +96,7 @@ export function validateSSR(schema) {
 
 export const validateProps = {
   queryId: { type: "string", pattern: "\\d" },
-  id: { type: "number", minimum: 1 },
+  id: { type: "number", minimum: 0 },
   email: { type: "string", format: "email" },
   password: { type: "string", format: "password", minLength: 8 },
 };

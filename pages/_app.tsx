@@ -6,6 +6,8 @@ import { Provider } from "react-redux";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
 import ContainerContext from "src/ContainerContext";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
@@ -17,10 +19,13 @@ export default function App({ Component, ...rest }) {
   }
 
   return (
-    <ContainerContext.Provider value={clientContainer}>
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
-    </ContainerContext.Provider>
+    <div>
+      <ToastContainer />
+      <ContainerContext.Provider value={clientContainer}>
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </ContainerContext.Provider>
+    </div>
   );
 }
