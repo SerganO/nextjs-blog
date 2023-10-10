@@ -4,7 +4,6 @@ import controllers from "server/controllers";
 import { createDB } from "../db";
 import { config } from "coreConfig";
 
-
 import * as awilix from "awilix";
 
 const container = awilix.createContainer({

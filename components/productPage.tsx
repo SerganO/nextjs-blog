@@ -14,7 +14,6 @@ export default function ProductPage({product, vendor, feedbacks}) {
   const SKU = product?.SKU
   const price = product?.price
 
-
   const fullname = `${vendor?.firstName} ${vendor?.lastName}`;
 
   var rating = 0;
@@ -68,7 +67,6 @@ export default function ProductPage({product, vendor, feedbacks}) {
                 <Link
                   href={`/products?user=${vendor?.id}`}
                   className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
-                  //onClick={goToProductsPage}
                 >
                   All Products
                 </Link>

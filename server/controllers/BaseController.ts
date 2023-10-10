@@ -1,29 +1,19 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { createRouter } from "next-connect";
 import getConfig from "next/config";
-import next from "next/types";
 
 import BaseContext from "server/di/BaseContext";
 import IContextContainer from "server/di/interfaces/IContextContainer";
 import clientContainer from "src/di/clientContainer";
-import { Entity } from "src/entities/entity";
+import { BaseEntity } from "src/entities/BaseEntity";
 import { IPagerParams } from "src/pagination/IPagerParams ";
 
 const {
   publicRuntimeConfig: { PAGE_SIZE_20 },
 } = getConfig();
 
-type Response = {
-  data: any;
-  message?: string;
-  isSuccess: boolean;
-  code?: string;
-  statusCode: number;
-  pager?;
-};
-
 export default class BaseController extends BaseContext {
-  private _entity: Entity = null;
+  private _entity: BaseEntity = null;
   constructor(opts: IContextContainer) {
     super(opts);
   }
@@ -42,7 +32,6 @@ export default class BaseController extends BaseContext {
 
   private useClassdMiddleware() {
     const key = this.constructor.name;
-    console.log("key: ", key);
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
@@ -50,7 +39,6 @@ export default class BaseController extends BaseContext {
 
   private useMethodMiddleware(methodName: string) {
     const key = this.constructor.name + "_" + methodName;
-    console.log("key: ", key);
     const methodMiddleware = Reflect.getMetadata(key, this.constructor);
     const methodArgs = Array.isArray(methodMiddleware) ? methodMiddleware : [];
     return methodArgs;
@@ -234,11 +222,9 @@ export default class BaseController extends BaseContext {
       }
     });
 
-    console.log("handler return");
     return router.handler({
       onError: (err, req, res) => {
         const error = err as Error;
-        //console.error(error.stack);
         console.log("error: ", error);
         res.status(500).end(error.message);
       },

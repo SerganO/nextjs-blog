@@ -2,10 +2,9 @@ import { useRouter } from "next/router";
 import SiteHeader from "../../components/siteHeader";
 import SearchFilters from "../../components/searchFilters";
 import ProductPage from "../../components/productPage";
-import React, {  useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import container from "server/di/container";
-//import { saveProductAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
@@ -15,7 +14,7 @@ const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveProductAction: (data) => dispatch(action(ADD,  { payload: data })),
+    saveProductAction: (data) => dispatch(action(ADD, { payload: data })),
   };
 };
 
@@ -60,7 +59,6 @@ function Base({ data }) {
   const productData = data;
   useEffect(() => {
     setCurrentProduct({ payload: { id: router.query.id } });
-    //fetchProduct({ payload: { id: router.query.id } });
   }, []);
 
   const handleGoBack = () => {
@@ -94,30 +92,8 @@ export default connect(
   (state) => state
 )(Base);
 
-export const getServerSideProps = reduxStore.getServerSideProps(container, "products/:id", "ProductController")
-
-
-  /*(store) => async (context) => {
-    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-
-    const res = await (
-      productController.handler("products/:id") as (
-        context: any
-      ) => Promise<any>
-    )(context);
-    //const nData = normalize(res.props.data.data, {items:product});
-    //store.dispatch(saveProductAction({ data: nData }));
-    store.dispatch(productEntity.normalize(res.props.data))
-    store.dispatch(
-      actionTypes.action(actionTypes.UPDATE_VALUE, {
-        payload: {
-          data: {
-            key: "SELECTED_PRODUCT_ID",
-            value: parseInt(context.query.id as string),
-          },
-        },
-      })
-    );
-    return res;
-  }
-);*/
+export const getServerSideProps = reduxStore.getServerSideProps(
+  container,
+  "products/:id",
+  "ProductController"
+);

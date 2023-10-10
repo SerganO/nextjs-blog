@@ -1,23 +1,12 @@
-//import Product from "server/models/Product";
-//import Feedback from "server/models/Feedback";
-//import User from "server/models/User";
 import { Op, FindOptions } from "sequelize";
 import BaseContext from "server/di/BaseContext";
-import IContextContainer from "server/di/interfaces/IContextContainer";
 import { IPagerParams } from "src/pagination/IPagerParams ";
 
 export default class ProductService extends BaseContext {
-  constructor(opts: IContextContainer) {
-    super(opts);
-    this.di = opts;
-    console.log("ProductService init: ", this);
-    console.log("di: ", this.di);
-  }
-
   /**
    * addFeedbackToProduct
    */
-  public addFeedbackToProduct(
+  public async addFeedbackToProduct(
     userId: number,
     productId: number,
     rating: number,
@@ -25,15 +14,8 @@ export default class ProductService extends BaseContext {
   ) {
     const { FeedbackService } = this.di;
 
-    return new Promise(async (resolve, reject) => {
-      try {
-        await FeedbackService.addFeedback(userId, productId, rating, message);
-        const response = await this.findProductExtendedInfo(`${productId}`);
-        resolve(response);
-      } catch (error) {
-        reject(error);
-      }
-    });
+    await FeedbackService.addFeedback(userId, productId, rating, message);
+    return this.findProductExtendedInfo(`${productId}`);
   }
 
   /**
@@ -151,11 +133,6 @@ export default class ProductService extends BaseContext {
         let response = {
           items: products,
           count,
-          //PAGINATION PARAMS
-          //page: params.page,
-          //pageName: params.pageName,
-          //perPage: params.perPage,
-          //entityName: params.entityName,
         };
         resolve(response);
       } catch (error) {
@@ -175,9 +152,6 @@ export default class ProductService extends BaseContext {
     const queryOptions: FindOptions = {};
     const countQueryOptions: FindOptions = {};
 
-    console.log("parameters: ", userId, offset, limit);
-    console.log("Product service dI:", this.di);
-    console.log("Product service dI us:", this.di.UserService);
     if (userId !== null && userId !== undefined) {
       queryOptions.where = {
         ...queryOptions.where,
@@ -296,7 +270,3 @@ queryOptions.nest = true;*/
     });
   }
 }
-
-/*const productService = new ProductService();
-
-export default productService;*/

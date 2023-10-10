@@ -2,10 +2,10 @@ import { AnyAction, CombinedState, Reducer, combineReducers } from "redux";
 import valueReducer from "./valueReducer";
 import { HYDRATE } from "next-redux-wrapper";
 import baseReducer from "./baseReducer";
-import { Entity } from "src/entities/entity";
+import { BaseEntity } from "src/entities/BaseEntity";
 import { pagination } from "./paginationReducer";
 
-let combinedReducers = Reflect.getMetadata("reducers", Entity).reduce(
+let combinedReducers = Reflect.getMetadata("reducers", BaseEntity).reduce(
   (reducers, obj) => {
     const key = `${obj.reducerName}`;
     const reducer = baseReducer(obj.reducerName);

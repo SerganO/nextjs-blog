@@ -20,7 +20,6 @@ export interface IUser extends Model {
 
 export type UserType = typeof Model & {
   new (values?: object, options?: BuildOptions): IUser;
-  //bind(): void;
 };
 
 export default (ctx: IContextContainer) => {
@@ -101,10 +100,6 @@ export default (ctx: IContextContainer) => {
       type: DataTypes.DATE,
     },
   });
-
-  //User.bind = () => {};
-
-  //User.bind();
 
   return User;
 };

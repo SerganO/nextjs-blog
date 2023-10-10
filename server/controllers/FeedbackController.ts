@@ -1,5 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import {GET, POST, SSR, USE} from "server/decorators";
 import validate from "server/middleware/validate";

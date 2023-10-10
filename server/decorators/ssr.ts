@@ -10,7 +10,6 @@ export default function SSR(
       properties.SSR.push(propertyKey);
     } else {
       properties = { ...properties, SSR: [propertyKey] };
-      //console.log("define data:", routeName, "::", properties,"::", target)
       Reflect.defineMetadata(routeName, properties, target);
     }
   };

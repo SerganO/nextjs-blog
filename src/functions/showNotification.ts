@@ -1,4 +1,3 @@
-
 export function showMessageNotification(message: string) {
     window?.alert(message);
 }

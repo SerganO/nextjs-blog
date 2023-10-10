@@ -10,12 +10,8 @@ type FeedbackData = {
   message: string;
 };
 
-const {
-  publicRuntimeConfig: { BASE_URL },
-} = getConfig();
-
 export default function FeedbackForm(product_id: number) {
-  const productId = product_id
+  const productId = product_id;
   const [currentFeedbackData, setFeedbackData] = useState<FeedbackData>({
     rating: 0,
     message: "",
@@ -23,14 +19,9 @@ export default function FeedbackForm(product_id: number) {
     product_id: productId,
   });
 
-  const router = useRouter();
- 
-  const actions = useActions("ProductEntity")
-
-  const {addFeedbackToProduct} = useActions<'ProductEntity'>('ProductEntity')
+  const { addFeedbackToProduct } = useActions<"ProductEntity">("ProductEntity");
   const [rating, setRating] = useState<number | undefined>(undefined);
   const [feedback, setFeedback] = useState("");
-  
 
   const [sendEnabled, setSendEnabled] = useState(false);
 
@@ -41,10 +32,10 @@ export default function FeedbackForm(product_id: number) {
     console.log("message lenght: ", feedback.length);
     setSendEnabled(rating !== undefined && feedback.length >= 6);
     console.log("sendEnabled: ", sendEnabled);
-    let feedbackData = currentFeedbackData
+    let feedbackData = currentFeedbackData;
     feedbackData.rating = rating;
     feedbackData.message = feedback;
-    setFeedbackData(feedbackData)
+    setFeedbackData(feedbackData);
     setButtonBackground(sendEnabled ? "bg-indigo-500" : "bg-gray-500");
   }, [rating, feedback, sendEnabled]);
 
@@ -58,52 +49,17 @@ export default function FeedbackForm(product_id: number) {
     setFeedback(event.target.value);
   };
 
-  //const dispatch: Dispatch<any> = useDispatch()
-
-  /*const saveFeedback = React.useCallback(
-    (feedback: IFeedbackPostData) => dispatch(addFeedbackAction(feedback)),
-    [dispatch]
-  )*/
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
 
     let feedbackData: IFeedbackPostData = {
       user_id: currentFeedbackData.user_id,
       product_id: productId,
       rating: currentFeedbackData.rating,
-      message: currentFeedbackData.message
-  }
-  
+      message: currentFeedbackData.message,
+    };
 
-  addFeedbackToProduct({payload: { feedbackData }})
-
-  //const entity = clientContainer.resolve<ProductEntity>("ProductEntity")
-  //dispatch(entity.addFeedbackToProductInvokable({payload: {feedbackData}}))
-  //dispatch(entity.action("addFeedbackToProduct", {payload: { feedbackData }}))
-  //dispatch(addFeedbackAction({payload: { feedbackData }}))
-  //saveFeedback(feedbackData)
-
-
-
-    /*xfetch(
-      `/api/feedbacks/add`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(currentFeedbackData),
-      },
-      (data) => {
-        console.log("responseBody: ", data);
-        setFeedback("");
-        setRating(undefined);
-        showMessageNotification("Feedback added successfully");
-        router.reload();
-      }
-    );*/
+    addFeedbackToProduct({ payload: { feedbackData } });
   };
 
   return (

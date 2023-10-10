@@ -22,7 +22,6 @@ export default class AuthController extends BaseController {
   )
   @USE(passportAuth)
   public async login({query, user, session, fnMessage, fnError}) {
-  //public async login({identity}) {
     console.log('api/login');
     console.log("data: ",user)
     fnMessage( "User logined success")

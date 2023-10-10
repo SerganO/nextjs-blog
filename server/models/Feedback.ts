@@ -17,7 +17,6 @@ export interface IFeedback extends Model {
 
 export type FeedbackType = typeof Model & {
   new (values?: object, options?: BuildOptions): IFeedback;
-  //bind(): void;
 };
 
 export default (ctx: IContextContainer) => {
@@ -69,10 +68,6 @@ export default (ctx: IContextContainer) => {
       type: DataTypes.DATE,
     },
   });
-
-  //Feedback.bind = () => {};
-
-  //Feedback.bind();
 
   Feedback.belongsTo(ctx.User, { foreignKey: "user_id", as: "author" });
   Feedback.belongsTo(ctx.Product, {

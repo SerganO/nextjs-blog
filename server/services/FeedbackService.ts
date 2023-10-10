@@ -1,15 +1,7 @@
 import { Op, FindOptions } from "sequelize";
 import BaseContext from "server/di/BaseContext";
-import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class FeedbackService extends BaseContext {
-  constructor(opts: IContextContainer) {
-    super(opts);
-    this.di = opts;
-    console.log("FeedbackService init: ", this);
-    console.log("di: ", this.di);
-  }
-
   /**
    * getAllFeedbacksInfo
    */
@@ -17,14 +9,14 @@ export default class FeedbackService extends BaseContext {
     const { Feedback } = this.di;
 
     const queryOptions: FindOptions = {};
-  
+
     if (userId !== null && userId !== undefined && !isNaN(userId)) {
       queryOptions.where = {
         ...queryOptions.where,
         user_id: { [Op.eq]: userId },
       };
     }
-  
+
     if (productId !== null && productId !== undefined && !isNaN(productId)) {
       queryOptions.where = {
         ...queryOptions.where,

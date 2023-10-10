@@ -8,22 +8,20 @@ const {
   publicRuntimeConfig: { BASE_URL },
 } = getConfig();
 
-
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
 
   const goAfterLogin = () => {
-    
-   //router.push("/")
-}
+    router.push("/");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log("start login")
+    console.log("start login");
     e.preventDefault();
     try {
-      console.log("start try")
+      console.log("start try");
       const response = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
         headers: {
@@ -31,9 +29,9 @@ const Login = () => {
         },
         body: JSON.stringify({ email: email, password: password }),
       });
-      console.log("response build")
+      console.log("response build");
       if (response.ok) {
-        console.log("response.ok")
+        console.log("response.ok");
         console.log("all ok");
         const responseBody = await response.json();
         console.log("responseBody: ", responseBody);
@@ -45,7 +43,6 @@ const Login = () => {
         showMessageNotification("error:" + responseBody);
       }
     } catch (error) {
-      //console.error(error);
       showMessageNotification("error:" + error);
     }
   };

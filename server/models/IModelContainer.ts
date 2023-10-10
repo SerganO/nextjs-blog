@@ -11,7 +11,6 @@ export interface IModelContainer {
 }
 
 export default {
-
   User: asFunction(User).singleton(),
   Product: asFunction(Product).singleton(),
   Feedback: asFunction(Feedback).singleton(),

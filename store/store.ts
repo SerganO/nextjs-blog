@@ -1,7 +1,7 @@
 import { AnyAction, applyMiddleware, compose, Dispatch } from "redux";
 import BaseClientContext from "src/di/baseClientContext";
 import { all } from "redux-saga/effects";
-import { Entity } from "src/entities/entity";
+import { BaseEntity } from "src/entities/BaseEntity";
 import createSagaMiddleware, { Task } from "redux-saga";
 import { configureStore, EnhancedStore } from "@reduxjs/toolkit";
 import rootReducer from "./reducers";
@@ -42,7 +42,7 @@ export default class ReduxStore extends BaseClientContext {
   }
 
   public rootSaga = function* () {
-    const sagas = Entity.sagas();
+    const sagas = BaseEntity.sagas();
     yield all(sagas);
   };
 
@@ -80,10 +80,6 @@ export default class ReduxStore extends BaseClientContext {
     });
     return this._wrapper;
   }
-
-  /*public getServerSideProps(controller: any) {
-    return this._wrapper.getServerSideProps(controller);
-  }*/
 
   public getServerSideProps(
     container,

@@ -7,7 +7,7 @@ import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
 import ContainerContext from "src/ContainerContext";
 import { ToastContainer } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 

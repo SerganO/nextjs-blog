@@ -5,8 +5,6 @@ import ProductPlate from "../components/productPlate";
 
 import container from "server/di/container";
 import { connect } from "react-redux";
-//import { saveMainProductPageAction } from "store/actionCreators";
-import { useActions } from "src/hooks/useEntity";
 import clientContainer from "src/di/clientContainer";
 import ReduxStore from "store/store";
 import { action, ADD } from "store/actionTypes";
@@ -16,35 +14,28 @@ const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 const mapDispatchToProps = (dispatch) => {
   return {
     saveMainProductPageAction: (data) =>
-      dispatch(action(ADD, {payload: data})),
+      dispatch(action(ADD, { payload: data })),
   };
 };
 
 const mapStateToProps = (state) => {
-  const productData = 
-    (Object.values(state.products) as any[])
-      .sort((a, b) => a.id - b.id)
-      .slice(0, 20)
-      .map(product => {
-        const feedbacks = product.feedbacks.map((feedbacId) => {
-          return state.feedbacks[feedbacId];
-        });
-        return { product, feedbacks }
-      })
+  const productData = (Object.values(state.products) as any[])
+    .sort((a, b) => a.id - b.id)
+    .slice(0, 20)
+    .map((product) => {
+      const feedbacks = product.feedbacks.map((feedbacId) => {
+        return state.feedbacks[feedbacId];
+      });
+      return { product, feedbacks };
+    });
 
-  return {data: productData}
-
+  return { data: productData };
 };
 
 function Base({ data }) {
   const productsData = data;
 
   const router = useRouter();
-  const { fetchMainProductPage } =
-    useActions("ProductEntity");
-  /*useEffect(() => {
-    fetchMainProductPage();
-  }, []);*/
 
   const goToProductsPage = () => {
     router.push("/products");
@@ -69,10 +60,7 @@ function Base({ data }) {
         </button>
         <div className="mt-6 sm:overflow-x-auto sm:px-4 ">
           <div className="px-4 sm:-ml-2 sm:inline-flex sm:px-0 sm:pb-8">
-            {productsData?.map((product, index) =>
-              ProductPlate(product)
-            )}
-            ;
+            {productsData?.map((product, index) => ProductPlate(product))};
           </div>
         </div>
       </main>
@@ -86,4 +74,8 @@ export default connect(
   (state) => state
 )(Base);
 
-export const getServerSideProps = reduxStore.getServerSideProps(container, "index", 'ProductController')
+export const getServerSideProps = reduxStore.getServerSideProps(
+  container,
+  "index",
+  "ProductController"
+);

@@ -1,6 +1,3 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import BaseContext from "server/di/BaseContext";
-import IContextContainer from "server/di/interfaces/IContextContainer";
 import BaseController from "./BaseController";
 import { GET, POST, SSR, USE } from "server/decorators";
 import validate, { validateProps } from "server/middleware/validate";
@@ -9,48 +6,11 @@ import pager from "server/decorators/pager";
 import entity from "server/decorators/entity";
 import { IPagerParams } from "src/pagination/IPagerParams ";
 
-/*@USE(async (req, res, next) => {
-  console.log("class use 1");
-  return await next();
-})
-@USE([
-  async (req, res, next) => {
-    console.log("class use 2, req:", req.query ?? req.params);
-    return await next();
-  },
-  async (req, res, next) => {
-    console.log("class use 3, req:", req.query ?? req.params);
-    return await next();
-  },
-  async (req, res, next) => {
-    console.log("class use 4, req:", req.query ?? req.params);
-    return await next();
-  },
-])*/
-
 @entity("ProductEntity")
 export default class ProductController extends BaseController {
   /**
    * getAllProducts
    */
-  /*@USE((req, res, next) => {
-    console.log("method use 1");
-    next();
-  })
-  @USE([
-    (req, res, next) => {
-      console.log("method use 2, req:", req.query);
-      next();
-    },
-    (req, res, next) => {
-      console.log("method use 3, req:", req.query);
-      next();
-    },
-    (req, res, next) => {
-      console.log("method use 4, req:", req.query);
-      next();
-    },
-  ])*/
   @GET("api/products")
   public getAllProducts({ query, fnMessage, fnError }) {
     const { ProductService } = this.di;
@@ -104,8 +64,6 @@ export default class ProductController extends BaseController {
   @GET("api/products/:id/extended")
   @SSR("products/:id")
   public findProductExtendedInfo({ query, fnMessage, fnError }) {
-    console.log("findProductExtendedInfo in");
-    console.log("query[id]: ", query["id"]);
     const id = query["id"] as string;
     const { ProductService } = this.di;
     fnMessage("product extended info fetched success");
@@ -292,7 +250,7 @@ export default class ProductController extends BaseController {
       additionalProperties: false,
     })
   )
-  @POST("api/products/")
+  @POST("api/products/add")
   public addProduct({ query, fnMessage, fnError }) {
     const body = query;
     let bodyString = JSON.stringify(body);
@@ -305,7 +263,7 @@ export default class ProductController extends BaseController {
     const category: string = bodyData["category"] as string;
     const price: number = parseFloat(bodyData["price"] as string);
 
-    if (userID && title && description && SKU && category && price) {
+    //if (userID && title && description && SKU && category && price) {
       const { ProductService } = this.di;
       fnMessage("product added success");
       fnError("Can not add product");
@@ -317,8 +275,8 @@ export default class ProductController extends BaseController {
         SKU,
         price
       );
-    } else {
-      throw Error("Can not add product: not full data");
-    }
+    //} else {
+      //throw Error("Can not add product: not full data");
+    //}
   }
 }

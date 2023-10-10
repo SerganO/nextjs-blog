@@ -1,12 +1,11 @@
-import { call, put, take } from "redux-saga/effects";
-import { Entity } from "./entity";
-import { schema } from "normalizr";
+import { call, put } from "redux-saga/effects";
+import { BaseEntity } from "./BaseEntity";
 import * as actionTypes from "store/actionTypes";
-import action from "./action";
-import reducer from "./reducer";
+import action from "./decorators/action";
+import reducer from "./decorators/reducer";
 
 @reducer("users")
-export default class UserEntity extends Entity<UserEntity> {
+export default class UserEntity extends BaseEntity<UserEntity> {
   constructor(opts: any) {
     super(opts);
     this.initSchema("users", {}, {});
@@ -42,28 +41,4 @@ export default class UserEntity extends Entity<UserEntity> {
       })
     );
   }
-
-  /*@action()
-  public fetchUserInvokable(data, isSagaCall = false) {
-    function* saga(data) {
-      const id = parseInt(data.id);
-      yield call(this.xRead, `/users/${id}`);
-      yield put(
-        actionTypes.action(actionTypes.UPDATE_VALUE, {
-          payload: {
-            data: {
-              key: "SELECTED_USER",
-              value: id,
-            },
-          },
-        })
-      );
-    }
-    return this.invokableSaga(
-      this.fetchUserInvokable.name,
-      isSagaCall,
-      saga,
-      data
-    );
-  }*/
 }

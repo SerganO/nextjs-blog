@@ -2,9 +2,8 @@ import { useContext } from "react";
 import ContainerContext from "../ContainerContext";
 import { useDispatch } from "react-redux";
 import { IEntityContainer } from "src/entities";
-//import { Action, action } from './actions'
 import { action } from "store/actionTypes";
-import { Entity } from "src/entities/entity";
+import { BaseEntity } from "src/entities/BaseEntity";
 
 export default function useEntity<T extends keyof IEntityContainer>(
   entityName: T
@@ -19,8 +18,7 @@ type FirstParam<Type> = Type extends (...args: infer P) => any
 export function useActions<T extends keyof IEntityContainer>(entityName: T) {
   const dispatch = useDispatch();
   const entity = useEntity(entityName);
-  //const actions = entity.actions as IEntityContainer[T]["actions"]
-  const actions = entity.actions as Omit<IEntityContainer[T], keyof Entity<IEntityContainer[T]>>
+  const actions = entity.actions as Omit<IEntityContainer[T], keyof BaseEntity<IEntityContainer[T]>>
 
   const dispatches: {
     [key in keyof typeof actions]: (

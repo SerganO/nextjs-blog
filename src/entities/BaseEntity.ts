@@ -16,17 +16,16 @@ enum HTTP_METHOD {
   POST,
 }
 
-export class Entity<EntityInstance = null> extends BaseClientContext {
+export class BaseEntity<EntityInstance = null> extends BaseClientContext {
   public static _actions = [];
   private _schema;
   private _entityName;
-  //public actions = [];
 
   constructor(opts: IClientContextContainer) {
     super(opts);
-
-    //this.invokableSaga = this.invokableSaga.bind(this);
-    this.actions = {} as { [K in Exclude<keyof this, keyof Entity>]?: string };
+    this.actions = {} as {
+      [K in Exclude<keyof this, keyof BaseEntity>]?: string;
+    };
 
     this.pageEntity = this.pageEntity.bind(this);
     this.actionRequest = this.actionRequest.bind(this);
@@ -34,7 +33,7 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     this.normalizedAction = this.normalizedAction.bind(this);
   }
 
-  public actions: { [K in Exclude<keyof this, keyof Entity>]?: string };
+  public actions: { [K in Exclude<keyof this, keyof BaseEntity>]?: string };
 
   protected initSchema(key: string | symbol, definition?: Schema, options?) {
     this._entityName = key;
@@ -132,27 +131,23 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
-      console.log("response code: ", sdata)
-      if(sdata.response.code == "TOAST") {
-        const {ToastEmitter} = this.di
-        if(sdata.response.isSuccess) {
-          ToastEmitter.message(sdata.response.message)
+      if (sdata.response.code == "TOAST") {
+        const { ToastEmitter } = this.di;
+        if (sdata.response.isSuccess) {
+          ToastEmitter.message(sdata.response.message);
         } else {
-          ToastEmitter.errorMessage(sdata.response.message)
+          ToastEmitter.errorMessage(sdata.response.message);
         }
       }
 
-
-      yield put(this.normalizedAction(sdata.response));
+      yield put(this.normalizedAction(sdata.response, type));
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });
     }
   }
 
   public normalizedData(data) {
-    let schema = Array.isArray(data)
-      ? [this._schema]
-      : this._schema;
+    let schema = Array.isArray(data) ? [this._schema] : this._schema;
     return normalize(data, schema);
   }
 
@@ -160,9 +155,9 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     try {
       return {
         type: type,
-        payload: { 
+        payload: {
           data: this.normalizedData(response.data),
-          pager: response.pager
+          pager: response.pager,
         },
         entityReducer: this._entityName,
       };
@@ -172,7 +167,7 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
   }
 
   public static sagas() {
-    const objects = Reflect.getMetadata("sagas", Entity);
+    const objects = Reflect.getMetadata("sagas", BaseEntity);
     const maped = objects.map((obj) => {
       const actionName = obj.className + "_" + obj.methodName;
       const classInstance = clientContainer.resolve(obj.className);
@@ -197,7 +192,7 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
 
     if (!("page" in params)) {
       console.log("No page");
-      params["page"] = pagination[pageName]["currentPage"]; // pagination.getIn([pageName, 'currentPage']);
+      params["page"] = pagination[pageName]["currentPage"];
     }
 
     // send event about starting page fetching
@@ -208,7 +203,6 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     if (
       !pagination[pageName] ||
       !pagination[pageName]["pages"][params.page] ||
-      //!pagination.hasIn([pageName, 'pages', params.page]) ||
       params.force
     ) {
       let count = 0;
@@ -216,16 +210,15 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
         !params.force &&
         pagination[pageName] &&
         pagination[pageName]["count"]
-        /*pagination.hasIn([pageName, 'count'])*/
       ) {
-        count = pagination[pageName]["count"]; // pagination.get(pageName).get('count');
+        count = pagination[pageName]["count"];
       }
       // set filter to paginator, in case fetch from getInitProps()
       const pFilter = params.filter ? params.filter : {};
       const pSort = params.sort ? params.sort : {};
       yield put(actionTypes.pageSetFilter(pageName, pFilter, pSort));
       console.log("Fetching page...");
-      if(params.force) {
+      if (params.force) {
         yield put(actionTypes.pageClear(pageName));
       }
       yield call(
@@ -245,5 +238,4 @@ export class Entity<EntityInstance = null> extends BaseClientContext {
     // send event about ending page fetching
     yield put(actionTypes.pageFetching(pageName, params.page, false));
   }
-
 }

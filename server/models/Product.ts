@@ -22,7 +22,6 @@ export interface IProduct extends Model {
 
 export type ProductType = typeof Model & {
   new (values?: object, options?: BuildOptions): IProduct;
-  //bind(): void;
 };
 
 export default (ctx: IContextContainer) => {
@@ -105,14 +104,6 @@ export default (ctx: IContextContainer) => {
     foreignKey: "user_id",
     onDelete: "SET NULL",
   });
-
-  /*Product.bind = () => {
-   
-
-   
-  };
-
-  Product.bind();*/
 
   return Product;
 };

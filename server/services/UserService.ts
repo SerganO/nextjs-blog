@@ -1,14 +1,6 @@
 import BaseContext from "server/di/BaseContext";
-//import User from "models/User";
-import IContextContainer from "server/di/interfaces/IContextContainer";
 
 export default class UserService extends BaseContext {
-  constructor(opts: IContextContainer) {
-    super(opts);
-    console.log("UserService init: ", this);
-    console.log("di: ", this.di);
-  }
-
   /**
    * getAllUsersInfo
    */
@@ -49,10 +41,12 @@ export default class UserService extends BaseContext {
   public findUserWithEmailAndPassword(email: string, password: string) {
     const { User } = this.di;
 
-    return User.findOne({ where: {
+    return User.findOne({
+      where: {
         user_email: email,
         password: password,
-     }})
+      },
+    });
   }
 
   /**
@@ -76,7 +70,3 @@ export default class UserService extends BaseContext {
     });
   }
 }
-
-/*const userService = new UserService();
-
-export default userService;*/

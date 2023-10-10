@@ -37,9 +37,6 @@ ajv.addKeyword(validatePropertyKeyword);
 
 export default function validate(schema) {
   return (req, res, next) => {
-    //console.log("req: ", req)
-    //console.log("res: ", res)
-
     const param = [req.body ?? {}, req.query ?? {}, req.params ?? {}].reduce(
       function (r, o) {
         Object.keys(o).forEach(function (k) {
@@ -55,7 +52,7 @@ export default function validate(schema) {
     const valid = ajv.validate(schema, param);
     if (!valid) {
       console.log("invalid data");
-      console.log("res.status: ", typeof res.status)
+      console.log("res.status: ", typeof res.status);
 
       if (typeof res.status != "undefined") {
         res.status(400).json({
@@ -65,15 +62,9 @@ export default function validate(schema) {
         return {
           props: {
             error: ajv.errorsText(),
-          }
+          },
         };
       }
-
-      /*if (typeof document == "undefined") {
-       
-      } else {
-       
-      }*/
     } else {
       if (typeof document == "undefined") {
         return next();

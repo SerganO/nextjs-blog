@@ -6,8 +6,6 @@ import SearchFilters from "../../components/searchFilters";
 import getConfig from "next/config";
 import Link from "next/link";
 import { connect } from "react-redux";
-import { showErrorNotification } from "src/functions/showNotification";
-//import { saveUserAction } from "store/actionCreators";
 import clientContainer from "src/di/clientContainer";
 import { useActions } from "src/hooks/useEntity";
 import ReduxStore from "store/store";
@@ -16,37 +14,24 @@ import { action, ADD } from "store/actionTypes";
 
 const reduxStore = clientContainer.resolve<ReduxStore>("ReduxStore");
 
-const {
-  publicRuntimeConfig: { BASE_URL },
-} = getConfig();
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveUserAction: (data) => dispatch(action(ADD, {payload: data})),
+    saveUserAction: (data) => dispatch(action(ADD, { payload: data })),
   };
 };
 const mapStateToProps = (state) => {
-    if(typeof state.users == `undefined`) return {}
-    return {data: state.users[state.valueReducer.values["SELECTED_USER"]]}
-}
-
-
+  if (typeof state.users == `undefined`) return {};
+  return { data: state.users[state.valueReducer.values["SELECTED_USER"]] };
+};
 
 function Base({ data }) {
   const router = useRouter();
-  const {setCurrentUser} = useActions('UserEntity')
+  const { setCurrentUser } = useActions("UserEntity");
 
   const userData = data;
 
-  //const [userData, setUserData] = useState<IUser>(data);
-
- useEffect(() => {
-    setCurrentUser( { payload: { id: router.query.id }})
-    //fetchUser( { payload: { id: router.query.id }})
-    //const entity = clientContainer.resolve<UserEntity>("UserEntity")
-    //dispatch(entity.fetchUserInvokable({ payload: { id: router.query.id }}))
-    //dispatch(entity.action("fetchUser", { payload: { id: router.query.id }}))
-    //dispatch(userRequestAction({ payload: { id: router.query.id } }));
+  useEffect(() => {
+    setCurrentUser({ payload: { id: router.query.id } });
   }, []);
 
   const fullname = `${userData?.firstName} ${userData?.lastName}`;
@@ -92,7 +77,6 @@ function Base({ data }) {
                 href={`/products?user=${userData?.id}`}
                 hidden={userData?.role != "vendor"}
                 className="max-w-2 h-fit w-full max-w-xs rounded-lg bg-indigo-500 px-4 py-2 font-semibold text-white hover:bg-indigo-400"
-                //onClick={goToProductsPage}
               >
                 All Products
               </Link>
@@ -110,44 +94,8 @@ export default connect(
   (state) => state
 )(Base);
 
-
-/*export const getServerSideProps = wrapper.getServerSideProps(
-  (store) => async (context) => {
-    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-    const res = await (
-      userController.handler("users/:id") as (context: any) => Promise<any>
-    )(context);
-
-    store.dispatch(saveUserToRedux(res.props.data));
-
-    return res;
-  }
-);*/
-
-export const getServerSideProps = reduxStore.getServerSideProps(container, "users/:id", "UserController")
-/*
-  (store) => async (context) => {
-    //console.log('2. Page.getServerSideProps uses the store to dispatch things');
-    const res = await (
-      userController.handler("users/:id") as (
-        context: any
-      ) => Promise<any>
-    )(context);
-    //const nData = normalize(res.props.data.data, {items:user})
-    //store.dispatch(saveUserAction({ data: nData }));
-    store.dispatch(userEntity.normalize(res.props.data))
-    store.dispatch(
-      actionTypes.action(actionTypes.UPDATE_VALUE, {
-        
-        payload: { data: {
-          key: "SELECTED_USER",
-          value: parseInt(context.query.id as string)
-        } },
-      }
-    )
-    
-    );
-
-    return res;
-  }
-);*/
+export const getServerSideProps = reduxStore.getServerSideProps(
+  container,
+  "users/:id",
+  "UserController"
+);

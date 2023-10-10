@@ -1,12 +1,12 @@
 import { call, put, take } from "redux-saga/effects";
-import { Entity } from "./entity";
+import { BaseEntity } from "./BaseEntity";
 import { schema } from "normalizr";
 import * as actionTypes from "store/actionTypes";
-import action from "./action";
-import reducer from "./reducer";
+import action from "./decorators/action";
+import reducer from "./decorators/reducer";
 
 @reducer("products")
-export default class ProductEntity extends Entity<ProductEntity> {
+export default class ProductEntity extends BaseEntity<ProductEntity> {
   constructor(opts: any) {
     super(opts);
     const user = new schema.Entity("users");
