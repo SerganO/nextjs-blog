@@ -20,7 +20,11 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   const productData = (Object.values(state.products) as any[])
-    .sort((a, b) => a.id - b.id)
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt as string).getTime() -
+        new Date(b.createdAt as string).getTime()
+    )
     .slice(0, 20)
     .map((product) => {
       const feedbacks = product.feedbacks.map((feedbacId) => {

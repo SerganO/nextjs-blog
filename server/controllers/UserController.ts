@@ -92,6 +92,7 @@ export default class UserController extends BaseController {
   @POST("api/users/add")
   public addUser({query, fnMessage, fnError}) {
     const body = query
+    console.log("api/users/add query: ", query)
     let bodyString = JSON.stringify(body);
     let bodyData = JSON.parse(bodyString);
 
@@ -103,8 +104,8 @@ export default class UserController extends BaseController {
 
     if (firstName && lastName && userEmail && password && role) {
       const { UserService } = this.di;
-      fnMessage("user added success");
-      fnError("Can not add user");
+      fnMessage("user added success", "TOAST");
+      fnError("Can not add user", "TOAST");
       return UserService.addUser(
         firstName,
         lastName,

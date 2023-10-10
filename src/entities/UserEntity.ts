@@ -1,5 +1,5 @@
 import { call, put } from "redux-saga/effects";
-import { BaseEntity } from "./BaseEntity";
+import { BaseEntity, HTTP_METHOD } from "./BaseEntity";
 import * as actionTypes from "store/actionTypes";
 import action from "./decorators/action";
 import reducer from "./decorators/reducer";
@@ -40,5 +40,16 @@ export default class UserEntity extends BaseEntity<UserEntity> {
         },
       })
     );
+  }
+
+  @action()
+  public *login(data) {
+    yield call (this.xRead, `/login`, { email: data.email, password: data.password }, HTTP_METHOD.POST)
+  }
+
+  @action()
+  public *register(data) {
+    console.log("action.register data: ", data)
+    yield call (this.xSave, `/users/add`, data)
   }
 }

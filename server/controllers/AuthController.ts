@@ -24,8 +24,8 @@ export default class AuthController extends BaseController {
   public async login({query, user, session, fnMessage, fnError}) {
     console.log('api/login');
     console.log("data: ",user)
-    fnMessage( "User logined success")
-    fnError("Login failed")
+    fnMessage( "User logined success", "TOAST")
+    fnError("Login failed", "TOAST")
     return user
   }
 

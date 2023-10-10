@@ -48,7 +48,11 @@ export default class BaseController extends BaseContext {
     console.log("routeName: ", routeName);
 
     const members: any = Reflect.getMetadata(routeName, this);
-    const pagers: any[] = Reflect.getMetadata("pagers", this);
+    let pagers: any[] = Reflect.getMetadata("pagers", this);
+
+    if (pagers == undefined) {
+      pagers = [];
+    }
 
     let cargs = this.useClassdMiddleware();
     const router = createRouter<NextApiRequest, NextApiResponse>();
@@ -80,16 +84,22 @@ export default class BaseController extends BaseContext {
           };
         }
 
-        const fnRes = (fieldName, isSuccess, defaultCode, defaultStatusCode) => (message, code = defaultCode, statusCode: number = defaultStatusCode) => {
-          context.query[fieldName] = {};
-          context.query[fieldName].isSuccess = isSuccess
-          context.query[fieldName].message = message;
-          context.query[fieldName].code = code;
-          context.query[fieldName].statusCode = statusCode;
-        }
+        const fnRes =
+          (fieldName, isSuccess, defaultCode, defaultStatusCode) =>
+          (
+            message,
+            code = defaultCode,
+            statusCode: number = defaultStatusCode
+          ) => {
+            context.query[fieldName] = {};
+            context.query[fieldName].isSuccess = isSuccess;
+            context.query[fieldName].message = message;
+            context.query[fieldName].code = code;
+            context.query[fieldName].statusCode = statusCode;
+          };
 
-        const fnError = fnRes("errorResponse", false, "ERROR", 500)
-        const fnMessage = fnRes("response", true, "OK", 200)
+        const fnError = fnRes("errorResponse", false, "ERROR", 500);
+        const fnMessage = fnRes("response", true, "OK", 200);
 
         router.use(routeName, ...cargs, ...margs).get(async () => {
           let data = await callback({
@@ -109,12 +119,12 @@ export default class BaseController extends BaseContext {
                 };
                 response = {
                   data: response.items,
-                  pager
-                }
+                  pager,
+                };
               } else {
                 response = {
-                  data: response
-                }
+                  data: response,
+                };
               }
               return response;
             })
@@ -170,43 +180,56 @@ export default class BaseController extends BaseContext {
               };
             }
 
-            const fnRes = (fieldName, isSuccess, defaultCode, defaultStatusCode) => (message, code = defaultCode, statusCode: number = defaultStatusCode) => {
-              req[fieldName] = {};
-              req[fieldName].isSuccess = isSuccess
-              req[fieldName].message = message;
-              req[fieldName].code = code;
-              req[fieldName].statusCode = statusCode;
-            }
-    
-            const fnError = fnRes("errorResponse", false, "ERROR", 500)
-            const fnMessage = fnRes("response", true, "OK", 200)
+            const fnRes =
+              (fieldName, isSuccess, defaultCode, defaultStatusCode) =>
+              (
+                message,
+                code = defaultCode,
+                statusCode: number = defaultStatusCode
+              ) => {
+                req[fieldName] = {};
+                req[fieldName].isSuccess = isSuccess;
+                req[fieldName].message = message;
+                req[fieldName].code = code;
+                req[fieldName].statusCode = statusCode;
+              };
+
+            const fnError = fnRes("errorResponse", false, "ERROR", 500);
+            const fnMessage = fnRes("response", true, "OK", 200);
             callback({
               query: methodName === "get" ? req.query : req.body,
               user,
               session: req.session,
               pager: pagerParams,
               fnMessage,
-              fnError
+              fnError,
             })
               .then((response) => {
+                console.log("response: ", response);
                 if (isPager) {
-                  response.pager = {
+                  const pager = {
                     count: response.count,
                     page: pagerParams.page,
                     pageName: pagerParams.pageName,
                     perPage: pagerParams.perPage,
                     entityName: pagerParams.entityName,
                   };
-                  response.data = response.items;
+                  response = {
+                    data: response.items,
+                    pager,
+                  };
                 } else {
-                  response.data = response
+                  response = {
+                    data: response,
+                  };
                 }
+                console.log("response: ", response);
                 return response;
               })
               .then((result) => {
                 const response = req["response"];
                 response["data"] = result.data;
-                if(result.pager) {
+                if (result.pager) {
                   response["pager"] = result.pager;
                 }
                 res.status(response.statusCode).json(response);

@@ -11,7 +11,7 @@ const {
   publicRuntimeConfig: { BASE_URL, API_STRING },
 } = getConfig();
 
-enum HTTP_METHOD {
+export enum HTTP_METHOD {
   GET,
   POST,
 }
