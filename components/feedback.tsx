@@ -2,8 +2,6 @@ import Link from "next/link";
 import Star from "./star";
 
 export default function FeedbackView({data, author}) {
-  console.log("FeedbackView: ", data, author)
-
   const fullname = author ? `${author.firstName} ${author.lastName}` : "User";
 
   return (

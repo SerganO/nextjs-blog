@@ -22,8 +22,6 @@ export default class AuthController extends BaseController {
   )
   @USE(passportAuth)
   public async login({query, user, session, fnMessage, fnError}) {
-    console.log('api/login');
-    console.log("data: ",user)
     fnMessage( "User logined success", "TOAST")
     fnError("Login failed", "TOAST")
     return user
@@ -31,7 +29,6 @@ export default class AuthController extends BaseController {
 
   @POST('api/logout')
   public async logout({query, user, session, fnMessage, fnError, logout}) {
-    console.log('api/logout');
     await logout()
     await session.destroy()
     fnMessage( "User logout success", "TOAST")

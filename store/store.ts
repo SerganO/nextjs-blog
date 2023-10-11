@@ -100,8 +100,6 @@ export default class ReduxStore extends BaseClientContext {
             ...response,
             ...res.props.data
           }
-          console.log("ssr res.props: ", res.props)
-          
           actions.push(controller.normalizedAction(res.props.data))
         }
         actions.forEach(action => {

@@ -91,7 +91,6 @@ export default class UserController extends BaseController {
   @POST("api/users/add")
   public addUser({ query, fnMessage, fnError }) {
     const body = query;
-    console.log("api/users/add query: ", query);
     let bodyString = JSON.stringify(body);
     let data = JSON.parse(bodyString) as IUserPostData;
 

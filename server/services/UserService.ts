@@ -39,7 +39,6 @@ export default class UserService extends BaseContext {
    * findUserWithEmailAndPassword
    */
   public findUserWithEmailAndPassword(email: string, password: string) {
-    console.log("findUserWithEmailAndPassword: ", email, password)
     const { User } = this.di;
 
     return User.findOne({

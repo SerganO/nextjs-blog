@@ -42,10 +42,8 @@ const getSession = nextSession({
 });
 
 export default async function session(req, res, next) {
-  console.log("sesion action")
   await getSession(req, res);
-  console.log(req.session)
-  console.log(req.session.id)
+  console.log("sesion:", req.session)
   
   await next();
 }

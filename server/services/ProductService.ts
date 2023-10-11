@@ -88,7 +88,6 @@ export default class ProductService extends BaseContext {
    * page
    */
   public page(params: IPagerParams) {
-    console.log("params: ", params);
     const limit = params.perPage;
     const offset = (params.page - 1) * params.perPage;
 

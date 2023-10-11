@@ -33,7 +33,6 @@ passport.use(
       userService.findUserWithEmailAndPassword(email, password).then((user) => {
         if (user) {
           const u = json(user);
-          console.log("user: ", u);
           done(null, user);
         } else {
           done(null, false, { message: "Email or password is incorrect" });

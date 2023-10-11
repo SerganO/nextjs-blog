@@ -72,8 +72,6 @@ const AuthForm = ({ data }) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    console.log("formData: ", formData);
     if (isRegister) {
       register({ payload: formData as IUserPostData });
     } else {

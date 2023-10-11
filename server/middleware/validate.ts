@@ -47,13 +47,8 @@ export default function validate(schema) {
       {}
     );
 
-    console.log("validate param: ", param);
-    console.log("validate schema: ", schema);
-
     const valid = ajv.validate(schema, param);
     if (!valid) {
-      console.log("invalid data");
-      console.log("res.status: ", typeof res.status);
 
       if (typeof res.status != "undefined") {
         res.status(400).json({
@@ -80,9 +75,6 @@ export default function validate(schema) {
 export function validateSSR(schema) {
   return (context) => {
     const param = context.query;
-
-    console.log(param);
-
     return ajv.validate(schema, param);
   };
 }

@@ -28,10 +28,7 @@ export default function FeedbackForm(product_id: number) {
   const [buttonBackground, setButtonBackground] = useState("bg-gray-500");
 
   useEffect(() => {
-    console.log("rating: ", rating);
-    console.log("message lenght: ", feedback.length);
     setSendEnabled(rating !== undefined && feedback.length >= 6);
-    console.log("sendEnabled: ", sendEnabled);
     let feedbackData = currentFeedbackData;
     feedbackData.rating = rating;
     feedbackData.message = feedback;

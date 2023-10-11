@@ -73,8 +73,6 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
       signal: controller.signal,
     };
 
-    console.log("pre json str: ", data);
-    console.log(" json str: ", JSON.stringify(data));
     if (method !== HTTP_METHOD.GET) {
       params.headers["content-type"] = "application/json";
       params.body = JSON.stringify(data);

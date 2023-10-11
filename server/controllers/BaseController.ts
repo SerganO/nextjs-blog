@@ -45,8 +45,6 @@ export default class BaseController extends BaseContext {
   }
 
   public handler(routeName: string) {
-    console.log("routeName: ", routeName);
-
     const members: any = Reflect.getMetadata(routeName, this);
     let pagers: any[] = Reflect.getMetadata("pagers", this);
 
@@ -154,7 +152,6 @@ export default class BaseController extends BaseContext {
 
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             let user = null;
-            console.log("req.user: ", req.user);
             if (req && req.user && req.user?.dataValues) {
               user = this.json(req.user?.dataValues);
             }
@@ -207,7 +204,6 @@ export default class BaseController extends BaseContext {
               logout: req.logout,
             })
               .then((response) => {
-                console.log("response: ", response);
                 if (isPager) {
                   const pager = {
                     count: response.count,
@@ -225,7 +221,6 @@ export default class BaseController extends BaseContext {
                     data: response,
                   };
                 }
-                console.log("response: ", response);
                 return response;
               })
               .then((result) => {
@@ -256,7 +251,6 @@ export default class BaseController extends BaseContext {
   }
 
   protected json(params: any) {
-    console.log("params: ", params);
     return JSON.parse(JSON.stringify(params));
   }
 }

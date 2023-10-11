@@ -53,7 +53,6 @@ export default class FeedbackService extends BaseContext {
    * addFeedback
    */
   public addFeedback(data: IFeedbackPostData) {
-    console.log("service add feedback ");
     const { Feedback } = this.di;
 
     return Feedback.create({
