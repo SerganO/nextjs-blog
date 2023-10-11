@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { IFeedback } from "../server/models/Feedback";
 import Star from "./star";
 
 export default function FeedbackView({data, author}) {

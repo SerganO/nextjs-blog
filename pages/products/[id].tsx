@@ -29,7 +29,7 @@ const mapStateToProps = (state) => {
       }
       const feedbacks = product.feedbacks.map((feedbacId) => {
         const feedback = state.feedbacks[feedbacId];
-        const author = state.users[feedback.author];
+        const author = state.users[feedback.user_id];
         return { data: feedback, author };
       });
 
