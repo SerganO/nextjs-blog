@@ -26,7 +26,7 @@ export default class ProductEntity extends BaseEntity<ProductEntity> {
     const feedbackData = data.feedbackData;
     yield call(
       this.xSave,
-      `/products/${feedbackData.product_id}/addFeedback`,
+      `/products/${feedbackData.productId}/addFeedback`,
       feedbackData
     );
   }

@@ -53,8 +53,8 @@ export default function FeedbackForm(product_id: number) {
     e.preventDefault();
 
     let feedbackData: IFeedbackPostData = {
-      user_id: currentFeedbackData.user_id,
-      product_id: productId,
+      userId: currentFeedbackData.user_id,
+      productId: productId,
       rating: currentFeedbackData.rating,
       message: currentFeedbackData.message,
     };

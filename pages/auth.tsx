@@ -75,7 +75,7 @@ const AuthForm = ({ data }) => {
 
     console.log("formData: ", formData);
     if (isRegister) {
-      register({ payload: formData });
+      register({ payload: formData as IUserPostData });
     } else {
       login({
         payload: { email: formData.userEmail, password: formData.password },

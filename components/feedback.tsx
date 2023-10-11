@@ -4,7 +4,8 @@ import Star from "./star";
 
 export default function FeedbackView({data, author}) {
   console.log("FeedbackView: ", data, author)
-  const fullname = `${author.firstName} ${author.lastName}`;
+
+  const fullname = author ? `${author.firstName} ${author.lastName}` : "User";
 
   return (
     <div

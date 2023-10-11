@@ -54,20 +54,12 @@ export default class UserService extends BaseContext {
    * addUser
    */
   public addUser(
-    firstName: string,
-    lastName: string,
-    userEmail: string,
-    password: string,
-    role: string
+    data: IUserPostData
   ) {
     const { User } = this.di;
 
     return User.create({
-      firstName: firstName,
-      lastName: lastName,
-      userEmail: userEmail,
-      password: password,
-      role: role,
+      ...data
     });
   }
 }

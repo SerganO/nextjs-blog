@@ -95,12 +95,12 @@ export default class ProductController extends BaseController {
       type: "object",
       properties: {
         id: validateProps.queryId,
-        user_id: { type: "number" },
-        product_id: { type: "number" },
+        userId: { type: "number" },
+        productId: { type: "number" },
         rating: { type: "number" },
         message: { type: "string" },
       },
-      required: ["product_id", "rating", "message"],
+      required: ["productId", "rating", "message"],
       additionalProperties: false,
     })
   )
@@ -112,36 +112,21 @@ export default class ProductController extends BaseController {
     console.log("c addf session: ", session);
     //console.log("c addf session user: ", session["passport"]["user"]);
     let bodyString = JSON.stringify(body);
-    let bodyData = JSON.parse(bodyString);
+    let data = JSON.parse(bodyString) as IFeedbackPostData;
 
-    let userId: number = parseInt(bodyData["user_id"] as string);
     if (session["passport"] && session["passport"]["user"]) {
-      userId = parseInt(session["passport"]["user"]);
+      data["userId"] = parseInt(session["passport"]["user"]);
     }
 
-    if(userId == -1) {
+    if( data["userId"] == -1) {
       fnError("You must be logined to add feedback", "TOAST");
       throw Error("You must be logined to add feedback");
     }
 
-    const productId: number = parseInt(bodyData["product_id"] as string);
-    const rating: number = parseInt(bodyData["rating"] as string);
-    const message: string = bodyData["message"] as string;
-
-    if (userId && productId && rating && message) {
       const { ProductService } = this.di;
       fnMessage("feedback added success", "TOAST");
       fnError("Can not add feedback", "TOAST");
-      return ProductService.addFeedbackToProduct(
-        userId,
-        productId,
-        rating,
-        message
-      );
-    } else {
-      fnError("Can not add feedback: not full data", "TOAST");
-      throw Error("Can not add feedback: not full data");
-    }
+      return ProductService.addFeedbackToProduct(data);
   }
 
   @pager()
@@ -244,14 +229,14 @@ export default class ProductController extends BaseController {
     validate({
       type: "object",
       properties: {
-        user_id: validateProps.id,
+        userId: validateProps.id,
         title: { type: "string" },
         description: { type: "string" },
         SKU: { type: "string" },
         category: { type: "string" },
         price: { type: "number", minimum: 0.0 },
       },
-      required: ["user_id", "title", "description", "SKU", "category", "price"],
+      required: ["userId", "title", "description", "SKU", "category", "price"],
       additionalProperties: false,
     })
   )
@@ -259,29 +244,13 @@ export default class ProductController extends BaseController {
   public addProduct({ query, fnMessage, fnError }) {
     const body = query;
     let bodyString = JSON.stringify(body);
-    let bodyData = JSON.parse(bodyString);
+    let data = JSON.parse(bodyString) as IProductPostData;
 
-    const userID: number = parseInt(bodyData["user_id"] as string);
-    const title: string = bodyData["title"] as string;
-    const description: string = bodyData["description"] as string;
-    const SKU: string = bodyData["SKU"] as string;
-    const category: string = bodyData["category"] as string;
-    const price: number = parseFloat(bodyData["price"] as string);
-
-    //if (userID && title && description && SKU && category && price) {
+  
       const { ProductService } = this.di;
       fnMessage("product added success");
       fnError("Can not add product");
-      return ProductService.addProduct(
-        userID,
-        title,
-        description,
-        category,
-        SKU,
-        price
-      );
-    //} else {
-      //throw Error("Can not add product: not full data");
-    //}
+      return ProductService.addProduct(data);
+    
   }
 }

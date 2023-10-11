@@ -48,6 +48,7 @@ export default function validate(schema) {
     );
 
     console.log("validate param: ", param);
+    console.log("validate schema: ", schema);
 
     const valid = ajv.validate(schema, param);
     if (!valid) {
@@ -56,7 +57,8 @@ export default function validate(schema) {
 
       if (typeof res.status != "undefined") {
         res.status(400).json({
-          error: ajv.errorsText(),
+          message: ajv.errorsText(),
+          code: "TOAST"
         });
       } else {
         return {

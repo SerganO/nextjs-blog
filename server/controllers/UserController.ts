@@ -5,12 +5,11 @@ import entity from "server/decorators/entity";
 
 @entity("UserEntity")
 export default class UserController extends BaseController {
-
   /**
    * getAllUsers
    */
   @GET("api/users")
-  public getAllUsers({query, fnMessage, fnError}) {
+  public getAllUsers({ query, fnMessage, fnError }) {
     const { UserService } = this.di;
     fnMessage("users info fetched success");
     fnError("Can not fetch users info");
@@ -32,7 +31,7 @@ export default class UserController extends BaseController {
   )
   @GET("api/users/:id")
   @SSR("users/:id")
-  public findUserInfo({query, fnMessage, fnError}) {
+  public findUserInfo({ query, fnMessage, fnError }) {
     const id = query["id"] as string;
     const { UserService } = this.di;
     fnMessage("user info fetched success");
@@ -44,7 +43,7 @@ export default class UserController extends BaseController {
    * getUserInfoFeedbacksIncluded
    */
   @GET("api/users/:id/feedbacks")
-  public getUserInfoFeedbacksIncluded({query, fnMessage, fnError}) {
+  public getUserInfoFeedbacksIncluded({ query, fnMessage, fnError }) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
     fnMessage("user extended info fetched success");
@@ -56,7 +55,7 @@ export default class UserController extends BaseController {
    * getUserInfoProductsIncluded
    */
   @GET("api/users/:id/products")
-  public getUserInfoProductsIncluded({query, fnMessage, fnError}) {
+  public getUserInfoProductsIncluded({ query, fnMessage, fnError }) {
     const id = parseInt(query["id"] as string);
     const { UserService } = this.di;
     fnMessage("user extended info fetched success");
@@ -90,31 +89,15 @@ export default class UserController extends BaseController {
     })
   )
   @POST("api/users/add")
-  public addUser({query, fnMessage, fnError}) {
-    const body = query
-    console.log("api/users/add query: ", query)
+  public addUser({ query, fnMessage, fnError }) {
+    const body = query;
+    console.log("api/users/add query: ", query);
     let bodyString = JSON.stringify(body);
-    let bodyData = JSON.parse(bodyString);
+    let data = JSON.parse(bodyString) as IUserPostData;
 
-    const firstName = bodyData["firstName"] as string;
-    const lastName = bodyData["lastName"] as string;
-    const userEmail = bodyData["userEmail"] as string;
-    const password = bodyData["password"] as string;
-    const role = bodyData["role"] as string;
-
-    if (firstName && lastName && userEmail && password && role) {
-      const { UserService } = this.di;
-      fnMessage("user added success", "TOAST");
-      fnError("Can not add user", "TOAST");
-      return UserService.addUser(
-        firstName,
-        lastName,
-        userEmail,
-        password,
-        role
-      );
-    } else {
-      throw Error("Can not add user: not full data");
-    }
+    const { UserService } = this.di;
+    fnMessage("user added success", "TOAST");
+    fnError("Can not add user", "TOAST");
+    return UserService.addUser(data);
   }
 }

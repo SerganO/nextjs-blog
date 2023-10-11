@@ -16,8 +16,8 @@ interface IProductPostData {
 }
 
 interface IFeedbackPostData {
-  user_id: number;
-  product_id: number;
+  userId: number;
+  productId: number;
   rating: number;
   message: string;
 }

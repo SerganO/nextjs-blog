@@ -7,15 +7,12 @@ export default class ProductService extends BaseContext {
    * addFeedbackToProduct
    */
   public async addFeedbackToProduct(
-    userId: number,
-    productId: number,
-    rating: number,
-    message: string
+    data: IFeedbackPostData
   ) {
     const { FeedbackService } = this.di;
 
-    await FeedbackService.addFeedback(userId, productId, rating, message);
-    return this.findProductExtendedInfo(`${productId}`);
+    await FeedbackService.addFeedback(data);
+    return this.findProductExtendedInfo(`${data.productId}`);
   }
 
   /**
@@ -193,23 +190,9 @@ export default class ProductService extends BaseContext {
   /**
    * addProduct
    */
-  public addProduct(
-    userId: number,
-    title: string,
-    description: string,
-    SKU: string,
-    category: string,
-    price: number
-  ) {
+  public addProduct(data: IProductPostData ) {
     const { Product } = this.di;
 
-    return Product.create({
-      userId: userId,
-      title: title,
-      description: description,
-      SKU: SKU,
-      category: category,
-      price: price,
-    });
+    return Product.create({...data});
   }
 }

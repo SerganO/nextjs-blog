@@ -52,20 +52,12 @@ export default class FeedbackService extends BaseContext {
   /**
    * addFeedback
    */
-  public addFeedback(
-    userId: number,
-    productId: number,
-    rating: number,
-    message: string
-  ) {
+  public addFeedback(data: IFeedbackPostData) {
     console.log("service add feedback ");
     const { Feedback } = this.di;
 
     return Feedback.create({
-      userId: userId,
-      productId: productId,
-      rating: rating,
-      message: message,
+      ...data,
     });
   }
 }
