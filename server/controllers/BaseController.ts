@@ -154,7 +154,8 @@ export default class BaseController extends BaseContext {
 
           router[methodName](routeName, ...cargs, ...margs, (req, res) => {
             let user = null;
-            if (req.user != undefined) {
+            console.log("req.user: ", req.user);
+            if (req && req.user && req.user?.dataValues) {
               user = this.json(req.user?.dataValues);
             }
             let pagerParams: IPagerParams = null;
@@ -203,6 +204,7 @@ export default class BaseController extends BaseContext {
               pager: pagerParams,
               fnMessage,
               fnError,
+              logout: req.logout,
             })
               .then((response) => {
                 console.log("response: ", response);
@@ -237,7 +239,6 @@ export default class BaseController extends BaseContext {
               .catch((error) => {
                 console.log("error:", error);
                 const errorResponse = req["errorResponse"];
-
                 res.status(errorResponse.statusCode).json(errorResponse);
               });
           });
@@ -247,14 +248,15 @@ export default class BaseController extends BaseContext {
 
     return router.handler({
       onError: (err, req, res) => {
-        const error = err as Error;
-        console.log("error: ", error);
-        res.status(500).end(error.message);
+        console.log("error:", err);
+        const errorResponse = req["errorResponse"];
+        res.status(errorResponse.statusCode).json(errorResponse);
       },
     });
   }
 
   protected json(params: any) {
+    console.log("params: ", params);
     return JSON.parse(JSON.stringify(params));
   }
 }

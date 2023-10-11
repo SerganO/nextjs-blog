@@ -21,7 +21,7 @@ const mapDispatchToProps = (dispatch) => {
 };
 const mapStateToProps = (state) => {
   if (typeof state.users == `undefined`) return {};
-  return { data: state.users[state.valueReducer.values["SELECTED_USER"]] };
+  return { data: state.users[state.valueReducer["SELECTED_USER"]] };
 };
 
 function Base({ data }) {

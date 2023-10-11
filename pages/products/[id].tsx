@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   if (typeof state.products != `undefined`) {
-    const selectedProductId = state.valueReducer.values["SELECTED_PRODUCT_ID"];
+    const selectedProductId = state.valueReducer["SELECTED_PRODUCT_ID"];
     const product = state.products[selectedProductId];
     if (product) {
       let vendor = null;

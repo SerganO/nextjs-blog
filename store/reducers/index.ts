@@ -29,19 +29,15 @@ export default (state, action) => {
     };
 
     const hydratedState = action.payload;
-
+    
     Object.keys(state).forEach((reducer) => {
       if (hydratedState[reducer]) {
         let newValues: any = {};
         const newData = hydratedState[reducer];
-        newValues = [state[reducer] ?? {}, newData ?? {}].reduce((
-          r,
-          o
-        ) => {
-          Object.keys(o).forEach(k => r[k] = o[k]);
+        newValues = [state[reducer] ?? {}, newData ?? {}].reduce((r, o) => {
+          Object.keys(o).forEach((k) => (r[k] = o[k]));
           return r;
-        },
-        {});
+        }, {});
 
         nextState[reducer] = {
           ...nextState[reducer],

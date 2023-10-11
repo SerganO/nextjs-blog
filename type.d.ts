@@ -72,7 +72,6 @@ type StoreEntitiesState = {
 };
 
 type ValuesState = {
-  values: any;
 };
 
 type DispatchType = (args: StoreAction) => StoreAction;

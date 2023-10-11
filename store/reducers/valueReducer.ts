@@ -1,7 +1,7 @@
 import * as actionTypes from "../actionTypes";
 
 const initialState: ValuesState = {
-  values: {},
+ 
 };
 
 const valueReducer = (
@@ -14,10 +14,7 @@ const valueReducer = (
       const value = action.payload.data.value;
       return {
         ...state,
-        values: {
-          ...state.values,
-          [key]: value,
-        },
+        [key]: value,
       };
     }
   }

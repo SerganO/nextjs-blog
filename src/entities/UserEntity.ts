@@ -44,12 +44,38 @@ export default class UserEntity extends BaseEntity<UserEntity> {
 
   @action()
   public *login(data) {
-    yield call (this.xRead, `/login`, { email: data.email, password: data.password }, HTTP_METHOD.POST)
+    const resData = yield call (this.xRead, `/login`, { email: data.email, password: data.password }, HTTP_METHOD.POST)
+    console.log("login res data: ", resData)
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        payload: {
+          data: {
+            key: "LOGGED_USER",
+            value: resData.response.data.id,
+          },
+        },
+      })
+    );
   }
 
   @action()
   public *register(data) {
     console.log("action.register data: ", data)
     yield call (this.xSave, `/users/add`, data)
+  }
+
+  @action()
+  public *logout() {
+  yield call (this.xRead, `/logout`, {}, HTTP_METHOD.POST)
+    yield put(
+      actionTypes.action(actionTypes.UPDATE_VALUE, {
+        payload: {
+          data: {
+            key: "LOGGED_USER",
+            value: null,
+          },
+        },
+      })
+    );
   }
 }

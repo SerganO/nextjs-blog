@@ -15,7 +15,7 @@ export default function FeedbackForm(product_id: number) {
   const [currentFeedbackData, setFeedbackData] = useState<FeedbackData>({
     rating: 0,
     message: "",
-    user_id: 51,
+    user_id: -1,
     product_id: productId,
   });
 

@@ -103,7 +103,7 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
       )
       .catch((e) => {
         controller.abort();
-        console.error("request excption", fullUrl, e);
+        console.error("request exception", fullUrl, e);
         clearTimeout(timeoutId);
         return Promise.resolve({
           success: false,
@@ -141,8 +141,10 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
       }
 
       yield put(this.normalizedAction(sdata.response, type));
+      return sdata
     } catch (error) {
       yield put({ type: actionTypes.ERROR, error });
+      return null
     }
   }
 

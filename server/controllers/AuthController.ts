@@ -29,6 +29,16 @@ export default class AuthController extends BaseController {
     return user
   }
 
+  @POST('api/logout')
+  public async logout({query, user, session, fnMessage, fnError, logout}) {
+    console.log('api/logout');
+    await logout()
+    await session.destroy()
+    fnMessage( "User logout success", "TOAST")
+    fnError("Logout failed", "TOAST")
+    return {}
+  }
+
  
 
 }

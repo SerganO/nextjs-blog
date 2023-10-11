@@ -119,6 +119,11 @@ export default class ProductController extends BaseController {
       userId = parseInt(session["passport"]["user"]);
     }
 
+    if(userId == -1) {
+      fnError("You must be logined to add feedback", "TOAST");
+      throw Error("You must be logined to add feedback");
+    }
+
     const productId: number = parseInt(bodyData["product_id"] as string);
     const rating: number = parseInt(bodyData["rating"] as string);
     const message: string = bodyData["message"] as string;
