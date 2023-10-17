@@ -128,6 +128,7 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
 
   private *actionRequest(url, HTTP_METHOD, type, data: any) {
     try {
+      console.log("actionRequest: url: ", url)
       const sdata = yield call(this.xFetch, url, HTTP_METHOD, data);
       if (sdata.response.code == "TOAST") {
         const { ToastEmitter } = this.di;
@@ -137,7 +138,6 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
           ToastEmitter.errorMessage(sdata.response.message);
         }
       }
-
       yield put(this.normalizedAction(sdata.response, type));
       return sdata
     } catch (error) {
@@ -147,8 +147,9 @@ export class BaseEntity<EntityInstance = null> extends BaseClientContext {
   }
 
   public normalizedData(data) {
-    let schema = Array.isArray(data) ? [this._schema] : this._schema;
-    return normalize(data, schema);
+      let schema = Array.isArray(data) ? [this._schema] : this._schema;
+      let resultData = normalize(data, schema)
+      return resultData.result ? resultData : {}
   }
 
   public normalizedAction(response, type = actionTypes.ADD) {

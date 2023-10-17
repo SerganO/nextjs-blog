@@ -50,6 +50,7 @@ function Base({ data }) {
   const router = useRouter();
 
   const { fetchProductsPage } = useActions("ProductEntity");
+  const { fetchUser } = useActions("UserEntity");
   const [page, setPage] = useState(parseInt(router.query.page as string) || 1);
 
   const productsPageData = data;
@@ -85,6 +86,12 @@ function Base({ data }) {
       payload: { page: page, pageName: "products", perPage: 20, filter, force },
     });
   }, [page]);
+
+  useEffect(() => {
+    if(filter["user_id"] && data && !data.vendor) {
+      fetchUser({payload: {id: filter["user_id"]}})
+    }
+  }, [filter])
 
   const goToProductsPage = () => {
     userId = "";

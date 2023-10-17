@@ -1,6 +1,5 @@
-// src/components/AuthForm.tsx
 import SiteHeader from "components/siteHeader";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { useActions } from "src/hooks/useEntity";
 import { action, ADD } from "store/actionTypes";
@@ -12,38 +11,31 @@ const mapDispatchToProps = (dispatch) => {
 };
 
 const mapStateToProps = (state) => {
-  let user = null;
-  if (state.valueReducer) {
-    user = state.valueReducer["LOGGED_USER"];
-  }
-
-  if (user != undefined && user != null) {
-    let userData = {};
-    if (typeof state.users == `undefined`) {
-      userData["firstName"] = "User";
-      userData["lastName"] = "";
-    } else {
-      userData = state.users[user];
-    }
-
+  const guest = {
+    data: {
+      isLoggedIn: false,
+      user: {},
+    },
+  };
+  if (
+    state.identity &&
+    state.identity.isGuest != null &&
+    state.identity.isGuest != undefined &&
+    !state.identity.isGuest
+  ) {
     return {
       data: {
         isLoggedIn: true,
-        user: userData,
+        user: state.identity,
       },
     };
   } else {
-    return {
-      data: {
-        isLoggedIn: false,
-        user: {},
-      },
-    };
+    return guest;
   }
 };
 
 const AuthForm = ({ data }) => {
-  const { login, register, logout } = useActions("UserEntity");
+  const { login, register, logout } = useActions("Identity");
   const [isRegister, setIsRegister] = useState(false);
   const isLoggedIn = data.isLoggedIn;
   const [formData, setFormData] = useState({
@@ -53,6 +45,10 @@ const AuthForm = ({ data }) => {
     password: "",
     role: "client",
   });
+
+  const name = data.user
+    ? data.user.firstName + " " + data.user.lastName
+    : "User";
 
   const toggleForm = () => {
     setIsRegister((prev) => !prev);
@@ -87,7 +83,7 @@ const AuthForm = ({ data }) => {
       <div className="flex h-screen items-center justify-center">
         {isLoggedIn ? (
           <div>
-            <h2>Welcome, {data.user.firstName} {data.user.lastName}!</h2>
+            <h2>Welcome, {name}!</h2>
             <button
               onClick={handleLogout}
               className="mt-4 rounded-md bg-red-500 px-4 py-2 text-white hover:bg-red-600"

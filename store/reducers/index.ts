@@ -4,6 +4,7 @@ import { HYDRATE } from "next-redux-wrapper";
 import baseReducer from "./baseReducer";
 import { BaseEntity } from "src/entities/BaseEntity";
 import { pagination } from "./paginationReducer";
+import identityReducer from "./identityReducer";
 
 let combinedReducers = Reflect.getMetadata("reducers", BaseEntity).reduce(
   (reducers, obj) => {
@@ -14,7 +15,7 @@ let combinedReducers = Reflect.getMetadata("reducers", BaseEntity).reduce(
       [key]: reducer,
     };
   },
-  { valueReducer, pagination }
+  { valueReducer, pagination, identity: identityReducer }
 );
 
 const rootReducer = combineReducers(combinedReducers) as Reducer<

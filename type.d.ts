@@ -21,33 +21,7 @@ interface IFeedbackPostData {
   rating: number;
   message: string;
 }
-
-type UserState = {
-  users: IUser[];
-  selectedUser: number;
-};
-
-type IPage = {
-  page: number;
-  count: number;
-  products: IProduct[];
-  vendor?: IUser;
-};
-
-type MainPageInfo = {
-  products: IProduct[];
-};
-
-type ProductState = {
-  mainPageInfo: MainPageInfo;
-  products: IProduct[];
-  pages: IPage[];
-  selectedProductId: number;
-  selectedPage: number;
-};
-
-type FeedbackState = {
-  feedbacks: IFeedback[];
+type ValuesState = {
 };
 
 type StoreAction = {
@@ -56,24 +30,13 @@ type StoreAction = {
   entityReducer?: string;
 };
 
-type StoreState = {
-  users: IUser[];
-  products: IProduct[];
-  feedbacks: IFeedback[];
-  pages: IPage[];
-  mainPageInfo: MainPageInfo;
-  selectedUser: number;
-  selectedProductId: number;
-  selectedPage: number;
-};
-
-type StoreEntitiesState = {
-  entities: any;
-};
-
-type ValuesState = {
-};
-
 type DispatchType = (args: StoreAction) => StoreAction;
 
-PAGE_SIZE_20 = 20;
+
+type Identity = {
+  userId?: number;
+  isGuest: boolean;
+  firstName?: string;
+  lastName?: string;
+  role?: string
+}
